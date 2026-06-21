@@ -6,6 +6,7 @@ import { SiteHeader } from "#/components/site-header";
 import { Badge } from "#/components/ui/badge";
 import { categoryLabel } from "#/lib/categories";
 import { getProject } from "#/lib/content/server";
+import { projectJsonLd } from "#/lib/structured-data";
 import { getLocale, localizeHref } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 
@@ -21,10 +22,47 @@ export const Route = createFileRoute("/projects/$slug")({
         title: loaderData ? `${loaderData.frontmatter.title} — ${m.meta_title()}` : m.meta_title(),
       },
       { name: "description", content: loaderData?.frontmatter.summary ?? m.meta_description() },
+      // CreativeWork JSON-LD for the case study (rendered as
+      // <script type="application/ld+json"> by the router).
+      ...(loaderData
+        ? [
+            {
+              "script:ld+json": projectJsonLd(
+                loaderData.slug,
+                loaderData.frontmatter,
+                loaderData.resolvedLocale,
+              ),
+            },
+          ]
+        : []),
     ],
   }),
+  notFoundComponent: ProjectNotFound,
   component: ProjectPage,
 });
+
+function ProjectNotFound() {
+  return (
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <SiteHeader />
+      <main className="flex flex-1 items-center justify-center">
+        <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-24 text-center">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            {m.project_not_found_title()}
+          </h1>
+          <p className="text-pretty text-muted-foreground">{m.project_not_found_body()}</p>
+          <a
+            href={localizeHref("/#projects")}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:underline"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            {m.project_not_found_cta()}
+          </a>
+        </div>
+      </main>
+    </div>
+  );
+}
 
 function ProjectPage() {
   const project = Route.useLoaderData();
@@ -90,8 +128,52 @@ function ProjectPage() {
           </header>
 
           <ProjectBody body={body} />
+
+          {frontmatter.decision && (
+            <CaseStudySection title={m.case_study_decision()}>
+              <p className="text-pretty text-muted-foreground">{frontmatter.decision}</p>
+            </CaseStudySection>
+          )}
+
+          {frontmatter.outcome && (
+            <CaseStudySection title={m.case_study_outcome()}>
+              <p className="text-pretty text-muted-foreground">{frontmatter.outcome.summary}</p>
+              {frontmatter.outcome.metrics && frontmatter.outcome.metrics.length > 0 && (
+                <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  {frontmatter.outcome.metrics.map((metric) => (
+                    <div
+                      key={metric.label}
+                      className="flex flex-col gap-1 rounded-md border border-border bg-card p-4"
+                    >
+                      <dt className="text-sm text-muted-foreground">{metric.label}</dt>
+                      <dd className="text-2xl font-bold tracking-tight">{metric.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </CaseStudySection>
+          )}
+
+          {frontmatter.learnings && frontmatter.learnings.length > 0 && (
+            <CaseStudySection title={m.case_study_learnings()}>
+              <ul className="flex list-disc flex-col gap-2 pl-5 text-pretty text-muted-foreground">
+                {frontmatter.learnings.map((learning) => (
+                  <li key={learning}>{learning}</li>
+                ))}
+              </ul>
+            </CaseStudySection>
+          )}
         </article>
       </main>
     </div>
+  );
+}
+
+function CaseStudySection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="mt-10 border-t border-border pt-10">
+      <h2 className="mb-4 text-xl font-semibold tracking-tight sm:text-2xl">{title}</h2>
+      {children}
+    </section>
   );
 }

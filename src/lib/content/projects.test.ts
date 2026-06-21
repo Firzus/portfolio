@@ -43,6 +43,45 @@ category: ai
 Body two.
 `;
 
+const CASE_STUDY_EN = `---
+title: Case Study Project
+summary: A project with the full case-study narrative.
+role: Lead developer
+stack:
+  - TypeScript
+category: web
+decision: Chose content-as-code over a database-backed CMS.
+outcome:
+  summary: Shipped a fully server-rendered, typed content layer.
+  metrics:
+    - label: Languages
+      value: "4"
+    - label: Database
+      value: None
+learnings:
+  - Designing the schema first paid off downstream.
+  - Locale fallback belongs at the boundary.
+---
+
+Body.
+`;
+
+const BAD_OUTCOME = `---
+title: Bad Outcome
+summary: Outcome missing required summary.
+role: Dev
+stack:
+  - TypeScript
+category: web
+outcome:
+  metrics:
+    - label: Languages
+      value: "4"
+---
+
+Body.
+`;
+
 const VALID_FR = `---
 title: Projet Exemple
 summary: Un projet valide.
@@ -105,9 +144,11 @@ beforeAll(async () => {
   await writeFile(path.join(contentDir, "en", "sample.mdx"), VALID_EN);
   await writeFile(path.join(contentDir, "en", "another.mdx"), VALID_EN_SECOND);
   await writeFile(path.join(contentDir, "fr", "sample.mdx"), VALID_FR);
+  await writeFile(path.join(contentDir, "en", "case-study.mdx"), CASE_STUDY_EN);
   await writeFile(path.join(contentDir, "en", "bad-category.mdx"), INVALID_CATEGORY);
   await writeFile(path.join(contentDir, "en", "missing-required.mdx"), MISSING_REQUIRED);
   await writeFile(path.join(contentDir, "en", "bad-url.mdx"), BAD_URL);
+  await writeFile(path.join(contentDir, "en", "bad-outcome.mdx"), BAD_OUTCOME);
 });
 
 afterAll(async () => {
@@ -166,12 +207,50 @@ describe("readProject", () => {
   it("rejects a malformed url", async () => {
     await expect(readProject("bad-url", "en", { contentDir })).rejects.toThrow(/liveUrl/);
   });
+
+  it("parses the case-study narrative fields (decision, outcome, learnings)", async () => {
+    const project = await readProject("case-study", "en", { contentDir });
+    expect(project?.frontmatter.decision).toContain("content-as-code");
+    expect(project?.frontmatter.outcome).toMatchObject({
+      summary: "Shipped a fully server-rendered, typed content layer.",
+      metrics: [
+        { label: "Languages", value: "4" },
+        { label: "Database", value: "None" },
+      ],
+    });
+    expect(project?.frontmatter.learnings).toEqual([
+      "Designing the schema first paid off downstream.",
+      "Locale fallback belongs at the boundary.",
+    ]);
+  });
+
+  it("leaves narrative fields undefined when absent", async () => {
+    const project = await readProject("sample", "en", { contentDir });
+    expect(project?.frontmatter.decision).toBeUndefined();
+    expect(project?.frontmatter.outcome).toBeUndefined();
+    expect(project?.frontmatter.learnings).toBeUndefined();
+  });
+
+  it("rejects an outcome missing its required summary", async () => {
+    await expect(readProject("bad-outcome", "en", { contentDir })).rejects.toThrow(
+      InvalidProjectError,
+    );
+    await expect(readProject("bad-outcome", "en", { contentDir })).rejects.toThrow(/summary/);
+  });
 });
 
 describe("listProjectSlugs", () => {
   it("returns the canonical (en) slug set, sorted", async () => {
     const slugs = await listProjectSlugs({ contentDir });
-    expect(slugs).toEqual(["another", "bad-category", "bad-url", "missing-required", "sample"]);
+    expect(slugs).toEqual([
+      "another",
+      "bad-category",
+      "bad-outcome",
+      "bad-url",
+      "case-study",
+      "missing-required",
+      "sample",
+    ]);
   });
 
   it("returns an empty array when the directory is absent", async () => {

@@ -44,6 +44,31 @@ function projectsCollection(locale: (typeof locales)[number]) {
       liveUrl: fields.url({ label: "Live URL" }),
       repoUrl: fields.url({ label: "Repository URL" }),
       publishedDate: fields.date({ label: "Published date" }),
+      decision: fields.text({
+        label: "Key decision / trade-off",
+        multiline: true,
+        description: "The key technical decision or trade-off behind the project.",
+      }),
+      outcome: fields.object(
+        {
+          summary: fields.text({ label: "Outcome summary", multiline: true }),
+          metrics: fields.array(
+            fields.object({
+              label: fields.text({ label: "Metric label" }),
+              value: fields.text({ label: "Metric value" }),
+            }),
+            {
+              label: "Metrics",
+              itemLabel: (props) => `${props.fields.label.value}: ${props.fields.value.value}`,
+            },
+          ),
+        },
+        { label: "Outcome" },
+      ),
+      learnings: fields.array(fields.text({ label: "Learning" }), {
+        label: "What I learned",
+        itemLabel: (props) => props.value,
+      }),
       content: fields.mdx({ label: "Content" }),
     },
   });
