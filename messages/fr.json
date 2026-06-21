@@ -90,6 +90,7 @@
   "contact_success_body": "Merci de m'avoir écrit — je vous réponds dès que possible.",
   "contact_error": "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer.",
   "contact_blocked": "Votre envoi n'a pas pu être vérifié. Veuillez réessayer.",
+  "contact_rate_limited": "Vous avez envoyé trop de messages. Veuillez patienter quelques minutes et réessayer.",
   "contact_error_name": "Veuillez saisir votre nom.",
   "contact_error_email": "Veuillez saisir une adresse e-mail valide.",
   "contact_error_message": "Votre message doit comporter au moins 10 caractères.",

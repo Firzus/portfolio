@@ -9,7 +9,7 @@ import { contactSchema, HONEYPOT_FIELD } from "#/lib/contact/schema";
 import * as m from "#/paraglide/messages";
 
 type FieldKey = "name" | "email" | "message";
-type Status = "idle" | "submitting" | "ok" | "blocked" | "error";
+type Status = "idle" | "submitting" | "ok" | "blocked" | "rate_limited" | "error";
 
 const fieldError: Record<FieldKey, () => string> = {
   name: m.contact_error_name,
@@ -60,6 +60,8 @@ export function ContactForm() {
         form.reset();
       } else if (result.status === "blocked") {
         setStatus("blocked");
+      } else if (result.status === "rate_limited") {
+        setStatus("rate_limited");
       } else if (result.status === "invalid") {
         const next: Partial<Record<FieldKey, string>> = {};
         for (const key of result.fields) {
@@ -159,6 +161,11 @@ export function ContactForm() {
       {status === "blocked" && (
         <p role="alert" className="text-sm text-destructive">
           {m.contact_blocked()}
+        </p>
+      )}
+      {status === "rate_limited" && (
+        <p role="alert" className="text-sm text-destructive">
+          {m.contact_rate_limited()}
         </p>
       )}
       {status === "error" && (

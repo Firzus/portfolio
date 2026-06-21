@@ -45,3 +45,39 @@ export function getContactEnv(): ContactEnv {
   cached = parsed.data;
   return cached;
 }
+
+/**
+ * Defaults sized for a personal portfolio: a handful of genuine messages from
+ * one visitor in a short span, with anything beyond that treated as abuse.
+ * Five submissions per ten minutes per IP leaves ample room for a real person
+ * (including retries after a typo) while capping Resend usage from a single
+ * source.
+ */
+const RATE_LIMIT_DEFAULTS = { limit: 5, windowMs: 10 * 60 * 1000 } as const;
+
+export type ContactRateLimitConfig = { limit: number; windowMs: number };
+
+/**
+ * Coerce an env var to a positive integer, falling back to `fallback` when
+ * unset or malformed. Misconfiguration degrades to the safe default rather than
+ * disabling the limiter or crashing the send path.
+ */
+function positiveIntEnv(value: string | undefined, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+/**
+ * Resolve the contact rate-limit window from env, with production-safe
+ * defaults. Overridable via `CONTACT_RATE_LIMIT` (max submissions) and
+ * `CONTACT_RATE_LIMIT_WINDOW_MS` (window length in ms).
+ */
+export function getContactRateLimitConfig(): ContactRateLimitConfig {
+  return {
+    limit: positiveIntEnv(process.env.CONTACT_RATE_LIMIT, RATE_LIMIT_DEFAULTS.limit),
+    windowMs: positiveIntEnv(
+      process.env.CONTACT_RATE_LIMIT_WINDOW_MS,
+      RATE_LIMIT_DEFAULTS.windowMs,
+    ),
+  };
+}

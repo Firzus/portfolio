@@ -90,6 +90,7 @@
   "contact_success_body": "Thanks for reaching out — I'll reply as soon as I can.",
   "contact_error": "Something went wrong while sending your message. Please try again.",
   "contact_blocked": "Your submission could not be verified. Please try again.",
+  "contact_rate_limited": "You've sent too many messages. Please wait a few minutes and try again.",
   "contact_error_name": "Please enter your name.",
   "contact_error_email": "Please enter a valid email address.",
   "contact_error_message": "Your message must be at least 10 characters.",

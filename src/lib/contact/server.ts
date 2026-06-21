@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestIP } from "@tanstack/react-start/server";
 import { checkBotId } from "botid/server";
 import { Resend } from "resend";
 import { z } from "zod";
 
-import { getContactEnv } from "#/lib/env";
+import { getContactEnv, getContactRateLimitConfig } from "#/lib/env";
 
 import { submitContact, type ContactResult } from "./contact";
+import { createRateLimiter, type RateLimitResult } from "./rate-limit";
 import { HONEYPOT_FIELD, type ContactInput } from "./schema";
 
 /**
@@ -43,9 +45,34 @@ function sendContactEmail(input: ContactInput): Promise<void> {
 }
 
 /**
- * Server function: validate the contact payload (Zod), run the BotID check, and
- * send the email via Resend. Returns a discriminated result the client renders
- * as success / blocked / validation / error states.
+ * Process-wide limiter shared across requests. Lazily built so the window can
+ * be read from env on first use and so importing this module stays side-effect
+ * free. One instance per server process; see `createRateLimiter` for the
+ * (intentional) non-distributed semantics.
+ */
+let limiter: ReturnType<typeof createRateLimiter> | undefined;
+
+function getLimiter(): ReturnType<typeof createRateLimiter> {
+  if (!limiter) limiter = createRateLimiter(getContactRateLimitConfig());
+  return limiter;
+}
+
+/**
+ * Rate-limit key for the caller. Prefer the proxy-forwarded client IP (Vercel
+ * sets `x-forwarded-for`); when it can't be determined, fall back to a single
+ * shared bucket so the limiter fails closed (still caps total throughput)
+ * rather than open (one bucket per request = no limit at all).
+ */
+function rateLimitForRequest(): RateLimitResult {
+  const ip = getRequestIP({ xForwardedFor: true });
+  return getLimiter().check(ip ?? "unknown");
+}
+
+/**
+ * Server function: validate the contact payload (Zod), enforce the per-IP rate
+ * limit, run the BotID check, and send the email via Resend. Returns a
+ * discriminated result the client renders as success / blocked / rate-limited /
+ * validation / error states.
  */
 export const sendContactMessage = createServerFn({ method: "POST" })
   .validator(contactRequestSchema)
@@ -56,5 +83,6 @@ export const sendContactMessage = createServerFn({ method: "POST" })
         return !isBot;
       },
       sendEmail: sendContactEmail,
+      checkRateLimit: rateLimitForRequest,
     });
   });

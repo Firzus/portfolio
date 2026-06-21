@@ -1,12 +1,17 @@
+import type { RateLimitResult } from "./rate-limit";
 import { contactSchema, HONEYPOT_FIELD, type ContactInput } from "./schema";
 
 /**
  * Outcome of a contact submission. A discriminated union so callers (and tests)
  * can branch on the exact result without inspecting thrown errors.
+ *
+ * `rate_limited` carries `retryAfterMs` so the UI can tell the user roughly how
+ * long to wait instead of failing opaquely.
  */
 export type ContactResult =
   | { status: "ok" }
   | { status: "blocked" }
+  | { status: "rate_limited"; retryAfterMs: number }
   | { status: "invalid"; fields: string[] }
   | { status: "error" };
 
@@ -20,6 +25,12 @@ export type ContactDeps = {
   verifyHuman: () => Promise<boolean>;
   /** Sends the contact email. Rejects on transport failure. */
   sendEmail: (input: ContactInput) => Promise<void>;
+  /**
+   * Records the submission against the caller's rate-limit window and reports
+   * whether it's allowed. Optional: when omitted (e.g. unit tests, or a deploy
+   * without a configured limiter) the check is skipped, like the honeypot layer.
+   */
+  checkRateLimit?: () => RateLimitResult;
 };
 
 /**
@@ -44,6 +55,16 @@ export async function submitContact(rawInput: unknown, deps: ContactDeps): Promi
   if (!parsed.success) {
     const fields = parsed.error.issues.map((issue) => String(issue.path[0] ?? ""));
     return { status: "invalid", fields };
+  }
+
+  // Rate-limit only well-formed submissions: invalid/honeypot payloads are
+  // rejected cheaply above and never reach Resend, so they shouldn't consume a
+  // legitimate caller's quota. This gates the expensive BotID + Resend calls.
+  if (deps.checkRateLimit) {
+    const decision = deps.checkRateLimit();
+    if (!decision.allowed) {
+      return { status: "rate_limited", retryAfterMs: decision.retryAfterMs };
+    }
   }
 
   try {

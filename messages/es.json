@@ -90,6 +90,7 @@
   "contact_success_body": "Gracias por escribir — te responderé lo antes posible.",
   "contact_error": "Algo salió mal al enviar tu mensaje. Inténtalo de nuevo.",
   "contact_blocked": "No se pudo verificar tu envío. Inténtalo de nuevo.",
+  "contact_rate_limited": "Has enviado demasiados mensajes. Espera unos minutos e inténtalo de nuevo.",
   "contact_error_name": "Introduce tu nombre.",
   "contact_error_email": "Introduce una dirección de correo válida.",
   "contact_error_message": "Tu mensaje debe tener al menos 10 caracteres.",

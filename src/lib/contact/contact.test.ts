@@ -134,4 +134,37 @@ describe("submitContact", () => {
       message: "A long enough message.",
     });
   });
+
+  it("blocks a rate-limited submission without verifying or sending", async () => {
+    const { deps, sendEmail, verifyHuman } = makeDeps({
+      checkRateLimit: vi.fn(() => ({ allowed: false, retryAfterMs: 5_000 })),
+    });
+
+    const result = await submitContact(VALID_INPUT, deps);
+
+    expect(result).toEqual({ status: "rate_limited", retryAfterMs: 5_000 });
+    expect(verifyHuman).not.toHaveBeenCalled();
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  it("does not consume rate-limit quota for an invalid payload", async () => {
+    const checkRateLimit = vi.fn(() => ({ allowed: true }) as const);
+    const { deps } = makeDeps({ checkRateLimit });
+
+    const result = await submitContact({ name: "", email: "bad", message: "short" }, deps);
+
+    expect(result.status).toBe("invalid");
+    expect(checkRateLimit).not.toHaveBeenCalled();
+  });
+
+  it("sends when the caller is under the rate limit", async () => {
+    const checkRateLimit = vi.fn(() => ({ allowed: true }) as const);
+    const { deps, sendEmail } = makeDeps({ checkRateLimit });
+
+    const result = await submitContact(VALID_INPUT, deps);
+
+    expect(result).toEqual({ status: "ok" });
+    expect(checkRateLimit).toHaveBeenCalledTimes(1);
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+  });
 });
