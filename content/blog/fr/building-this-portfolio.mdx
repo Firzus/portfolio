@@ -1,0 +1,29 @@
+---
+title: Construire ce portfolio comme une case study
+summary: Pourquoi le portfolio lui-même est la meilleure preuve de compétence — une app TanStack Start rendue côté serveur, i18n complète et contenu géré en code.
+publishedDate: 2026-06-15
+tags:
+  - meta
+  - engineering
+draft: false
+---
+
+## La thèse
+
+Un développeur junior n'a pas besoin d'affirmer qu'il sait construire des apps web modernes. Il peut simplement en livrer une, bien réalisée, et laisser l'artefact parler. Ce portfolio est exactement cela : chaque décision d'architecture est un petit argument sur ma façon de travailler.
+
+## Sur quoi il tourne
+
+Le site est une application TanStack Start rendue côté serveur et déployée sur Vercel. Quelques choix à souligner :
+
+- Rendu côté serveur pour un SEO efficace par page et par locale.
+- Une couche de contenu géré en code : des fichiers MDX validés par Zod à la frontière de lecture.
+- Une internationalisation complète en quatre langues via Paraglide, avec un fallback vers l'anglais quand une traduction manque.
+
+## Le contenu en code
+
+Plutôt qu'une base de données ou un CMS lourd, les projets et les articles vivent en MDX dans le repo, un fichier par locale. La couche de lecture parse le frontmatter, le valide contre un schéma, et retombe sur le fichier anglais canonique quand la version localisée est absente. Un frontmatter invalide est rejeté à la frontière avec une erreur claire — aucune donnée erronée n'atteint une page.
+
+## La suite
+
+Le blog que vous lisez est volontairement minimal : une liste, une page de détail et un flux RSS. Il est conçu pour grandir sans refonte — un nouvel article n'est qu'un nouveau fichier.

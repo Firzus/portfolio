@@ -49,9 +49,43 @@ function projectsCollection(locale: (typeof locales)[number]) {
   });
 }
 
+/**
+ * Build a `blog` collection bound to one locale directory, mirroring the
+ * per-locale MDX layout `content/blog/{locale}/*`. Same fallback model as
+ * projects: `en` is canonical, other locales are optional (see
+ * `src/lib/content/posts.ts`).
+ */
+function blogCollection(locale: (typeof locales)[number]) {
+  return collection({
+    label: `Blog (${locale.toUpperCase()})`,
+    slugField: "title",
+    path: `content/blog/${locale}/*`,
+    format: { contentField: "content" },
+    schema: {
+      title: fields.slug({ name: { label: "Title" } }),
+      summary: fields.text({
+        label: "Summary",
+        multiline: true,
+        validation: { isRequired: true },
+      }),
+      publishedDate: fields.date({
+        label: "Published date",
+        validation: { isRequired: true },
+      }),
+      tags: fields.array(fields.text({ label: "Tag" }), {
+        label: "Tags",
+        itemLabel: (props) => props.value,
+      }),
+      draft: fields.checkbox({ label: "Draft", defaultValue: false }),
+      content: fields.mdx({ label: "Content" }),
+    },
+  });
+}
+
 export default config({
   storage: { kind: "local" },
-  collections: Object.fromEntries(
-    locales.map((locale) => [`projects_${locale}`, projectsCollection(locale)]),
-  ),
+  collections: Object.fromEntries([
+    ...locales.map((locale) => [`projects_${locale}`, projectsCollection(locale)]),
+    ...locales.map((locale) => [`blog_${locale}`, blogCollection(locale)]),
+  ]),
 });
