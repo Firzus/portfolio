@@ -6,5 +6,7 @@
   "hero_subtitle": "Portfolio scaffold running on TanStack Start with a Tailwind v4 + shadcn/ui design system.",
   "cta_contact": "Get in touch",
   "cta_projects": "View projects",
-  "locale_switcher_label": "Change language"
+  "locale_switcher_label": "Change language",
+  "meta_title": "Portfolio — Firzus",
+  "meta_description": "Agentic / AI Developer portfolio. Server-rendered with TanStack Start."
 }

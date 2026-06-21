@@ -4,7 +4,15 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import { ThemeProvider } from "#/components/theme-provider";
 import { themeInitScript } from "#/lib/theme";
-import { baseLocale, getLocale, localizeHref, locales, shouldRedirect } from "#/paraglide/runtime";
+import * as m from "#/paraglide/messages";
+import {
+  baseLocale,
+  getLocale,
+  getUrlOrigin,
+  locales,
+  localizeUrl,
+  shouldRedirect,
+} from "#/paraglide/runtime";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -27,7 +35,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "Portfolio — Firzus",
+        title: m.meta_title(),
       },
     ],
     links: [
@@ -41,12 +49,12 @@ export const Route = createRootRoute({
       ...locales.map((locale) => ({
         rel: "alternate",
         hrefLang: locale,
-        href: localizeHref(match.pathname, { locale }),
+        href: localizeUrl(new URL(match.pathname, getUrlOrigin()), { locale }).href,
       })),
       {
         rel: "alternate",
         hrefLang: "x-default",
-        href: localizeHref(match.pathname, { locale: baseLocale }),
+        href: localizeUrl(new URL(match.pathname, getUrlOrigin()), { locale: baseLocale }).href,
       },
     ],
   }),

@@ -6,5 +6,7 @@
   "hero_subtitle": "Base de portfolio propulsée par TanStack Start avec un design system Tailwind v4 + shadcn/ui.",
   "cta_contact": "Me contacter",
   "cta_projects": "Voir les projets",
-  "locale_switcher_label": "Changer de langue"
+  "locale_switcher_label": "Changer de langue",
+  "meta_title": "Portfolio — Firzus",
+  "meta_description": "Portfolio de développeur Agentic / IA. Rendu côté serveur avec TanStack Start."
 }

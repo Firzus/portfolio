@@ -8,10 +8,10 @@ import * as m from "#/paraglide/messages";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Portfolio — Firzus" },
+      { title: m.meta_title() },
       {
         name: "description",
-        content: "Agentic / AI Developer portfolio. Server-rendered with TanStack Start.",
+        content: m.meta_description(),
       },
     ],
   }),
