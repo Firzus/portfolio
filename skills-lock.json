@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "skills": {
+    "cro": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/cro/SKILL.md",
+      "computedHash": "07f7a27c57e48f4b67230712f8efbc5bcc01611b35321b3c2c2e5279c9304bcd"
+    },
+    "dokploy-best-practices": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/dokploy-best-practices/SKILL.md",
+      "computedHash": "17ec15e390b4a110a2895eed7e77d4586b1c94dbf7654514901f9f7ce0debab9"
+    },
+    "extract-theme": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/extract-theme/SKILL.md",
+      "computedHash": "996438e61b5042dd00c7db4315f65f8bb681e6dd1a4580b0ff6f1cd2318d3b08"
+    },
+    "image-optimization": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/image-optimization/SKILL.md",
+      "computedHash": "653abbb3871ea97dbde314429ab26dd83f1a9ee65a85313e3ac778f6012229f4"
+    },
+    "imagegen": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/imagegen/SKILL.md",
+      "computedHash": "702a4c61b27b3b69846b0e3c14319549e0752594cd3bb83730c7e7c56fd9b3ce"
+    },
+    "seo-audit": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/seo-audit/SKILL.md",
+      "computedHash": "f2dc52130189068981f21e1c0bdc4471ac7cd9b08d8a1320604411aa0f950385"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "computedHash": "ac9d0d69caac7de1d1e5647f3db3bcd2f13af355d6b3a78780fbf7fc80e8dca0"
+    },
+    "shaders": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/shaders/SKILL.md",
+      "computedHash": "176ced0389a9ecf6a7b426942bb60419633ff35af2f4f478184233c1dd034456"
+    },
+    "tailwind-design-system": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/frontend-mobile-development/skills/tailwind-design-system/SKILL.md",
+      "computedHash": "cd61afd28f594e8b6712b61749209cbb4466e3eec4e4223793bbd97fc85c1b63"
+    },
+    "tanstack-router": {
+      "source": "tanstack-skills/tanstack-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/tanstack-router/skills/tanstack-router/SKILL.md",
+      "computedHash": "24beccc4016f91bab65547209cfd849ea5e66f3d5d92820683a9dd84669ced56"
+    },
+    "tanstack-start": {
+      "source": "tanstack-skills/tanstack-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/tanstack-start/skills/tanstack-start/SKILL.md",
+      "computedHash": "e9d8355fe3e47b118e739081f1123c52aa0ecde57da840722177e1ad5caf9908"
+    },
+    "typescript-advanced-types": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/javascript-typescript/skills/typescript-advanced-types/SKILL.md",
+      "computedHash": "8cbf2bf600f392d7260e476e3202932a876e2281cda3b15a8b6a5a43f383252d"
+    },
+    "ui-ux-pro-max": {
+      "source": "skills.volces.com",
+      "sourceType": "well-known",
+      "computedHash": "3086febf11d75770819f96f720bfe03b0042860a5ede29895a41f606305cdfa0"
+    },
+    "vite-plus-best-practices": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/vite-plus-best-practices/SKILL.md",
+      "computedHash": "235bd219f804e7ab254d5efbd79bbef4cacbf25334a7c8d5980d2dde38604ef8"
+    },
+    "zod": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/zod/SKILL.md",
+      "computedHash": "c69b5133b65643317236707f2cd3e521b4fc6e5ee5fd6c6c00cf62a37dfd0144"
+    }
+  }
+}
