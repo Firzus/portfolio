@@ -28,7 +28,7 @@ export function LocaleSwitcher() {
         <Languages className="size-4" />
       </Menu.Trigger>
       <Menu.Portal>
-        <Menu.Positioner sideOffset={8} align="end">
+        <Menu.Positioner sideOffset={8} align="end" className="z-50">
           <Menu.Popup className="min-w-40 rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none">
             {locales.map((locale) => (
               <Menu.Item

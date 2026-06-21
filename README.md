@@ -11,14 +11,14 @@ See PRD in [issue #2](https://github.com/Firzus/portfolio/issues/2).
 
 ## Commands
 
-| Command                          | Description                                                 |
-| -------------------------------- | ----------------------------------------------------------- |
-| `pnpm install` (or `vp install`) | Install dependencies                                        |
-| `pnpm dev`                       | Start the dev server (SSR) on `http://localhost:3000`       |
-| `pnpm build`                     | Production build (Nitro `node-server` preset)               |
-| `pnpm start`                     | Run the production Node server (`.output/server/index.mjs`) |
-| `vp check`                       | Format + lint + type-check in one pass                      |
-| `pnpm test`                      | Run tests                                                   |
+| Command                          | Description                                                             |
+| -------------------------------- | ----------------------------------------------------------------------- |
+| `pnpm install` (or `vp install`) | Install dependencies                                                    |
+| `pnpm dev`                       | Start the dev server (SSR) on `http://localhost:3000`                   |
+| `pnpm build`                     | Production build (Nitro; `vercel` preset on Vercel, else `node-server`) |
+| `pnpm start`                     | Run the production Node server (`.output/server/index.mjs`)             |
+| `vp check`                       | Format + lint + type-check in one pass                                  |
+| `pnpm test`                      | Run tests                                                               |
 
 > Built-in `vp` commands (`vp dev`, `vp build`, `vp test`) run the bundled tool. The `package.json` scripts wrap them.
 
@@ -28,6 +28,14 @@ After a production build, the server listens on `PORT` (default `3000`):
 pnpm build
 PORT=3000 pnpm start
 ```
+
+## Deployment
+
+The site is deployed on **Vercel** (SSR via the Nitro `vercel` preset, domain `portfolio.lprieu.dev`).
+
+- When the `VERCEL` env var is set (Vercel build environment), `vite.config.ts` switches the Nitro preset to `vercel`, emitting Build Output API v3 in `.vercel/output`. Locally, Nitro keeps the `node-server` preset.
+- `vercel.json` pins the install/build commands (`pnpm`) and disables framework auto-detection.
+- Auto-deploy is wired through git: pushes to `main` ship to production, PRs get preview deployments.
 
 ## Key dependency versions
 
