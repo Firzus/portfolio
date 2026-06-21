@@ -29,7 +29,12 @@ const config = defineConfig({
       ],
     }),
     devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    // On Vercel, build with the Nitro `vercel` preset (Build Output API v3 in
+    // `.vercel/output`). Locally / elsewhere, Nitro auto-detects `node-server`.
+    nitro({
+      preset: process.env.VERCEL ? "vercel" : undefined,
+      rollupConfig: { external: [/^@sentry\//] },
+    }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),

@@ -14,6 +14,7 @@ dist-ssr
 .tanstack
 .vinxi
 .wrangler
+.vercel
 
 # Generated
 src/routeTree.gen.ts
@@ -26,3 +27,5 @@ src/paraglide/
 .env
 __unconfig*
 todos.json
+
+.vercel
