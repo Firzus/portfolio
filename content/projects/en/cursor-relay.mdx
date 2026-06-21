@@ -1,0 +1,31 @@
+---
+title: Cursor Relay
+summary: An AI infrastructure layer that proxies and shims agent traffic between editors and model providers for observability and control.
+role: AI infrastructure developer
+stack:
+  - TypeScript
+  - Node.js
+  - HTTP proxy
+  - Streaming
+category: ai
+featured: true
+order: 3
+repoUrl: https://github.com/Firzus/cursor-relay
+publishedDate: 2026-02-15
+---
+
+## Problem
+
+Agent tooling talks directly to model providers, leaving no seam to observe, route or adapt requests — and no way to swap providers without touching every client.
+
+## Role
+
+I built the relay, proxy and shim cluster that sits between the editor and the model, normalizing protocols and streaming responses transparently.
+
+## Stack
+
+A Node.js streaming proxy that speaks the editor's wire format on one side and provider APIs on the other, with request inspection and provider routing in between.
+
+## Result
+
+A single control point for agent traffic: provider swaps, request logging and protocol adaptation without changing the client.
