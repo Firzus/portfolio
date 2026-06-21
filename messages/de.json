@@ -1,0 +1,12 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav_brand": "Firzus",
+  "hero_role": "Agentic / KI-Entwickler",
+  "hero_title": "Hallo",
+  "hero_subtitle": "Portfolio-Grundgerüst auf Basis von TanStack Start mit einem Tailwind-v4- und shadcn/ui-Designsystem.",
+  "cta_contact": "Kontakt aufnehmen",
+  "cta_projects": "Projekte ansehen",
+  "locale_switcher_label": "Sprache wechseln",
+  "meta_title": "Portfolio — Firzus",
+  "meta_description": "Portfolio eines Agentic-/KI-Entwicklers. Serverseitig gerendert mit TanStack Start."
+}

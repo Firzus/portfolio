@@ -17,6 +17,7 @@ dist-ssr
 
 # Generated
 src/routeTree.gen.ts
+src/paraglide/
 .vite-hooks/_/
 
 # Misc
