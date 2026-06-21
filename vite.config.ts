@@ -20,6 +20,13 @@ const config = defineConfig({
       project: "./project.inlang",
       outdir: "./src/paraglide",
       strategy: ["url", "cookie", "baseLocale"],
+      // Keystatic owns its own routing under /keystatic and talks to
+      // /api/keystatic. Skip i18n middleware (locale redirect + URL
+      // de-localization) so the Admin UI isn't locale-prefixed.
+      routeStrategies: [
+        { match: "/keystatic/:path(.*)?", exclude: true },
+        { match: "/api/keystatic/:path(.*)?", exclude: true },
+      ],
     }),
     devtools(),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
