@@ -4,11 +4,15 @@
  * messages so this stays a single source of truth for URLs/paths.
  */
 export const siteConfig = {
+  /** GitHub handle, used both for the profile link and the live activity API. */
+  githubUsername: "Firzus",
   social: {
     github: "https://github.com/Firzus",
     // TODO: replace with the real LinkedIn URL.
     linkedin: "https://www.linkedin.com/in/firzus",
   },
+  /** Public path to the downloadable CV (PDF). Replace the placeholder file. */
+  cvPath: "/cv-firzus.pdf",
 } as const;
 
 export type NavItem = {
