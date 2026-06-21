@@ -1,0 +1,30 @@
+---
+title: Codex Cursor Proxy
+summary: A desktop companion that bridges local coding agents with the Cursor editor, managing sessions and credentials on-device.
+role: Desktop developer
+stack:
+  - TypeScript
+  - Electron
+  - Node.js
+category: desktop
+featured: false
+order: 12
+repoUrl: https://github.com/Firzus/codex-cursor-proxy
+publishedDate: 2026-03-08
+---
+
+## Problem
+
+Running agent proxies as background services is fragile: developers need a visible, controllable desktop process that manages local sessions and credentials.
+
+## Role
+
+I built the desktop shell that supervises the proxy lifecycle, surfaces logs and stores credentials securely on-device.
+
+## Stack
+
+An Electron app wrapping a Node.js proxy, with a tray UI for session control and secure local credential storage.
+
+## Result
+
+A one-click desktop companion that keeps the local agent bridge running, observable and under user control.

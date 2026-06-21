@@ -1,0 +1,31 @@
+---
+title: Cursor Relay
+summary: Une couche d'infrastructure IA qui relaie et adapte le trafic des agents entre les editeurs et les fournisseurs de modeles, pour l'observabilite et le controle.
+role: Developpeur infrastructure IA
+stack:
+  - TypeScript
+  - Node.js
+  - HTTP proxy
+  - Streaming
+category: ai
+featured: true
+order: 3
+repoUrl: https://github.com/Firzus/cursor-relay
+publishedDate: 2026-02-15
+---
+
+## Probleme
+
+L'outillage des agents parle directement aux fournisseurs de modeles, sans point d'observation ni de routage, et sans possibilite de changer de fournisseur sans toucher chaque client.
+
+## Role
+
+J'ai construit le cluster relay, proxy et shim qui s'intercale entre l'editeur et le modele, normalisant les protocoles et relayant les reponses en streaming de maniere transparente.
+
+## Stack
+
+Un proxy streaming Node.js qui parle le format de l'editeur d'un cote et les API des fournisseurs de l'autre, avec inspection des requetes et routage entre les deux.
+
+## Resultat
+
+Un point de controle unique pour le trafic des agents : changement de fournisseur, journalisation et adaptation de protocole sans modifier le client.
