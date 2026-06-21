@@ -1,6 +1,16 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
+import { initBotId } from "botid/client/core";
 import { routeTree } from "./routeTree.gen";
 import { deLocalizeUrl, localizeUrl } from "./paraglide/runtime";
+
+// Register the contact server function endpoint for BotID. The client attaches
+// challenge headers only to declared paths; server functions POST to
+// /_serverFn/<id>, so protect the whole prefix. Browser-only (no-op on server).
+if (typeof window !== "undefined") {
+  initBotId({
+    protect: [{ path: "/_serverFn/*", method: "POST" }],
+  });
+}
 
 export function getRouter() {
   const router = createTanStackRouter({
