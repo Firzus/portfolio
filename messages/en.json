@@ -1,0 +1,10 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav_brand": "Firzus",
+  "hero_role": "Agentic / AI Developer",
+  "hero_title": "Hello",
+  "hero_subtitle": "Portfolio scaffold running on TanStack Start with a Tailwind v4 + shadcn/ui design system.",
+  "cta_contact": "Get in touch",
+  "cta_projects": "View projects",
+  "locale_switcher_label": "Change language"
+}
