@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { Reveal } from "#/components/motion/reveal";
 import { ProjectCard } from "#/components/project-card";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
@@ -39,12 +40,12 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
 
   return (
     <section id="projects" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-      <div className="flex flex-col gap-3">
+      <Reveal stagger className="flex flex-col gap-3">
         <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
           {m.featured_title()}
         </h2>
         <p className="max-w-2xl text-pretty text-muted-foreground">{m.featured_subtitle()}</p>
-      </div>
+      </Reveal>
 
       {hasFeatured && (
         <>

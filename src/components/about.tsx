@@ -1,5 +1,6 @@
 import { Download } from "lucide-react";
 
+import { Reveal } from "#/components/motion/reveal";
 import { Button } from "#/components/ui/button";
 import { siteConfig } from "#/lib/site-config";
 import * as m from "#/paraglide/messages";
@@ -7,7 +8,7 @@ import * as m from "#/paraglide/messages";
 export function About() {
   return (
     <section id="about" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+      <Reveal className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
         <div className="flex flex-col gap-3">
           <p className="text-sm font-medium uppercase tracking-widest text-primary">
             {m.about_eyebrow()}
@@ -33,7 +34,7 @@ export function About() {
             {m.about_cv_download()}
           </Button>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
