@@ -8,6 +8,7 @@ import { notFoundHead, NotFoundPage } from "#/components/not-found-page";
 import { getPost } from "#/lib/content/server";
 import { formatDate } from "#/lib/format-date";
 import { buildPageHead } from "#/lib/seo/meta";
+import { articleJsonLd } from "#/lib/structured-data";
 import { getLocale, localizeHref } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 
@@ -26,6 +27,16 @@ export const Route = createFileRoute("/blog/$slug")({
       description,
       pathname: `/blog/${loaderData.slug}`,
       ogType: "article",
+      availableLocales: loaderData.availableLocales,
+      extraMeta: [
+        {
+          "script:ld+json": articleJsonLd(
+            loaderData.slug,
+            loaderData.frontmatter,
+            loaderData.locale,
+          ),
+        },
+      ],
     });
   },
   notFoundComponent: NotFoundPage,
@@ -39,11 +50,11 @@ function PostPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <article className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <a
             href={localizeHref("/blog")}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-accent-gold"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             {m.nav_blog()}

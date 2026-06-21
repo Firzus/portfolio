@@ -5,14 +5,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ThemeProvider } from "#/components/theme-provider";
 import { themeInitScript } from "#/lib/theme";
 import * as m from "#/paraglide/messages";
-import {
-  baseLocale,
-  getLocale,
-  getUrlOrigin,
-  locales,
-  localizeUrl,
-  shouldRedirect,
-} from "#/paraglide/runtime";
+import { getLocale, shouldRedirect } from "#/paraglide/runtime";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -25,7 +18,10 @@ export const Route = createRootRoute({
       throw redirect({ href: decision.redirectUrl.href });
     }
   },
-  head: ({ match }) => ({
+  // hreflang/canonical are emitted per-route via `buildPageHead`, which knows
+  // the real pathname (the root match's pathname is always `/`) and each page's
+  // genuine locale availability.
+  head: () => ({
     meta: [
       {
         charSet: "utf-8",
@@ -43,19 +39,6 @@ export const Route = createRootRoute({
         rel: "stylesheet",
         href: appCss,
       },
-      // hreflang alternates for every locale + x-default pointing at baseLocale.
-      // React canonical prop is `hrefLang`; it renders to the lowercase
-      // `hreflang` attribute that crawlers read.
-      ...locales.map((locale) => ({
-        rel: "alternate",
-        hrefLang: locale,
-        href: localizeUrl(new URL(match.pathname, getUrlOrigin()), { locale }).href,
-      })),
-      {
-        rel: "alternate",
-        hrefLang: "x-default",
-        href: localizeUrl(new URL(match.pathname, getUrlOrigin()), { locale: baseLocale }).href,
-      },
     ],
   }),
   shellComponent: RootDocument,
@@ -72,6 +55,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <a
+          href="#main"
+          className="sr-only z-50 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:absolute focus:left-4 focus:top-4"
+        >
+          {m.skip_to_content()}
+        </a>
         <ThemeProvider>
           {children}
           {import.meta.env.DEV ? (

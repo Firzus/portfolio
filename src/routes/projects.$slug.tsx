@@ -26,6 +26,7 @@ export const Route = createFileRoute("/projects/$slug")({
       description: loaderData.frontmatter.summary,
       pathname: `/projects/${loaderData.slug}`,
       ogType: "article",
+      availableLocales: loaderData.availableLocales,
       extraMeta: [
         {
           "script:ld+json": projectJsonLd(
@@ -45,7 +46,7 @@ function ProjectNotFound() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
-      <main className="flex flex-1 items-center justify-center">
+      <main id="main" className="flex flex-1 items-center justify-center">
         <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-24 text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             {m.project_not_found_title()}
@@ -53,7 +54,7 @@ function ProjectNotFound() {
           <p className="text-pretty text-muted-foreground">{m.project_not_found_body()}</p>
           <a
             href={localizeHref("/#projects")}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-gold transition-colors hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             {m.project_not_found_cta()}
@@ -71,11 +72,11 @@ function ProjectPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <article className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <a
             href={localizeHref("/#projects")}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-accent-gold"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             {m.nav_projects()}
@@ -106,7 +107,7 @@ function ProjectPage() {
                     href={frontmatter.liveUrl}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-primary"
+                    className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-accent-gold"
                   >
                     <ExternalLink className="size-4" />
                     {m.project_live()}
@@ -117,7 +118,7 @@ function ProjectPage() {
                     href={frontmatter.repoUrl}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-primary"
+                    className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-accent-gold"
                   >
                     <Github className="size-4" />
                     {m.project_repo()}

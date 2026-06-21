@@ -1,5 +1,5 @@
-import { listPostSlugs } from "#/lib/content/posts";
-import { listProjectSlugs } from "#/lib/content/projects";
+import { listPosts } from "#/lib/content/posts";
+import { listProjects } from "#/lib/content/projects";
 import { locales, localizeUrl, type Locale } from "#/paraglide/runtime";
 
 const STATIC_PATHS = ["/", "/contact", "/blog"] as const;
@@ -20,7 +20,14 @@ function escapeXml(value: string): string {
 }
 
 function localizedLoc(origin: string, pathname: string, locale: Locale): string {
-  return localizeUrl(new URL(pathname, origin), { locale }).href;
+  const href = localizeUrl(new URL(pathname, origin), { locale }).href;
+  // Normalize the localized home (`/fr/` → `/fr`); keep the base-locale root
+  // (`https://host/`) intact.
+  const url = new URL(href);
+  if (url.pathname !== "/" && url.pathname.endsWith("/")) {
+    url.pathname = url.pathname.slice(0, -1);
+  }
+  return url.href;
 }
 
 /**
@@ -46,19 +53,26 @@ export function buildSitemapIndex(origin: string): string {
 
 /**
  * Build a locale-specific urlset sitemap. Includes static routes plus every
- * project and blog post slug (canonical `en` slug set, localized URLs).
+ * project and blog post that genuinely exists in this locale (no en-fallback
+ * duplicates), with `<lastmod>` populated from `publishedDate` when present.
  */
 export async function buildLocaleSitemap(origin: string, locale: Locale): Promise<string> {
-  const [projectSlugs, postSlugs] = await Promise.all([listProjectSlugs(), listPostSlugs()]);
+  const [projects, posts] = await Promise.all([listProjects(locale), listPosts(locale)]);
 
   const urls: SitemapUrl[] = [
     ...STATIC_PATHS.map((pathname) => ({ loc: localizedLoc(origin, pathname, locale) })),
-    ...projectSlugs.map((slug) => ({
-      loc: localizedLoc(origin, `/projects/${slug}`, locale),
-    })),
-    ...postSlugs.map((slug) => ({
-      loc: localizedLoc(origin, `/blog/${slug}`, locale),
-    })),
+    ...projects
+      .filter((project) => project.availableLocales.includes(locale))
+      .map((project) => ({
+        loc: localizedLoc(origin, `/projects/${project.slug}`, locale),
+        lastmod: project.frontmatter.publishedDate,
+      })),
+    ...posts
+      .filter((post) => post.availableLocales.includes(locale))
+      .map((post) => ({
+        loc: localizedLoc(origin, `/blog/${post.slug}`, locale),
+        lastmod: post.frontmatter.publishedDate,
+      })),
   ];
 
   const body = urls

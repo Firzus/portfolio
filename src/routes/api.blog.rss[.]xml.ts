@@ -26,6 +26,7 @@ async function handle({ request }: { request: Request }): Promise<Response> {
       siteUrl: origin,
       feedUrl: url.href,
       blogUrl,
+      language: locale,
     },
     posts,
   );
