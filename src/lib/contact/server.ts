@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { getContactEnv, getContactRateLimitConfig } from "#/lib/env";
 
+import { isVerifiedHuman } from "./bot-check";
 import { submitContact, type ContactResult } from "./contact";
 import { createRateLimiter, type RateLimitResult } from "./rate-limit";
 import { HONEYPOT_FIELD, type ContactInput } from "./schema";
@@ -78,10 +79,11 @@ export const sendContactMessage = createServerFn({ method: "POST" })
   .validator(contactRequestSchema)
   .handler(async ({ data }): Promise<ContactResult> => {
     return submitContact(data, {
-      verifyHuman: async () => {
-        const { isBot } = await checkBotId();
-        return !isBot;
-      },
+      // Fail closed: only an explicit human verdict (`isBot === false`) sends
+      // email. An ambiguous/missing verdict is treated as not-human (blocked),
+      // and a thrown check (network, missing OIDC) bubbles up as `error` — both
+      // short-circuit before Resend.
+      verifyHuman: async () => isVerifiedHuman(await checkBotId()),
       sendEmail: sendContactEmail,
       checkRateLimit: rateLimitForRequest,
     });

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { isVerifiedHuman } from "#/lib/contact/bot-check";
 import { submitContact, type ContactDeps } from "#/lib/contact/contact";
 import type { ContactInput } from "#/lib/contact/schema";
 
@@ -82,6 +83,31 @@ describe("submitContact", () => {
 
     expect(result).toEqual({ status: "error" });
     expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  // Fail-closed wiring: an ambiguous BotID verdict (no `isBot`) must resolve to
+  // not-human through `isVerifiedHuman`, so the submission is blocked and never
+  // reaches Resend — same path the server function takes.
+  it("blocks an ambiguous bot verdict without sending (fail-closed)", async () => {
+    const { deps, sendEmail } = makeDeps({
+      verifyHuman: vi.fn(async () => isVerifiedHuman(await Promise.resolve({}))),
+    });
+
+    const result = await submitContact(VALID_INPUT, deps);
+
+    expect(result).toEqual({ status: "blocked" });
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  it("sends only on an explicit human verdict (isBot === false)", async () => {
+    const { deps, sendEmail } = makeDeps({
+      verifyHuman: vi.fn(async () => isVerifiedHuman(await Promise.resolve({ isBot: false }))),
+    });
+
+    const result = await submitContact(VALID_INPUT, deps);
+
+    expect(result).toEqual({ status: "ok" });
+    expect(sendEmail).toHaveBeenCalledTimes(1);
   });
 
   it("blocks a submission that fills the honeypot field", async () => {
