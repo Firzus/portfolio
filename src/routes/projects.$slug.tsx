@@ -30,7 +30,7 @@ export const Route = createFileRoute("/projects/$slug")({
               "script:ld+json": projectJsonLd(
                 loaderData.slug,
                 loaderData.frontmatter,
-                loaderData.resolvedLocale,
+                loaderData.locale,
               ),
             },
           ]
