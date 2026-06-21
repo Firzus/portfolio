@@ -70,7 +70,7 @@ export function GitHubActivity({ highlight }: GitHubActivityProps) {
   return (
     <section id="github" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary">
+        <p className="text-sm font-medium uppercase tracking-widest text-accent-gold">
           {m.github_eyebrow()}
         </p>
         <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
@@ -179,9 +179,9 @@ function ActivityCard({ highlight }: { highlight: GitHubHighlight }) {
                 href={item.repoUrl}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="group flex items-center gap-3 py-3 transition-colors hover:text-primary"
+                className="group flex items-center gap-3 py-3 transition-colors hover:text-accent-gold"
               >
-                <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+                <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-accent-gold" />
                 <span className="min-w-0 flex-1">
                   <span className="text-sm text-muted-foreground">{kindLabel[item.kind]()} </span>
                   <span className="font-medium">{item.repo}</span>

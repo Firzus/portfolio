@@ -1,6 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "nav_brand": "Firzus",
+  "skip_to_content": "Aller au contenu",
   "nav_home": "Accueil",
   "nav_projects": "Projets",
   "nav_blog": "Blog",

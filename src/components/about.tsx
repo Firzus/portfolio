@@ -10,7 +10,7 @@ export function About() {
     <section id="about" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
       <Reveal className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">
+          <p className="text-sm font-medium uppercase tracking-widest text-accent-gold">
             {m.about_eyebrow()}
           </p>
           <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">

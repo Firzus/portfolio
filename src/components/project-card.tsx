@@ -27,7 +27,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
         <Badge variant="muted">{categoryLabel(frontmatter.category)}</Badge>
         <ArrowUpRight
           aria-hidden="true"
-          className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
+          className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-gold"
         />
       </div>
 
@@ -59,7 +59,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               href={frontmatter.liveUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-primary"
+              className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-accent-gold"
             >
               <ExternalLink className="size-4" />
               {m.project_live()}
@@ -70,7 +70,7 @@ export function ProjectCard({ project, className }: ProjectCardProps) {
               href={frontmatter.repoUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-primary"
+              className="inline-flex items-center gap-1.5 font-medium text-muted-foreground transition-colors hover:text-accent-gold"
             >
               <Github className="size-4" />
               {m.project_repo()}

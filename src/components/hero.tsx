@@ -17,7 +17,7 @@ export function Hero() {
             {m.hero_availability()}
           </span>
 
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">
+          <p className="text-sm font-medium uppercase tracking-widest text-accent-gold">
             {m.hero_role()}
           </p>
 

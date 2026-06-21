@@ -13,7 +13,7 @@ export function Testimonials() {
       className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8"
     >
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary">
+        <p className="text-sm font-medium uppercase tracking-widest text-accent-gold">
           {m.testimonials_eyebrow()}
         </p>
         <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
@@ -28,7 +28,7 @@ export function Testimonials() {
             key={testimonial.id}
             className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6"
           >
-            <Quote className="size-5 text-primary" aria-hidden="true" />
+            <Quote className="size-5 text-accent-gold" aria-hidden="true" />
             <blockquote className="text-pretty text-foreground">"{testimonial.quote}"</blockquote>
             <figcaption className="mt-auto flex flex-col">
               {testimonial.url ? (
@@ -36,7 +36,7 @@ export function Testimonials() {
                   href={testimonial.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="font-medium transition-colors hover:text-primary"
+                  className="font-medium transition-colors hover:text-accent-gold"
                 >
                   {testimonial.author}
                 </a>

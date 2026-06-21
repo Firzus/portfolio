@@ -42,7 +42,7 @@ function BlogIndex() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <div className="flex flex-col gap-3">
             <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
@@ -77,7 +77,7 @@ function BlogIndex() {
                     <h2 className="text-xl font-semibold tracking-tight">
                       <a
                         href={localizeHref(`/blog/${post.slug}`)}
-                        className="transition-colors hover:text-primary"
+                        className="transition-colors hover:text-accent-gold"
                       >
                         {post.frontmatter.title}
                       </a>
@@ -85,7 +85,7 @@ function BlogIndex() {
                     <p className="text-pretty text-muted-foreground">{post.frontmatter.summary}</p>
                     <a
                       href={localizeHref(`/blog/${post.slug}`)}
-                      className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-primary"
+                      className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-accent-gold"
                     >
                       {m.blog_read_more()}
                     </a>
