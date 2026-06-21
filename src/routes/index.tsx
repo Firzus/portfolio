@@ -9,19 +9,19 @@ import { Skills } from "#/components/skills";
 import { Testimonials } from "#/components/testimonials";
 import { getProjects } from "#/lib/content/server";
 import { getGitHubHighlight } from "#/lib/github/server";
+import { buildPageHead } from "#/lib/seo/meta";
+import { personJsonLd } from "#/lib/structured-data";
 import { getLocale } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: m.meta_title() },
-      {
-        name: "description",
-        content: m.meta_description(),
-      },
-    ],
-  }),
+  head: () =>
+    buildPageHead({
+      title: m.meta_title(),
+      description: m.meta_description(),
+      pathname: "/",
+      extraMeta: [{ "script:ld+json": personJsonLd(getLocale()) }],
+    }),
   loader: async () => {
     const [projects, github] = await Promise.all([
       getProjects({ data: { locale: getLocale() } }),

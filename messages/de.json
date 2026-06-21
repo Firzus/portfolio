@@ -93,7 +93,11 @@
   "contact_error_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
   "contact_error_message": "Ihre Nachricht muss mindestens 10 Zeichen lang sein.",
   "contact_meta_title": "Kontakt — Firzus",
-  "contact_meta_description": "Nehmen Sie Kontakt mit Firzus auf, Agentic-/KI-Entwickler.",
-  "meta_title": "Portfolio — Firzus",
-  "meta_description": "Portfolio eines Agentic-/KI-Entwicklers. Serverseitig gerendert mit TanStack Start."
+  "contact_meta_description": "Kontaktieren Sie Firzus für Junior-Rollen im Bereich Agentic / KI. Nachricht senden oder Lebenslauf herunterladen.",
+  "meta_title": "Firzus — Agentic-/KI-Entwickler-Portfolio",
+  "meta_description": "Junior-Agentic-/KI-Portfolio für Recruiter: TypeScript, React, TanStack Start, Case Studies, Live-GitHub-Aktivität und Kontakt.",
+  "blog_meta_description": "Beiträge zu agentic KI-Workflows, moderner Webentwicklung und Portfolio-Case-Studies — von Firzus.",
+  "not_found_title": "Seite nicht gefunden",
+  "not_found_body": "Diese Seite existiert nicht oder wurde möglicherweise verschoben.",
+  "not_found_cta": "Zur Startseite"
 }

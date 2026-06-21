@@ -28,6 +28,9 @@ const config = defineConfig({
         { match: "/api/keystatic/:path(.*)?", exclude: true },
         // The RSS feed picks its locale from `?locale=`, not the URL prefix.
         { match: "/api/blog/:path(.*)?", exclude: true },
+        { match: "/api/sitemap/:path(.*)?", exclude: true },
+        { match: "/sitemap.xml", exclude: true },
+        { match: "/robots.txt", exclude: true },
       ],
     }),
     devtools(),
