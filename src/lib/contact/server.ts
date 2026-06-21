@@ -1,11 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
 import { checkBotId } from "botid/server";
 import { Resend } from "resend";
+import { z } from "zod";
 
 import { getContactEnv } from "#/lib/env";
 
 import { submitContact, type ContactResult } from "./contact";
-import { contactSchema, type ContactInput } from "./schema";
+import { HONEYPOT_FIELD, type ContactInput } from "./schema";
+
+/**
+ * Loose boundary schema for the server function: accepts the form fields plus
+ * the optional honeypot, without stripping it. `submitContact` then runs the
+ * strict `contactSchema` validation and the honeypot check on this payload.
+ */
+const contactRequestSchema = z.object({
+  name: z.string(),
+  email: z.string(),
+  message: z.string(),
+  [HONEYPOT_FIELD]: z.string().optional(),
+});
 
 /**
  * Build the Resend-backed email sender from validated env. Resend reports
@@ -35,7 +48,7 @@ function sendContactEmail(input: ContactInput): Promise<void> {
  * as success / blocked / validation / error states.
  */
 export const sendContactMessage = createServerFn({ method: "POST" })
-  .validator(contactSchema)
+  .validator(contactRequestSchema)
   .handler(async ({ data }): Promise<ContactResult> => {
     return submitContact(data, {
       verifyHuman: async () => {

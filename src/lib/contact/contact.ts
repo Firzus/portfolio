@@ -1,4 +1,4 @@
-import { contactSchema, type ContactInput } from "./schema";
+import { contactSchema, HONEYPOT_FIELD, type ContactInput } from "./schema";
 
 /**
  * Outcome of a contact submission. A discriminated union so callers (and tests)
@@ -28,6 +28,18 @@ export type ContactDeps = {
  * invalid or the caller is classified as a bot.
  */
 export async function submitContact(rawInput: unknown, deps: ContactDeps): Promise<ContactResult> {
+  // Honeypot: a hidden field no human fills. A non-empty value means a bot —
+  // short-circuit as `blocked`. This is a host-independent layer that also
+  // covers non-Vercel deploys where BotID isn't provisioned.
+  if (
+    rawInput &&
+    typeof rawInput === "object" &&
+    typeof (rawInput as Record<string, unknown>)[HONEYPOT_FIELD] === "string" &&
+    ((rawInput as Record<string, unknown>)[HONEYPOT_FIELD] as string).trim() !== ""
+  ) {
+    return { status: "blocked" };
+  }
+
   const parsed = contactSchema.safeParse(rawInput);
   if (!parsed.success) {
     const fields = parsed.error.issues.map((issue) => String(issue.path[0] ?? ""));
