@@ -43,6 +43,12 @@
       "skillPath": "skills/imagegen/SKILL.md",
       "computedHash": "702a4c61b27b3b69846b0e3c14319549e0752594cd3bb83730c7e7c56fd9b3ce"
     },
+    "resend": {
+      "source": "resend/resend-skills",
+      "sourceType": "github",
+      "skillPath": "skills/resend/SKILL.md",
+      "computedHash": "9de632cf0e2a3f68b458f66ce95bb26999122277d126d53e7eafa6f0cdd0f013"
+    },
     "seo-audit": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
