@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "chrome-devtools": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/chrome-devtools/SKILL.md",
+      "computedHash": "a5c5ec699f31caa7afe1cd4ad4d0acd7ae586be455e4e55068e6a81b1e3a054c"
+    },
     "cro": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",

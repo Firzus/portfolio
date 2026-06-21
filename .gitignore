@@ -1,7 +1,27 @@
-
-
 # Agents
 .cursor/
 .claude/
 .agents/
 
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+.output
+.nitro
+.tanstack
+.vinxi
+.wrangler
+
+# Generated
+src/routeTree.gen.ts
+.vite-hooks/_/
+
+# Misc
+.DS_Store
+*.local
+.env
+__unconfig*
+todos.json
