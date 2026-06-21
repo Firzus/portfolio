@@ -1,0 +1,29 @@
+---
+title: Building this portfolio as a case study
+summary: Why the portfolio itself is the strongest proof of skill — a server-rendered TanStack Start app with full i18n and content-as-code.
+publishedDate: 2026-06-15
+tags:
+  - meta
+  - engineering
+draft: false
+---
+
+## The thesis
+
+A junior developer doesn't need to claim they can build modern web apps. They can just ship one, well, and let the artifact do the talking. This portfolio is exactly that: every architectural decision is a small argument about how I work.
+
+## What it runs on
+
+The site is a TanStack Start application rendered on the server and deployed to Vercel. A few choices worth calling out:
+
+- Server-side rendering for SEO that works per page and per locale.
+- A content-as-code layer: MDX files validated by Zod at the read boundary.
+- Full internationalization in four languages via Paraglide, with a fallback to English when a translation is missing.
+
+## Content as code
+
+Rather than a database or a heavyweight CMS, the projects and posts live as MDX in the repo, one file per locale. The reading layer parses frontmatter, validates it against a schema, and falls back to the canonical English file when a localized one is absent. Invalid frontmatter is rejected at the boundary with a clear error — bad data never reaches a page.
+
+## What's next
+
+The blog you're reading is intentionally minimal: a list, a detail page, and an RSS feed. It's wired to grow without rework — new posts are just new files.

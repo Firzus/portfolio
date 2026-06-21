@@ -1,0 +1,25 @@
+---
+title: Notes on agentic development workflows
+summary: How I delegate well-scoped work to AI agents — small, verifiable slices, tight feedback loops, and tests as the contract.
+publishedDate: 2026-05-28
+tags:
+  - ai
+  - workflow
+draft: false
+---
+
+## Small, verifiable slices
+
+The unit of agentic work that actually ships is a thin vertical slice: one behavior, end to end, with a test that proves it. Big ambiguous tasks stall; narrow ones with a clear definition of done move fast.
+
+## Tests as the contract
+
+When an agent and I agree on a test first, the test becomes the spec. The agent has an objective target, and I have a cheap way to verify the result without reading every line.
+
+## Tight feedback loops
+
+The faster the loop — type-check, lint, test — the more autonomy an agent can safely take. Most of the value is in making verification cheap, not in writing more prompts.
+
+## Keep humans on the seams
+
+I review at the boundaries: schemas, public APIs, the edges where a mistake propagates. Implementation details inside a well-tested seam matter less than the shape of the seam itself.
