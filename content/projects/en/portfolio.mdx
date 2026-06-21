@@ -13,6 +13,26 @@ order: 4
 liveUrl: https://portfolio.lprieu.dev
 repoUrl: https://github.com/Firzus/portfolio
 publishedDate: 2026-06-01
+decision: >-
+  The hardest trade-off was content-as-code vs. a database-backed CMS. I chose
+  MDX validated by Zod and edited through Keystatic: zero infrastructure, full
+  git history, and a typed boundary that rejects malformed content at read time
+  — at the cost of writing the locale-fallback and validation layer myself.
+outcome:
+  summary: >-
+    A fully server-rendered, four-language portfolio that doubles as its own
+    strongest case study — shipped on Vercel with content editable from git.
+  metrics:
+    - label: Languages
+      value: "4"
+    - label: Database
+      value: None
+    - label: Rendering
+      value: SSR
+learnings:
+  - Designing the content schema first made every downstream feature — cards, case studies, SEO — fall out of a single typed source of truth.
+  - Locale fallback is a boundary concern best tested in isolation, not bolted onto components.
+  - Treating the portfolio itself as a case study forced rigor I would have skipped on a throwaway site.
 ---
 
 ## Problem
