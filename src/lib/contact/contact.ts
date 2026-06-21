@@ -34,10 +34,10 @@ export async function submitContact(rawInput: unknown, deps: ContactDeps): Promi
     return { status: "invalid", fields };
   }
 
-  const isHuman = await deps.verifyHuman();
-  if (!isHuman) return { status: "blocked" };
-
   try {
+    const isHuman = await deps.verifyHuman();
+    if (!isHuman) return { status: "blocked" };
+
     await deps.sendEmail(parsed.data);
   } catch {
     return { status: "error" };

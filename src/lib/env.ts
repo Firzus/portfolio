@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+/** Resend accepts a bare address or `"Name" <addr@domain.com>`. Validate the addr part. */
+function isResendEmailAddress(value: string): boolean {
+  const emailPart = value.trim().match(/<([^>]+)>$/)?.[1] ?? value.trim();
+  return z.email().safeParse(emailPart).success;
+}
+
+const resendEmailAddress = z.string().min(1).refine(isResendEmailAddress, {
+  message: "Invalid email address",
+});
+
 /**
  * Boundary schema for the server-only environment variables the contact
  * feature needs. Validation happens lazily on first use (see `getContactEnv`)
@@ -9,7 +19,7 @@ import { z } from "zod";
 const contactEnvSchema = z.object({
   RESEND_API_KEY: z.string().min(1),
   CONTACT_TO_EMAIL: z.email(),
-  CONTACT_FROM_EMAIL: z.email(),
+  CONTACT_FROM_EMAIL: resendEmailAddress,
 });
 
 export type ContactEnv = z.infer<typeof contactEnvSchema>;

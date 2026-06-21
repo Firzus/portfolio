@@ -71,6 +71,19 @@ describe("submitContact", () => {
     expect(result).toEqual({ status: "error" });
   });
 
+  it("returns an error result when the bot check throws", async () => {
+    const { deps, sendEmail } = makeDeps({
+      verifyHuman: vi.fn(async () => {
+        throw new Error("VERCEL_OIDC_TOKEN is not set");
+      }),
+    });
+
+    const result = await submitContact(VALID_INPUT, deps);
+
+    expect(result).toEqual({ status: "error" });
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
   it("trims and normalizes the payload before sending", async () => {
     const { deps, sendEmail } = makeDeps();
 
