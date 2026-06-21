@@ -1,6 +1,6 @@
 import { collection, config, fields } from "@keystatic/core";
 
-import { locales } from "#/lib/i18n";
+import { contentLocales, type Locale } from "#/lib/i18n";
 
 const categoryOptions = [
   { label: "Web", value: "web" },
@@ -16,7 +16,7 @@ const categoryOptions = [
  * (`en`) is canonical; other locales are optional and fall back to `en` at read
  * time (see `src/lib/content/projects.ts`).
  */
-function projectsCollection(locale: (typeof locales)[number]) {
+function projectsCollection(locale: Locale) {
   return collection({
     label: `Projects (${locale.toUpperCase()})`,
     slugField: "title",
@@ -33,6 +33,9 @@ function projectsCollection(locale: (typeof locales)[number]) {
       stack: fields.array(fields.text({ label: "Technology" }), {
         label: "Stack",
         itemLabel: (props) => props.value,
+        // Zod requires a non-empty stack (schema.ts); mirror it here so the CMS
+        // can't author content the reader will reject at parse time.
+        validation: { length: { min: 1 } },
       }),
       category: fields.select({
         label: "Category",
@@ -80,7 +83,7 @@ function projectsCollection(locale: (typeof locales)[number]) {
  * projects: `en` is canonical, other locales are optional (see
  * `src/lib/content/posts.ts`).
  */
-function blogCollection(locale: (typeof locales)[number]) {
+function blogCollection(locale: Locale) {
   return collection({
     label: `Blog (${locale.toUpperCase()})`,
     slugField: "title",
@@ -109,8 +112,10 @@ function blogCollection(locale: (typeof locales)[number]) {
 
 export default config({
   storage: { kind: "local" },
+  // Only expose editing surfaces for locales we actually ship content in, so
+  // editors don't author es/de files no localized route meaningfully serves.
   collections: Object.fromEntries([
-    ...locales.map((locale) => [`projects_${locale}`, projectsCollection(locale)]),
-    ...locales.map((locale) => [`blog_${locale}`, blogCollection(locale)]),
+    ...contentLocales.map((locale) => [`projects_${locale}`, projectsCollection(locale)]),
+    ...contentLocales.map((locale) => [`blog_${locale}`, blogCollection(locale)]),
   ]),
 });

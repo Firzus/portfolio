@@ -50,8 +50,8 @@ export type GitHubHighlight = {
 export const githubUserSchema = z.object({
   login: z.string(),
   name: z.string().nullable().optional(),
-  html_url: z.string(),
-  avatar_url: z.string(),
+  html_url: z.url(),
+  avatar_url: z.url(),
   bio: z.string().nullable().optional(),
   public_repos: z.number(),
   followers: z.number(),

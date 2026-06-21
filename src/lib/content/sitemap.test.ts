@@ -12,14 +12,19 @@ describe("buildSitemapIndex", () => {
 });
 
 describe("buildLocaleSitemap", () => {
-  it("includes static routes and localized project/blog urls", async () => {
+  it("includes static routes and localized project urls that exist in the locale", async () => {
     const xml = await buildLocaleSitemap("https://example.com", "fr");
 
     expect(xml).toContain("<loc>https://example.com/fr</loc>");
     expect(xml).toContain("<loc>https://example.com/fr/contact</loc>");
     expect(xml).toContain("<loc>https://example.com/fr/blog</loc>");
+    // fr has localized project content, so at least one fr project URL appears.
     expect(xml).toMatch(/<loc>https:\/\/example\.com\/fr\/projects\/[^<]+<\/loc>/);
-    expect(xml).toMatch(/<loc>https:\/\/example\.com\/fr\/blog\/[^<]+<\/loc>/);
+  });
+
+  it("emits <lastmod> from publishedDate", async () => {
+    const xml = await buildLocaleSitemap("https://example.com", "en");
+    expect(xml).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
   });
 });
 

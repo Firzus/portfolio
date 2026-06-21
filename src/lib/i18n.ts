@@ -5,6 +5,15 @@ import { baseLocale, isLocale, type Locale, locales } from "#/paraglide/runtime"
 export { baseLocale, type Locale, locales };
 
 /**
+ * Locales we actually author editorial content (MDX) in. A subset of the UI
+ * `locales` (which are fully translated via the message catalog). Keystatic and
+ * any "which locales have content" logic key off this list so we don't expose
+ * empty editing surfaces or advertise translations that don't exist. Add a
+ * locale here once its `content/{projects,blog}/{locale}` files are authored.
+ */
+export const contentLocales = ["en", "fr"] as const satisfies readonly Locale[];
+
+/**
  * Boundary schema: a requested locale is any string. Anything non-string
  * (undefined, null, numbers, objects) is rejected and falls back to baseLocale.
  */

@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { useHasMounted } from "#/hooks/use-has-mounted";
 import { useReducedMotion } from "#/hooks/use-reduced-motion";
-import { supportsGpuRendering } from "#/lib/gpu";
+import { prefersLightweightVisual, supportsGpuRendering } from "#/lib/gpu";
 import { cn } from "#/lib/utils";
 
 // Lazy so neither `shaders` nor `three` is loaded on the server or for users who
@@ -34,15 +34,17 @@ function ShaderFallback({ className }: { className?: string }) {
 export function HeroShader({ className }: { className?: string }) {
   const mounted = useHasMounted();
   const reducedMotion = useReducedMotion();
-  const [gpuReady, setGpuReady] = React.useState(false);
+  const [shaderAllowed, setShaderAllowed] = React.useState(false);
 
   React.useEffect(() => {
-    setGpuReady(supportsGpuRendering());
+    // Run the shader only with real GPU support AND on a device that isn't
+    // low-power/data-saving/phone-sized (where it drains battery for little gain).
+    setShaderAllowed(supportsGpuRendering() && !prefersLightweightVisual());
   }, []);
 
   const fallback = <ShaderFallback className={className} />;
 
-  if (!mounted || reducedMotion || !gpuReady) {
+  if (!mounted || reducedMotion || !shaderAllowed) {
     return fallback;
   }
 

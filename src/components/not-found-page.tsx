@@ -10,10 +10,10 @@ export function NotFoundPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
-      <main className="flex flex-1 items-center justify-center">
+      <main id="main" className="flex flex-1 items-center justify-center">
         <div className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-24 text-center">
           <p
-            className="text-sm font-medium uppercase tracking-widest text-primary"
+            className="text-sm font-medium uppercase tracking-widest text-accent-gold"
             aria-hidden="true"
           >
             404
@@ -22,7 +22,7 @@ export function NotFoundPage() {
           <p className="text-pretty text-muted-foreground">{m.not_found_body()}</p>
           <a
             href={localizeHref("/")}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-gold transition-colors hover:underline"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
             {m.not_found_cta()}

@@ -6,6 +6,10 @@
 export const siteConfig = {
   /** GitHub handle, used both for the profile link and the live activity API. */
   githubUsername: "Firzus",
+  /** Real person name for Person/author structured data (recruiter-facing). */
+  fullName: "Firzus",
+  /** Human-readable site name for `og:site_name` / titles. */
+  siteName: "Firzus — Portfolio",
   social: {
     github: "https://github.com/Firzus",
     // TODO: replace with the real LinkedIn URL.
@@ -24,7 +28,9 @@ export type NavItem = {
 
 export const navItems: readonly NavItem[] = [
   { href: "/", labelKey: "nav_home" },
-  { href: "/projects", labelKey: "nav_projects" },
+  // The home renders a narrative `#projects` section (no standalone /projects
+  // index route exists); link to the anchor rather than a 404.
+  { href: "/#projects", labelKey: "nav_projects" },
   { href: "/blog", labelKey: "nav_blog" },
   { href: "/contact", labelKey: "nav_contact" },
 ] as const;

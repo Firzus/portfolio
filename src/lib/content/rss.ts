@@ -24,6 +24,8 @@ export interface RssChannel {
   feedUrl: string;
   /** Absolute base for post links, e.g. `https://portfolio.lprieu.dev/blog`. */
   blogUrl: string;
+  /** Feed language tag (e.g. `en`, `fr`) for the channel `<language>`. */
+  language: string;
 }
 
 /**
@@ -31,8 +33,13 @@ export interface RssChannel {
  * absolute URLs so it has no dependency on the request or i18n runtime.
  */
 export function buildRssFeed(channel: RssChannel, posts: Post[]): string {
-  const lastBuildDate =
-    posts.length > 0 ? toRfc822(posts[0]!.frontmatter.publishedDate) : new Date().toUTCString();
+  // Most-recent publish date, computed explicitly so it doesn't depend on the
+  // caller pre-sorting the posts.
+  const latest = posts.reduce<string | null>((max, post) => {
+    const date = post.frontmatter.publishedDate;
+    return max === null || date > max ? date : max;
+  }, null);
+  const lastBuildDate = latest ? toRfc822(latest) : new Date().toUTCString();
 
   const items = posts
     .map((post) => {
@@ -57,6 +64,7 @@ export function buildRssFeed(channel: RssChannel, posts: Post[]): string {
     `    <title>${escapeXml(channel.title)}</title>`,
     `    <link>${escapeXml(channel.siteUrl)}</link>`,
     `    <description>${escapeXml(channel.description)}</description>`,
+    `    <language>${escapeXml(channel.language)}</language>`,
     `    <atom:link href="${escapeXml(channel.feedUrl)}" rel="self" type="application/rss+xml" />`,
     `    <lastBuildDate>${lastBuildDate}</lastBuildDate>`,
     items,

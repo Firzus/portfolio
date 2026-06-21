@@ -84,6 +84,42 @@ describe("submitContact", () => {
     expect(sendEmail).not.toHaveBeenCalled();
   });
 
+  it("blocks a submission that fills the honeypot field", async () => {
+    const { deps, sendEmail, verifyHuman } = makeDeps();
+
+    const result = await submitContact({ ...VALID_INPUT, company: "Acme Corp" }, deps);
+
+    expect(result).toEqual({ status: "blocked" });
+    expect(verifyHuman).not.toHaveBeenCalled();
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  it("ignores an empty honeypot field", async () => {
+    const { deps, sendEmail } = makeDeps();
+
+    const result = await submitContact({ ...VALID_INPUT, company: "  " }, deps);
+
+    expect(result).toEqual({ status: "ok" });
+    expect(sendEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects a name containing line breaks (header hardening)", async () => {
+    const { deps, sendEmail } = makeDeps();
+
+    const result = await submitContact(
+      {
+        name: "Ada\r\nBcc: victim@example.com",
+        email: "ada@example.com",
+        message: "A valid message.",
+      },
+      deps,
+    );
+
+    expect(result.status).toBe("invalid");
+    if (result.status === "invalid") expect(result.fields).toContain("name");
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
   it("trims and normalizes the payload before sending", async () => {
     const { deps, sendEmail } = makeDeps();
 

@@ -1,4 +1,5 @@
 import { siteConfig } from "#/lib/site-config";
+import type { PostFrontmatter } from "#/lib/content/post-schema";
 import type { ProjectFrontmatter } from "#/lib/content/schema";
 import { allSkills } from "#/lib/skills";
 import { getUrlOrigin, type Locale, localizeUrl } from "#/paraglide/runtime";
@@ -49,12 +50,24 @@ export interface CollectionPageJsonLd {
   url: string;
 }
 
+export interface BlogPostingJsonLd {
+  "@context": "https://schema.org";
+  "@type": "BlogPosting";
+  headline: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  author: { "@type": "Person"; name: string; url: string };
+  mainEntityOfPage: { "@type": "WebPage"; "@id": string };
+  keywords?: string;
+}
+
 function personEntity(locale: Locale): PersonJsonLd {
   const url = localizeUrl(new URL("/", getUrlOrigin()), { locale }).href;
   return {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: siteConfig.githubUsername,
+    name: siteConfig.fullName,
     url,
     jobTitle: "Agentic / AI Developer",
     description:
@@ -104,6 +117,36 @@ export function collectionPageJsonLd(
 }
 
 /**
+ * Build a `BlogPosting` JSON-LD object for a blog post. The canonical URL is
+ * localized; `author` reuses the home Person entity URL so the entity stays
+ * consistent across schemas.
+ */
+export function articleJsonLd(
+  slug: string,
+  frontmatter: PostFrontmatter,
+  locale: Locale,
+): BlogPostingJsonLd {
+  const url = localizeUrl(new URL(`/blog/${slug}`, getUrlOrigin()), { locale }).href;
+  const authorUrl = localizeUrl(new URL("/", getUrlOrigin()), { locale }).href;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: frontmatter.title,
+    description: frontmatter.summary,
+    url,
+    datePublished: frontmatter.publishedDate,
+    author: {
+      "@type": "Person",
+      name: siteConfig.fullName,
+      url: authorUrl,
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    ...(frontmatter.tags.length > 0 ? { keywords: frontmatter.tags.join(", ") } : {}),
+  };
+}
+
+/**
  * Build a `CreativeWork` JSON-LD object for a project case study. The canonical
  * URL is localized so each locale advertises its own absolute URL. Returns a
  * plain object; callers serialize it as `{ "script:ld+json": jsonLd }`.
@@ -114,6 +157,7 @@ export function projectJsonLd(
   locale: Locale,
 ): CreativeWorkJsonLd {
   const url = localizeUrl(new URL(`/projects/${slug}`, getUrlOrigin()), { locale }).href;
+  const authorUrl = localizeUrl(new URL("/", getUrlOrigin()), { locale }).href;
   const sameAs = [frontmatter.liveUrl, frontmatter.repoUrl].filter((link): link is string =>
     Boolean(link),
   );
@@ -126,8 +170,8 @@ export function projectJsonLd(
     url,
     author: {
       "@type": "Person",
-      name: siteConfig.githubUsername,
-      url: siteConfig.social.github,
+      name: siteConfig.fullName,
+      url: authorUrl,
     },
     genre: frontmatter.category,
     keywords: frontmatter.stack.join(", "),

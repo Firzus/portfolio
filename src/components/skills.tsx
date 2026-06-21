@@ -7,7 +7,7 @@ export function Skills() {
   return (
     <section id="skills" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
       <Reveal stagger className="flex flex-col gap-3">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary">
+        <p className="text-sm font-medium uppercase tracking-widest text-accent-gold">
           {m.skills_eyebrow()}
         </p>
         <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">

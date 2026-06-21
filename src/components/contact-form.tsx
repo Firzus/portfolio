@@ -5,7 +5,7 @@ import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 import { Textarea } from "#/components/ui/textarea";
 import { sendContactMessage } from "#/lib/contact/server";
-import { contactSchema } from "#/lib/contact/schema";
+import { contactSchema, HONEYPOT_FIELD } from "#/lib/contact/schema";
 import * as m from "#/paraglide/messages";
 
 type FieldKey = "name" | "email" | "message";
@@ -33,6 +33,7 @@ export function ContactForm() {
       email: String(formData.get("email") ?? ""),
       message: String(formData.get("message") ?? ""),
     };
+    const honeypot = String(formData.get(HONEYPOT_FIELD) ?? "");
 
     // Client-side validation mirrors the server schema for instant feedback.
     const parsed = contactSchema.safeParse(raw);
@@ -51,7 +52,9 @@ export function ContactForm() {
     setStatus("submitting");
 
     try {
-      const result = await sendContactMessage({ data: parsed.data });
+      const result = await sendContactMessage({
+        data: { ...parsed.data, [HONEYPOT_FIELD]: honeypot },
+      });
       if (result.status === "ok") {
         setStatus("ok");
         form.reset();
@@ -85,6 +88,19 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+      {/* Honeypot: hidden from humans, off the tab order; bots that fill it are
+          blocked server-side. Not `display:none` so some bots still see it. */}
+      <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="contact-company">Company</label>
+        <input
+          id="contact-company"
+          name={HONEYPOT_FIELD}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
       <div className="flex flex-col gap-2">
         <Label htmlFor="contact-name">{m.contact_field_name()}</Label>
         <Input

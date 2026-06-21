@@ -35,11 +35,12 @@ describe("projectJsonLd", () => {
       datePublished: "2025-01-15",
       author: {
         "@type": "Person",
-        name: siteConfig.githubUsername,
-        url: siteConfig.social.github,
+        name: siteConfig.fullName,
       },
       sameAs: ["https://example.com", "https://github.com/example/sample"],
     });
+    // author.url points at the localized home (consistent Person entity).
+    expect(projectJsonLd("sample", frontmatter, "en").author.url).toMatch(/\/$/);
   });
 
   it("localizes the canonical url per locale", () => {
@@ -69,7 +70,7 @@ describe("personJsonLd", () => {
 
     expect(jsonLd).toMatchObject({
       "@type": "Person",
-      name: siteConfig.githubUsername,
+      name: siteConfig.fullName,
       sameAs: [siteConfig.social.github, siteConfig.social.linkedin],
     });
     expect(jsonLd.knowsAbout.length).toBeGreaterThan(5);

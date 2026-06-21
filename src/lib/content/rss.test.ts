@@ -9,6 +9,7 @@ function post(overrides: Partial<Post["frontmatter"]> & { slug: string }): Post 
     slug,
     locale: "en",
     resolvedLocale: "en",
+    availableLocales: ["en"],
     body: "",
     frontmatter: {
       title: "Title",
@@ -27,6 +28,7 @@ const channel = {
   siteUrl: "https://example.com",
   feedUrl: "https://example.com/api/blog/rss.xml",
   blogUrl: "https://example.com/blog",
+  language: "en",
 };
 
 describe("buildRssFeed", () => {

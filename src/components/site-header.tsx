@@ -12,8 +12,18 @@ import { localizeHref } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 
 function isActivePath(current: string, href: string) {
-  if (href === "/") return current === "/";
-  return current === href || current.startsWith(`${href}/`);
+  // Anchor links (e.g. `/#projects`) are active when on their base page.
+  const [path] = href.split("#");
+  const base = path === "" ? "/" : path;
+  if (base === "/") return current === "/";
+  return current === base || current.startsWith(`${base}/`);
+}
+
+/** Localize an href while preserving a trailing `#hash` anchor. */
+function localizeNavHref(href: string): string {
+  const [path, hash] = href.split("#");
+  const localized = localizeHref(path === "" ? "/" : path);
+  return hash ? `${localized}#${hash}` : localized;
 }
 
 export function SiteHeader() {
@@ -26,7 +36,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <a
           href={localizeHref("/")}
-          className="text-sm font-semibold tracking-tight transition-colors hover:text-primary"
+          className="text-sm font-semibold tracking-tight transition-colors hover:text-accent-gold"
         >
           {m.nav_brand()}
         </a>
@@ -37,7 +47,7 @@ export function SiteHeader() {
             return (
               <a
                 key={item.href}
-                href={localizeHref(item.href)}
+                href={localizeNavHref(item.href)}
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -83,7 +93,7 @@ export function SiteHeader() {
                         )}
                         render={
                           <a
-                            href={localizeHref(item.href)}
+                            href={localizeNavHref(item.href)}
                             aria-current={active ? "page" : undefined}
                           />
                         }

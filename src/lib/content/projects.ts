@@ -6,12 +6,17 @@ import { z } from "zod";
 
 import { baseLocale, type Locale, resolveLocale } from "#/lib/i18n";
 
+import { listRegistryLocales, listRegistrySlugs, readRegistryRaw } from "./registry";
 import { type ProjectFrontmatter, projectFrontmatterSchema } from "./schema";
 
 /**
  * Root of the `projects` content tree, structured one directory per locale:
  * `content/projects/{locale}/{slug}.mdx`. The `en` directory is canonical: it
  * defines the set of projects, and any missing localized file falls back to it.
+ *
+ * In production the build-time `registry` (import.meta.glob) is the source of
+ * truth so content is bundled into the serverless function. The fs path is used
+ * only when a `contentDir` override is passed (tests).
  */
 export const DEFAULT_CONTENT_DIR = path.join(process.cwd(), "content", "projects");
 
@@ -23,6 +28,8 @@ export interface Project {
   locale: Locale;
   /** The locale actually served (equals `locale`, or `baseLocale` on fallback). */
   resolvedLocale: Locale;
+  /** Locales in which this project has its own file (no fallback). */
+  availableLocales: Locale[];
   frontmatter: ProjectFrontmatter;
   /** Raw MDX body (without frontmatter). Rendering is the caller's concern. */
   body: string;
@@ -55,7 +62,7 @@ function fileFor(contentDir: string, locale: Locale, slug: string): string {
   return path.join(contentDir, locale, `${slug}${MDX_EXTENSION}`);
 }
 
-async function readRaw(file: string): Promise<string | null> {
+async function readRawFs(file: string): Promise<string | null> {
   try {
     return await readFile(file, "utf8");
   } catch (error) {
@@ -64,13 +71,59 @@ async function readRaw(file: string): Promise<string | null> {
   }
 }
 
-function parse(slug: string, locale: Locale, resolvedLocale: Locale, raw: string): Project {
+/** Read raw MDX from the fs override (tests) or the bundled registry (prod). */
+async function readRaw(
+  contentDir: string | undefined,
+  locale: Locale,
+  slug: string,
+): Promise<string | null> {
+  if (contentDir) return readRawFs(fileFor(contentDir, locale, slug));
+  return readRegistryRaw("projects", locale, slug);
+}
+
+/** Locales in which a slug has its own file (registry in prod, fs in tests). */
+async function availableLocalesFor(
+  contentDir: string | undefined,
+  slug: string,
+): Promise<Locale[]> {
+  if (!contentDir) return listRegistryLocales("projects", slug) as Locale[];
+  const present = await Promise.all(
+    (await listLocaleDirs(contentDir)).map(async (locale) =>
+      (await readRawFs(fileFor(contentDir, locale, slug))) !== null ? locale : null,
+    ),
+  );
+  return present.filter((l): l is Locale => l !== null);
+}
+
+async function listLocaleDirs(contentDir: string): Promise<Locale[]> {
+  try {
+    const entries = await readdir(contentDir, { withFileTypes: true });
+    return entries.filter((e) => e.isDirectory()).map((e) => e.name as Locale);
+  } catch {
+    return [];
+  }
+}
+
+function parse(
+  slug: string,
+  locale: Locale,
+  resolvedLocale: Locale,
+  availableLocales: Locale[],
+  raw: string,
+): Project {
   const { data, content } = matter(raw);
   const result = projectFrontmatterSchema.safeParse(data);
   if (!result.success) {
     throw new InvalidProjectError(slug, resolvedLocale, result.error.issues);
   }
-  return { slug, locale, resolvedLocale, frontmatter: result.data, body: content.trim() };
+  return {
+    slug,
+    locale,
+    resolvedLocale,
+    availableLocales,
+    frontmatter: result.data,
+    body: content.trim(),
+  };
 }
 
 /**
@@ -84,18 +137,20 @@ export async function readProject(
   requested: unknown,
   options: ReadOptions = {},
 ): Promise<Project | null> {
-  const contentDir = options.contentDir ?? DEFAULT_CONTENT_DIR;
+  const { contentDir } = options;
   const locale = resolveLocale(requested);
 
-  const localized = await readRaw(fileFor(contentDir, locale, slug));
+  const localized = await readRaw(contentDir, locale, slug);
   if (localized !== null) {
-    return parse(slug, locale, locale, localized);
+    const available = await availableLocalesFor(contentDir, slug);
+    return parse(slug, locale, locale, available, localized);
   }
 
   if (locale !== baseLocale) {
-    const fallback = await readRaw(fileFor(contentDir, baseLocale, slug));
+    const fallback = await readRaw(contentDir, baseLocale, slug);
     if (fallback !== null) {
-      return parse(slug, locale, baseLocale, fallback);
+      const available = await availableLocalesFor(contentDir, slug);
+      return parse(slug, locale, baseLocale, available, fallback);
     }
   }
 
@@ -106,7 +161,9 @@ export async function readProject(
  * Canonical slug set, derived from the base-locale (`en`) directory.
  */
 export async function listProjectSlugs(options: ReadOptions = {}): Promise<string[]> {
-  const contentDir = options.contentDir ?? DEFAULT_CONTENT_DIR;
+  const { contentDir } = options;
+  if (!contentDir) return listRegistrySlugs("projects", baseLocale);
+
   let entries: string[];
   try {
     entries = await readdir(path.join(contentDir, baseLocale));

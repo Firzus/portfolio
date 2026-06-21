@@ -10,6 +10,10 @@ async function handle({ request }: { request: Request }): Promise<Response> {
     "# https://www.robotstxt.org/robotstxt.html",
     "User-agent: *",
     "Allow: /",
+    // SEO feeds live under /api/ — allow them before the broad /api/ disallow
+    // (Google honours the most specific match, order-independent).
+    "Allow: /api/sitemap/",
+    "Allow: /api/blog/rss.xml",
     "Disallow: /keystatic/",
     "Disallow: /api/",
     "",

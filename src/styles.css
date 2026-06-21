@@ -20,6 +20,10 @@
   --popover-foreground: oklch(15% 0 90);
   --primary: oklch(84.7% 0.149 80.3);
   --primary-foreground: oklch(20% 0.03 80);
+  /* Gold for text/icons/rings on the light background. The bright `--primary`
+     gold fails WCAG AA as text on near-white, so foreground gold is darkened
+     (kept the same hue/chroma family). Dark theme overrides it back to bright. */
+  --accent-gold: oklch(52% 0.12 80.3);
   --secondary: oklch(95% 0 90);
   --secondary-foreground: oklch(20% 0 90);
   --muted: oklch(95% 0 90);
@@ -29,7 +33,7 @@
   --destructive: oklch(58% 0.22 27);
   --border: oklch(90% 0 90);
   --input: oklch(90% 0 90);
-  --ring: oklch(84.7% 0.149 80.3);
+  --ring: oklch(52% 0.12 80.3);
 
   --chart-1: oklch(84.7% 0.149 80.3);
   --chart-2: oklch(70% 0.12 80.3);
@@ -56,6 +60,8 @@
   --popover-foreground: oklch(90.1% 0 90);
   --primary: oklch(84.7% 0.149 80.3);
   --primary-foreground: oklch(20% 0.03 80);
+  /* On the dark background the bright gold already passes contrast as text. */
+  --accent-gold: oklch(84.7% 0.149 80.3);
   --secondary: oklch(25% 0 90);
   --secondary-foreground: oklch(90.1% 0 90);
   --muted: oklch(25% 0 90);
@@ -92,6 +98,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-accent-gold: var(--accent-gold);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
