@@ -90,6 +90,7 @@
   "contact_success_body": "Danke für Ihre Nachricht — ich antworte so schnell wie möglich.",
   "contact_error": "Beim Senden Ihrer Nachricht ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
   "contact_blocked": "Ihre Übermittlung konnte nicht verifiziert werden. Bitte versuchen Sie es erneut.",
+  "contact_rate_limited": "Sie haben zu viele Nachrichten gesendet. Bitte warten Sie einige Minuten und versuchen Sie es erneut.",
   "contact_error_name": "Bitte geben Sie Ihren Namen ein.",
   "contact_error_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
   "contact_error_message": "Ihre Nachricht muss mindestens 10 Zeichen lang sein.",
