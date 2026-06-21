@@ -93,7 +93,11 @@
   "contact_error_email": "Introduce una dirección de correo válida.",
   "contact_error_message": "Tu mensaje debe tener al menos 10 caracteres.",
   "contact_meta_title": "Contacto — Firzus",
-  "contact_meta_description": "Ponte en contacto con Firzus, desarrollador Agentic / IA.",
-  "meta_title": "Portfolio — Firzus",
-  "meta_description": "Portfolio de desarrollador Agentic / IA. Renderizado en el servidor con TanStack Start."
+  "contact_meta_description": "Contacta con Firzus para roles junior Agentic / IA. Envía un mensaje o descarga el CV.",
+  "meta_title": "Firzus — Portfolio desarrollador Agentic / IA",
+  "meta_description": "Portfolio junior Agentic / IA para reclutadores: TypeScript, React, TanStack Start, case studies, actividad GitHub en vivo y contacto.",
+  "blog_meta_description": "Artículos sobre flujos agentic IA, ingeniería web moderna y case studies del portfolio — por Firzus.",
+  "not_found_title": "Página no encontrada",
+  "not_found_body": "Esta página no existe o puede haberse movido.",
+  "not_found_cta": "Volver al inicio"
 }

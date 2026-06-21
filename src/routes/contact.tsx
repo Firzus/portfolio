@@ -2,15 +2,27 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ContactForm } from "#/components/contact-form";
 import { SiteHeader } from "#/components/site-header";
+import { buildPageHead } from "#/lib/seo/meta";
+import { contactPageJsonLd } from "#/lib/structured-data";
+import { getLocale } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: m.contact_meta_title() },
-      { name: "description", content: m.contact_meta_description() },
-    ],
-  }),
+  head: () =>
+    buildPageHead({
+      title: m.contact_meta_title(),
+      description: m.contact_meta_description(),
+      pathname: "/contact",
+      extraMeta: [
+        {
+          "script:ld+json": contactPageJsonLd(
+            getLocale(),
+            m.contact_meta_title(),
+            m.contact_meta_description(),
+          ),
+        },
+      ],
+    }),
   component: ContactPage,
 });
 

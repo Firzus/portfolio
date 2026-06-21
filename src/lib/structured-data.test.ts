@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import type { ProjectFrontmatter } from "#/lib/content/schema";
 import { siteConfig } from "#/lib/site-config";
-import { projectJsonLd } from "#/lib/structured-data";
+import {
+  collectionPageJsonLd,
+  contactPageJsonLd,
+  personJsonLd,
+  projectJsonLd,
+} from "#/lib/structured-data";
 
 const frontmatter: ProjectFrontmatter = {
   title: "Sample Project",
@@ -55,5 +60,36 @@ describe("projectJsonLd", () => {
 
     expect(jsonLd.datePublished).toBeUndefined();
     expect(jsonLd.sameAs).toBeUndefined();
+  });
+});
+
+describe("personJsonLd", () => {
+  it("includes sameAs and knowsAbout for recruiters", () => {
+    const jsonLd = personJsonLd("en");
+
+    expect(jsonLd).toMatchObject({
+      "@type": "Person",
+      name: siteConfig.githubUsername,
+      sameAs: [siteConfig.social.github, siteConfig.social.linkedin],
+    });
+    expect(jsonLd.knowsAbout.length).toBeGreaterThan(5);
+    expect(jsonLd.knowsAbout).toContain("TypeScript");
+  });
+});
+
+describe("contactPageJsonLd", () => {
+  it("wraps the person as mainEntity", () => {
+    const jsonLd = contactPageJsonLd("en", "Contact", "Get in touch");
+
+    expect(jsonLd["@type"]).toBe("ContactPage");
+    expect(jsonLd.mainEntity["@type"]).toBe("Person");
+    expect(jsonLd.url).toMatch(/\/contact$/);
+  });
+});
+
+describe("collectionPageJsonLd", () => {
+  it("localizes the collection url", () => {
+    expect(collectionPageJsonLd("en", "/blog", "Blog", "Posts").url).toMatch(/\/blog$/);
+    expect(collectionPageJsonLd("fr", "/blog", "Blog", "Posts").url).toMatch(/\/fr\/blog$/);
   });
 });

@@ -4,8 +4,10 @@ import { ArrowLeft } from "lucide-react";
 import { PostBody } from "#/components/post-body";
 import { SiteHeader } from "#/components/site-header";
 import { Badge } from "#/components/ui/badge";
+import { notFoundHead, NotFoundPage } from "#/components/not-found-page";
 import { getPost } from "#/lib/content/server";
 import { formatDate } from "#/lib/format-date";
+import { buildPageHead } from "#/lib/seo/meta";
 import { getLocale, localizeHref } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 
@@ -15,14 +17,18 @@ export const Route = createFileRoute("/blog/$slug")({
     if (!post) throw notFound();
     return post;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: loaderData ? `${loaderData.frontmatter.title} — ${m.meta_title()}` : m.meta_title(),
-      },
-      { name: "description", content: loaderData?.frontmatter.summary ?? m.meta_description() },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) return notFoundHead();
+    const title = `${loaderData.frontmatter.title} — ${m.meta_title()}`;
+    const description = loaderData.frontmatter.summary;
+    return buildPageHead({
+      title,
+      description,
+      pathname: `/blog/${loaderData.slug}`,
+      ogType: "article",
+    });
+  },
+  notFoundComponent: NotFoundPage,
   component: PostPage,
 });
 

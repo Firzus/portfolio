@@ -47,3 +47,8 @@ export const skillGroups: readonly SkillGroup[] = [
     items: ["Git", "GitHub", "Docker", "Vercel", "CI/CD", "Keystatic"],
   },
 ] as const;
+
+/** Flat, deduplicated skill list for structured data (`knowsAbout`). */
+export const allSkills: readonly string[] = [
+  ...new Set(skillGroups.flatMap((group) => group.items)),
+];

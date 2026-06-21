@@ -4,8 +4,10 @@ import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import { ProjectBody } from "#/components/project-body";
 import { SiteHeader } from "#/components/site-header";
 import { Badge } from "#/components/ui/badge";
+import { notFoundHead } from "#/components/not-found-page";
 import { categoryLabel } from "#/lib/categories";
 import { getProject } from "#/lib/content/server";
+import { buildPageHead } from "#/lib/seo/meta";
 import { projectJsonLd } from "#/lib/structured-data";
 import { getLocale, localizeHref } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
@@ -16,27 +18,25 @@ export const Route = createFileRoute("/projects/$slug")({
     if (!project) throw notFound();
     return project;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      {
-        title: loaderData ? `${loaderData.frontmatter.title} — ${m.meta_title()}` : m.meta_title(),
-      },
-      { name: "description", content: loaderData?.frontmatter.summary ?? m.meta_description() },
-      // CreativeWork JSON-LD for the case study (rendered as
-      // <script type="application/ld+json"> by the router).
-      ...(loaderData
-        ? [
-            {
-              "script:ld+json": projectJsonLd(
-                loaderData.slug,
-                loaderData.frontmatter,
-                loaderData.locale,
-              ),
-            },
-          ]
-        : []),
-    ],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) return notFoundHead();
+    const title = `${loaderData.frontmatter.title} — ${m.meta_title()}`;
+    return buildPageHead({
+      title,
+      description: loaderData.frontmatter.summary,
+      pathname: `/projects/${loaderData.slug}`,
+      ogType: "article",
+      extraMeta: [
+        {
+          "script:ld+json": projectJsonLd(
+            loaderData.slug,
+            loaderData.frontmatter,
+            loaderData.locale,
+          ),
+        },
+      ],
+    });
+  },
   notFoundComponent: ProjectNotFound,
   component: ProjectPage,
 });

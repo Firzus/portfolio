@@ -4,24 +4,34 @@ import { SiteHeader } from "#/components/site-header";
 import { Badge } from "#/components/ui/badge";
 import { getPosts } from "#/lib/content/server";
 import { formatDate } from "#/lib/format-date";
+import { buildPageHead } from "#/lib/seo/meta";
+import { collectionPageJsonLd } from "#/lib/structured-data";
 import { getLocale, localizeHref } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 
 export const Route = createFileRoute("/blog/")({
-  head: () => ({
-    meta: [
-      { title: `${m.blog_title()} — ${m.meta_title()}` },
-      { name: "description", content: m.blog_subtitle() },
-    ],
-    links: [
-      {
-        rel: "alternate",
-        type: "application/rss+xml",
-        title: `${m.blog_title()} — ${m.nav_brand()}`,
-        href: `/api/blog/rss.xml?locale=${getLocale()}`,
-      },
-    ],
-  }),
+  head: () => {
+    const title = `${m.blog_title()} — ${m.meta_title()}`;
+    const description = m.blog_meta_description();
+    const page = buildPageHead({ title, description, pathname: "/blog" });
+    return {
+      meta: [
+        ...page.meta,
+        {
+          "script:ld+json": collectionPageJsonLd(getLocale(), "/blog", m.blog_title(), description),
+        },
+      ],
+      links: [
+        ...page.links,
+        {
+          rel: "alternate",
+          type: "application/rss+xml",
+          title: `${m.blog_title()} — ${m.nav_brand()}`,
+          href: `/api/blog/rss.xml?locale=${getLocale()}`,
+        },
+      ],
+    };
+  },
   loader: () => getPosts({ data: { locale: getLocale() } }),
   component: BlogIndex,
 });
