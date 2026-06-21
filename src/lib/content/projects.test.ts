@@ -133,6 +133,19 @@ liveUrl: not-a-url
 Body.
 `;
 
+const UNKNOWN_KEY = `---
+title: Typo Key
+summary: Has an unexpected frontmatter key.
+role: Dev
+stack:
+  - TypeScript
+category: web
+fetured: true
+---
+
+Body.
+`;
+
 let contentDir: string;
 
 beforeAll(async () => {
@@ -149,6 +162,7 @@ beforeAll(async () => {
   await writeFile(path.join(contentDir, "en", "missing-required.mdx"), MISSING_REQUIRED);
   await writeFile(path.join(contentDir, "en", "bad-url.mdx"), BAD_URL);
   await writeFile(path.join(contentDir, "en", "bad-outcome.mdx"), BAD_OUTCOME);
+  await writeFile(path.join(contentDir, "en", "unknown-key.mdx"), UNKNOWN_KEY);
 });
 
 afterAll(async () => {
@@ -231,6 +245,12 @@ describe("readProject", () => {
     expect(project?.frontmatter.learnings).toBeUndefined();
   });
 
+  it("rejects unknown frontmatter keys (strict schema catches typos)", async () => {
+    await expect(readProject("unknown-key", "en", { contentDir })).rejects.toThrow(
+      InvalidProjectError,
+    );
+  });
+
   it("rejects an outcome missing its required summary", async () => {
     await expect(readProject("bad-outcome", "en", { contentDir })).rejects.toThrow(
       InvalidProjectError,
@@ -250,6 +270,7 @@ describe("listProjectSlugs", () => {
       "case-study",
       "missing-required",
       "sample",
+      "unknown-key",
     ]);
   });
 
