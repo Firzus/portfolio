@@ -35,6 +35,8 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
 
   if (featured.length === 0 && secondary.length === 0) return null;
 
+  const hasFeatured = featured.length > 0;
+
   return (
     <section id="projects" className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
       <div className="flex flex-col gap-3">
@@ -44,35 +46,39 @@ export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
         <p className="max-w-2xl text-pretty text-muted-foreground">{m.featured_subtitle()}</p>
       </div>
 
-      <div
-        role="group"
-        aria-label={m.featured_filter_label()}
-        className="mt-8 flex flex-wrap gap-2"
-      >
-        <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>
-          {m.featured_filter_all()}
-        </FilterButton>
-        {availableCategories.map((category) => (
-          <FilterButton
-            key={category}
-            active={filter === category}
-            onClick={() => setFilter(category)}
+      {hasFeatured && (
+        <>
+          <div
+            role="group"
+            aria-label={m.featured_filter_label()}
+            className="mt-8 flex flex-wrap gap-2"
           >
-            {categoryLabel(category)}
-          </FilterButton>
-        ))}
-      </div>
+            <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>
+              {m.featured_filter_all()}
+            </FilterButton>
+            {availableCategories.map((category) => (
+              <FilterButton
+                key={category}
+                active={filter === category}
+                onClick={() => setFilter(category)}
+              >
+                {categoryLabel(category)}
+              </FilterButton>
+            ))}
+          </div>
 
-      {visibleFeatured.length > 0 ? (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {visibleFeatured.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-        </div>
-      ) : (
-        <p className="mt-8 rounded-xl border border-dashed border-border bg-card/50 p-8 text-center text-sm text-muted-foreground">
-          {m.featured_empty()}
-        </p>
+          {visibleFeatured.length > 0 ? (
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {visibleFeatured.map((project) => (
+                <ProjectCard key={project.slug} project={project} />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-8 rounded-xl border border-dashed border-border bg-card/50 p-8 text-center text-sm text-muted-foreground">
+              {m.featured_empty()}
+            </p>
+          )}
+        </>
       )}
 
       {secondary.length > 0 && (
