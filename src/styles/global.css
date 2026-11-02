@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Vendored skills contain demo markup that would otherwise add unused utilities. */
+@source not "../../.agents";
+
 /*
  * Provisional design tokens. The prototype's palette, type scale and spacing
  * replace these values; components use the semantic names only
