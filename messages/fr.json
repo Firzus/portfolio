@@ -1,0 +1,12 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "meta_title": "Lilian PRIEU, Software Engineer",
+  "meta_description": "Portfolio de Lilian PRIEU, Software Engineer.",
+  "job_title": "Software Engineer",
+  "contact_heading": "Contact",
+  "contact_linkedin": "LinkedIn",
+  "contact_email": "E-mail",
+  "contact_github": "GitHub",
+  "language_switcher_label": "Langue",
+  "language_name": "Français"
+}
