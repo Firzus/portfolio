@@ -111,7 +111,7 @@ export function createRoom(canvas, { lightColor, groundColor, animate }) {
 
   scene.add(new THREE.HemisphereLight(0x6f8a92, 0x050708, 0.18));
 
-  const source = new THREE.Vector3(0, 8.6, -8.2);
+  const source = new THREE.Vector3(-4.6, 8.6, -8.2);
   const spot = new THREE.SpotLight(light, 520, 40, 0.34, 0.55, 1.4);
   spot.position.copy(source);
   spot.castShadow = true;
@@ -148,7 +148,7 @@ export function createRoom(canvas, { lightColor, groundColor, animate }) {
   const target = new THREE.Vector3();
   function aim(degrees) {
     const angle = THREE.MathUtils.degToRad(degrees);
-    target.set(Math.sin(angle) * 9, 0, -8.2 + Math.cos(angle) * 9);
+    target.set(source.x + Math.sin(angle) * 12, 0, source.z + Math.cos(angle) * 12);
     spot.target.position.copy(target);
     spot.target.updateMatrixWorld();
     const axis = source.clone().sub(target);

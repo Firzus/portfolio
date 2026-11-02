@@ -245,10 +245,8 @@ a {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
-  gap: 2rem;
+  gap: 2.5rem;
   width: min(58vw, 54rem);
-  min-height: min(56svh, 34rem);
   padding: 2rem;
   background: var(--color-raised);
   transform-origin: 0% 100%;
@@ -528,6 +526,11 @@ a {
   height: min(35rem, 62svh);
 }
 
+.showcase.is-live [data-ui].ui {
+  width: min(100%, 30rem);
+  font-size: 1rem;
+}
+
 /* Interface fragments: the products' own conventions apply inside [data-ui]. */
 
 [data-ui].ui {
@@ -653,8 +656,8 @@ a {
 .about__shape {
   position: absolute;
   left: 3.5rem;
-  bottom: calc(min(38vw, 34rem) * -0.2);
-  width: min(38vw, 34rem);
+  bottom: calc(min(46vw, 42rem) * -0.2);
+  width: min(46vw, 42rem);
   aspect-ratio: 1;
   clip-path: circle(50%);
 }

@@ -43,12 +43,7 @@
     <div id="smooth-wrapper">
       <div id="smooth-content">
         <main id="main">
-          <section
-            class="hero scene"
-            id="top"
-            data-scene="hero-card"
-            aria-labelledby="hero-title"
-          >
+          <section class="hero scene" id="top" data-scene="hero-card" aria-labelledby="hero-title">
             <div class="scene-stage hero__stage">
               <div class="hero__room" data-slot="room" data-state="still">
                 <img
@@ -79,8 +74,8 @@
                 </div>
                 <div class="hero__field" data-slot="light-field">
                   <label for="light">Lumière de la salle</label>
-                  <input id="light" type="range" min="-40" max="40" step="1" value="-14" />
-                  <output for="light" id="light-value">-14°</output>
+                  <input id="light" type="range" min="-40" max="40" step="1" value="8" />
+                  <output for="light" id="light-value">8°</output>
                 </div>
                 <div class="hero__foot">
                   <a class="link" href="https://github.com/Firzus">GitHub</a>
@@ -108,8 +103,8 @@
                 />
               </div>
               <figcaption class="intro__note">
-                Chambre noire, XVIIᵉ siècle. Un trou dans le mur, et la lumière dessine le paysage
-                à l'envers sur la paroi.
+                Chambre noire, XVIIᵉ siècle. Un trou dans le mur, et la lumière dessine le paysage à
+                l'envers sur la paroi.
               </figcaption>
             </figure>
           </section>
@@ -145,10 +140,10 @@
                 <img
                   class="plate__img"
                   src="assets/auctioneer.jpg"
-                  width="1920"
-                  height="1332"
+                  width="1860"
+                  height="1164"
                   loading="lazy"
-                  style="--focus: 50% 45%"
+                  style="--focus: 40% 35%"
                   alt="Gravure sur bois de 1864 : un commissaire-priseur lève le bras pendant une vente."
                 />
               </div>
@@ -239,7 +234,9 @@
                   </div>
                   <div class="piece__panel">
                     <h3 class="piece__name">Le site</h3>
-                    <p class="piece__desc">Guides, panoplies et prix relevés à l'hôtel des ventes.</p>
+                    <p class="piece__desc">
+                      Guides, panoplies et prix relevés à l'hôtel des ventes.
+                    </p>
                   </div>
                 </li>
                 <li class="piece">
@@ -248,12 +245,16 @@
                       <p class="ui__head">Huzounet</p>
                       <p class="ui__ok">Code créateur appliqué</p>
                       <p class="ui__row">Boutique partenaire · HUZ</p>
-                      <p class="ui__warn">Ce site imite une page de connexion. Ne saisissez pas votre mot de passe.</p>
+                      <p class="ui__warn">
+                        Ce site imite une page de connexion. Ne saisissez pas votre mot de passe.
+                      </p>
                     </div>
                   </div>
                   <div class="piece__panel">
                     <h3 class="piece__name">L'extension</h3>
-                    <p class="piece__desc">Applique les codes créateur et signale les sites d'hameçonnage.</p>
+                    <p class="piece__desc">
+                      Applique les codes créateur et signale les sites d'hameçonnage.
+                    </p>
                   </div>
                 </li>
                 <li class="piece">
@@ -261,13 +262,17 @@
                     <div class="ui ui--overlay" data-ui>
                       <p class="ui__head">PNJ Dofus</p>
                       <p class="ui__search">Maître de l'Atelier</p>
-                      <p class="ui__command"><span>/travel 4,-19</span><span class="ui__chip">Copié</span></p>
+                      <p class="ui__command">
+                        <span>/travel 4,-19</span><span class="ui__chip">Copié</span>
+                      </p>
                       <p class="ui__row">Astrub · Atelier des tailleurs</p>
                     </div>
                   </div>
                   <div class="piece__panel">
                     <h3 class="piece__name">PNJ Dofus</h3>
-                    <p class="piece__desc">Une fenêtre au-dessus du jeu qui copie le chemin vers un PNJ.</p>
+                    <p class="piece__desc">
+                      Une fenêtre au-dessus du jeu qui copie le chemin vers un PNJ.
+                    </p>
                   </div>
                 </li>
                 <li class="piece">
@@ -304,7 +309,9 @@
                   </div>
                   <div class="piece__panel">
                     <h3 class="piece__name">Les données</h3>
-                    <p class="piece__desc">Extrait les tables et les textes de chaque version du jeu.</p>
+                    <p class="piece__desc">
+                      Extrait les tables et les textes de chaque version du jeu.
+                    </p>
                   </div>
                 </li>
               </ul>
@@ -391,17 +398,25 @@
               <p class="footer__head">Images</p>
               <p>
                 Chambre noire, XVIIᵉ siècle ; Philips Galle, Le Colosse de Rhodes, 1572 (Met, CC0) ;
-                Charles Maurand, Le commissaire-priseur, 1864 (Art Institute of Chicago, CC0) ;
-                Les automates de Vaucanson, gravure du XVIIIᵉ siècle ; Konrad Miller, carte du
-                monde de Ravenne, 1898. Domaine public, via Wikimedia Commons sauf mention.
+                Charles Maurand, Le commissaire-priseur, 1864 (Art Institute of Chicago, CC0) ; Les
+                automates de Vaucanson, gravure du XVIIIᵉ siècle ; Konrad Miller, carte du monde de
+                Ravenne, 1898. Domaine public, via Wikimedia Commons sauf mention.
               </p>
             </div>
           </div>
           <!-- textLength makes the name run exactly from margin to margin at any width. -->
-          <svg class="footer__wordmark footer__wordmark--line" viewBox="0 0 1000 150" aria-hidden="true">
+          <svg
+            class="footer__wordmark footer__wordmark--line"
+            viewBox="0 0 1000 150"
+            aria-hidden="true"
+          >
             <text x="0" y="122" textLength="1000" lengthAdjust="spacing">Lilian PRIEU</text>
           </svg>
-          <svg class="footer__wordmark footer__wordmark--stack" viewBox="0 0 1000 560" aria-hidden="true">
+          <svg
+            class="footer__wordmark footer__wordmark--stack"
+            viewBox="0 0 1000 560"
+            aria-hidden="true"
+          >
             <text x="0" y="245" textLength="1000" lengthAdjust="spacing">Lilian</text>
             <text x="0" y="530" textLength="1000" lengthAdjust="spacing">PRIEU</text>
           </svg>

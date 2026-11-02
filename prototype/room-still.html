@@ -1,8 +1,37 @@
-<!doctype html><html><head><style>html,body{margin:0;background:#0c1013}div{position:fixed;inset:0}canvas{width:100%;height:100%}</style>
-<!-- Renders the room alone; its screenshot at 1600x1000 is assets/room.jpg, the still shown without WebGL or script. -->
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js"}}</script></head>
-<body><div><canvas></canvas></div><script type="module">
-import { createRoom } from "./scene.js";
-const r = createRoom(document.querySelector("canvas"), { lightColor: "#5fe0f0", groundColor: "#0c1013", animate: false });
-r.setAngle(-14); r.render();
-</script></body></html>
+<!doctype html>
+<html>
+  <head>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #0c1013;
+      }
+      div {
+        position: fixed;
+        inset: 0;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <!-- Renders the room alone; its screenshot at 1600x1000 is assets/room.jpg, the still shown without WebGL or script. -->
+    <script type="importmap">
+      { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <div><canvas></canvas></div>
+    <script type="module">
+      import { createRoom } from "./scene.js";
+      const r = createRoom(document.querySelector("canvas"), {
+        lightColor: "#5fe0f0",
+        groundColor: "#0c1013",
+        animate: false,
+      });
+      r.setAngle(8);
+      r.render();
+    </script>
+  </body>
+</html>

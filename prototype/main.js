@@ -140,13 +140,23 @@ media.add(
             onUpdate: (self) => roomControls?.setProgress(self.progress),
           },
         })
-        .to(card, { scale: 0.3, x: () => -card.offsetLeft + 24, y: () => window.innerHeight - card.offsetTop - card.offsetHeight - 24, ease: "none" }, 0)
+        .to(
+          card,
+          {
+            scale: 0.3,
+            x: () => -card.offsetLeft + 24,
+            y: () => window.innerHeight - card.offsetTop - card.offsetHeight - 24,
+            ease: "none",
+          },
+          0,
+        )
         .to(card, { autoAlpha: 0, duration: 0.15, ease: "none" }, 0.85);
 
       // Showcase: the map is held while the four cards cross it from right to left.
       const track = showcase.querySelector(".showcase__track");
       const title = showcase.querySelector(".showcase__title");
-      const distance = () => track.scrollWidth - window.innerWidth * 0.5 - track.lastElementChild.offsetWidth / 2;
+      const distance = () =>
+        track.scrollWidth - window.innerWidth * 0.5 - track.lastElementChild.offsetWidth / 2;
       gsap
         .timeline({
           scrollTrigger: {
@@ -230,4 +240,4 @@ media.add(
 
 // Images load lazily and the web font changes text widths: both move every trigger.
 window.addEventListener("load", () => ScrollTrigger.refresh());
-document.fonts?.ready.then(() => ScrollTrigger.refresh());
+void document.fonts?.ready.then(() => ScrollTrigger.refresh());
