@@ -1,0 +1,41 @@
+/*
+ * Design tokens of the homepage prototype. The names follow Tailwind v4's
+ * namespaces (--color-*, --font-*, --text-*) so this block can move into the
+ * @theme of src/styles/global.css unchanged.
+ */
+:root {
+  /* One blue-black ground for the whole page; the light lives in the scene and the pictures. */
+  --color-surface: #0c1013;
+  --color-raised: #151b1f;
+  --color-ink: #eef1f0;
+  --color-muted: #a3acae;
+  /* Used on the single primary action and the active state of the light control only. */
+  --color-accent: #82d4da;
+  --color-accent-ink: #0c1013;
+  /* The one section that flips to a pale field (contact). */
+  --color-field: #cdd4d3;
+  --color-field-ink: #0c1013;
+  --color-field-muted: #3b4447;
+  /* Colour of the light inside the WebGL room and the tint of the pictures, never of type or controls. */
+  --color-light: #5fe0f0;
+
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --text-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --text-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+  --text-head: clamp(2.25rem, 1.3rem + 3.6vw, 4.5rem);
+  --text-display: clamp(2.75rem, 0.5rem + 8.4vw, 9.5rem);
+
+  --tracking-display: -0.035em;
+  --leading-display: 1;
+  --leading-body: 1.55;
+
+  --space-margin: clamp(1.25rem, 0.6rem + 2.6vw, 3rem);
+  --space-section: clamp(7rem, 4rem + 10vw, 13rem);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-quick: 180ms;
+  --duration-enter: 700ms;
+}

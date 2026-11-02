@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lilian PRIEU, Software Engineer</title>
+    <meta
+      name="description"
+      content="Lilian PRIEU, ingénieur logiciel : des jeux vidéo et les outils qui servent à les faire."
+    />
+    <script>
+      document.documentElement.classList.replace("no-js", "js");
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="style.css" />
+    <!-- Same specifiers as the npm packages, so the modules move into Astro without edits. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/index.js",
+          "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/ScrollTrigger.js",
+          "gsap/ScrollSmoother": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/ScrollSmoother.js",
+          "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Aller au contenu</a>
+
+    <div class="stub" data-slot="stub" data-state="hidden">
+      <a class="stub__name" href="#top">Lilian PRIEU</a>
+      <a class="button button--small" href="mailto:lprieu.infos@gmail.com">Écrire</a>
+    </div>
+
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <main id="main">
+          <section
+            class="hero scene"
+            id="top"
+            data-scene="hero-card"
+            aria-labelledby="hero-title"
+          >
+            <div class="scene-stage hero__stage">
+              <div class="hero__room" data-slot="room" data-state="still">
+                <img
+                  class="hero__still"
+                  src="assets/room.jpg"
+                  width="1600"
+                  height="1000"
+                  alt="Une salle sombre traversée par un faisceau de lumière cyan qui découpe l'ombre de piliers sur le sol."
+                  fetchpriority="high"
+                />
+                <canvas class="hero__canvas" aria-hidden="true"></canvas>
+              </div>
+
+              <div class="hero__card" data-slot="card">
+                <h1 class="hero__title" id="hero-title">
+                  <span>Lilian PRIEU</span>
+                  <span>Software Engineer</span>
+                </h1>
+                <div class="hero__body">
+                  <ul class="hero__facts">
+                    <li>Jeux vidéo et outils</li>
+                    <li>Unity, C#, TypeScript, Rust</li>
+                    <li>Lysandra, Huzounet, Atelier</li>
+                  </ul>
+                  <p class="hero__lede">
+                    Je construis des jeux, et les outils qui servent à les faire.
+                  </p>
+                </div>
+                <div class="hero__field" data-slot="light-field">
+                  <label for="light">Lumière de la salle</label>
+                  <input id="light" type="range" min="-40" max="40" step="1" value="-14" />
+                  <output for="light" id="light-value">-14°</output>
+                </div>
+                <div class="hero__foot">
+                  <a class="link" href="https://github.com/Firzus">GitHub</a>
+                  <a class="button" href="mailto:lprieu.infos@gmail.com">Écrire un e-mail</a>
+                  <a class="link" href="https://www.linkedin.com/in/lprieu/">LinkedIn</a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="intro" aria-labelledby="intro-title">
+            <h2 class="intro__title" id="intro-title" data-reveal>Ce que je fais</h2>
+            <p class="intro__statement" data-reveal>
+              Je fais des jeux en Unity et en C#, et les outils qui vont autour : extensions
+              d'éditeur, sites, applications de bureau, moteurs de rendu.
+            </p>
+            <figure class="intro__figure" data-reveal>
+              <div class="engraving">
+                <img
+                  src="assets/camera-obscura.jpg"
+                  width="1614"
+                  height="1004"
+                  loading="lazy"
+                  alt="Gravure : un homme dans une chambre noire regarde le paysage projeté par un trou dans le mur."
+                />
+              </div>
+              <figcaption class="intro__note">
+                Chambre noire, XVIIᵉ siècle. Un trou dans le mur, et la lumière dessine le paysage
+                à l'envers sur la paroi.
+              </figcaption>
+            </figure>
+          </section>
+
+          <section class="work" aria-labelledby="work-title">
+            <h2 class="visually-hidden" id="work-title">Projets</h2>
+
+            <article class="plate" id="lysandra" aria-labelledby="lysandra-title">
+              <div class="plate__picture engraving">
+                <img
+                  class="plate__img"
+                  src="assets/colossus.jpg"
+                  width="2000"
+                  height="1644"
+                  loading="lazy"
+                  style="--focus: 52% 78%"
+                  alt="Gravure de 1572 : le Colosse de Rhodes au-dessus du port, sa tête tombée au premier plan."
+                />
+              </div>
+              <div class="plate__band">
+                <p class="plate__kind">Jeu vidéo</p>
+                <h3 class="plate__title" id="lysandra-title">Lysandra</h3>
+                <p class="plate__fact">Unity, C#, HLSL</p>
+                <p class="plate__desc">
+                  Un jeu d'action en 3D, solo et hors ligne. Lyra y affronte le Colosse, un boss qui
+                  gagne en force à chaque pique détruite.
+                </p>
+              </div>
+            </article>
+
+            <article class="plate" id="huzounet" aria-labelledby="huzounet-title">
+              <div class="plate__picture engraving">
+                <img
+                  class="plate__img"
+                  src="assets/auctioneer.jpg"
+                  width="1920"
+                  height="1332"
+                  loading="lazy"
+                  style="--focus: 50% 45%"
+                  alt="Gravure sur bois de 1864 : un commissaire-priseur lève le bras pendant une vente."
+                />
+              </div>
+              <div class="plate__band">
+                <p class="plate__kind">Plateforme web</p>
+                <h3 class="plate__title" id="huzounet-title">Huzounet</h3>
+                <p class="plate__fact">TypeScript, Rust</p>
+                <p class="plate__desc">
+                  Une plateforme autour de Dofus : un site de guides et de prix, une extension de
+                  navigateur et des outils de bureau.
+                </p>
+              </div>
+            </article>
+
+            <article class="plate" id="atelier" aria-labelledby="atelier-title">
+              <div class="plate__picture engraving">
+                <img
+                  class="plate__img"
+                  src="assets/automata.jpg"
+                  width="1920"
+                  height="1329"
+                  loading="lazy"
+                  style="--focus: 50% 45%"
+                  alt="Gravure du XVIIIᵉ siècle : les automates de Vaucanson, un joueur de flûte, un canard et un joueur de tambourin, chacun sur son socle."
+                />
+              </div>
+              <div class="plate__band">
+                <p class="plate__kind">Outil Unity</p>
+                <h3 class="plate__title" id="atelier-title">Atelier</h3>
+                <p class="plate__fact">C#, éditeur Unity</p>
+                <p class="plate__desc">
+                  Un package Unity pour écrire le gameplay depuis l'Inspector, avec des événements,
+                  des conditions et des instructions, sans code.
+                </p>
+              </div>
+            </article>
+          </section>
+
+          <section
+            class="showcase scene"
+            data-scene="cards-crossing"
+            aria-labelledby="showcase-title"
+          >
+            <div class="scene-stage showcase__stage">
+              <div class="showcase__ground engraving">
+                <img
+                  src="assets/mappa-mundi.jpg"
+                  width="1920"
+                  height="2054"
+                  loading="lazy"
+                  alt="Carte du monde de Ravenne, reconstituée en 1898 : un disque entouré d'océan."
+                />
+              </div>
+              <h2 class="showcase__title" id="showcase-title">Huzounet, pièce par pièce</h2>
+              <ul class="showcase__track">
+                <li class="piece">
+                  <div class="piece__shot">
+                    <div class="ui ui--market" data-ui>
+                      <p class="ui__head">Blé · Hôtel des ventes</p>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th scope="col">Lot</th>
+                            <th scope="col">Prix</th>
+                            <th scope="col">À l'unité</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>x1</td>
+                            <td>14 k</td>
+                            <td>14 k</td>
+                          </tr>
+                          <tr aria-current="true">
+                            <td>x10</td>
+                            <td>120 k</td>
+                            <td>12 k</td>
+                          </tr>
+                          <tr>
+                            <td>x100</td>
+                            <td>1 100 k</td>
+                            <td>11 k</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <p class="ui__foot">Relevé il y a 12 min</p>
+                    </div>
+                  </div>
+                  <div class="piece__panel">
+                    <h3 class="piece__name">Le site</h3>
+                    <p class="piece__desc">Guides, panoplies et prix relevés à l'hôtel des ventes.</p>
+                  </div>
+                </li>
+                <li class="piece">
+                  <div class="piece__shot">
+                    <div class="ui ui--extension" data-ui>
+                      <p class="ui__head">Huzounet</p>
+                      <p class="ui__ok">Code créateur appliqué</p>
+                      <p class="ui__row">Boutique partenaire · HUZ</p>
+                      <p class="ui__warn">Ce site imite une page de connexion. Ne saisissez pas votre mot de passe.</p>
+                    </div>
+                  </div>
+                  <div class="piece__panel">
+                    <h3 class="piece__name">L'extension</h3>
+                    <p class="piece__desc">Applique les codes créateur et signale les sites d'hameçonnage.</p>
+                  </div>
+                </li>
+                <li class="piece">
+                  <div class="piece__shot">
+                    <div class="ui ui--overlay" data-ui>
+                      <p class="ui__head">PNJ Dofus</p>
+                      <p class="ui__search">Maître de l'Atelier</p>
+                      <p class="ui__command"><span>/travel 4,-19</span><span class="ui__chip">Copié</span></p>
+                      <p class="ui__row">Astrub · Atelier des tailleurs</p>
+                    </div>
+                  </div>
+                  <div class="piece__panel">
+                    <h3 class="piece__name">PNJ Dofus</h3>
+                    <p class="piece__desc">Une fenêtre au-dessus du jeu qui copie le chemin vers un PNJ.</p>
+                  </div>
+                </li>
+                <li class="piece">
+                  <div class="piece__shot">
+                    <div class="ui ui--data" data-ui>
+                      <p class="ui__head">Versions du client</p>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th scope="col">Version</th>
+                            <th scope="col">Canal</th>
+                            <th scope="col">Tables</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr aria-current="true">
+                            <td>3.1.12</td>
+                            <td>Principal</td>
+                            <td>412</td>
+                          </tr>
+                          <tr>
+                            <td>3.1.11</td>
+                            <td>Principal</td>
+                            <td>409</td>
+                          </tr>
+                          <tr>
+                            <td>3.2.0</td>
+                            <td>Bêta</td>
+                            <td>418</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="piece__panel">
+                    <h3 class="piece__name">Les données</h3>
+                    <p class="piece__desc">Extrait les tables et les textes de chaque version du jeu.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="about" aria-labelledby="about-title">
+            <div class="about__panel">
+              <h2 class="about__title" id="about-title" data-reveal>Du moteur au navigateur</h2>
+              <div class="about__shape engraving" data-reveal>
+                <img
+                  src="assets/camera-obscura.jpg"
+                  width="1614"
+                  height="1004"
+                  loading="lazy"
+                  style="--focus: 12% 55%"
+                  alt=""
+                />
+              </div>
+              <div class="about__blocks">
+                <div class="about__block" data-reveal>
+                  <h3>Le jeu et ses outils</h3>
+                  <p>
+                    Je travaille surtout dans Unity, en C# et en HLSL : du gameplay, des shaders, et
+                    des outils d'éditeur pour que d'autres règlent le jeu sans écrire de code.
+                  </p>
+                </div>
+                <div class="about__block" data-reveal>
+                  <h3>Avec des agents</h3>
+                  <p>
+                    Je code avec des agents IA, cadrés par des règles écrites dans chaque dépôt. Je
+                    publie mes skills et mes outils, comme tauri-agent-kit, sur GitHub.
+                  </p>
+                </div>
+                <p class="about__links" data-reveal>
+                  <a class="link" href="#cv">Télécharger le CV (PDF)</a>
+                  <a class="link" href="https://github.com/Firzus">Le code sur GitHub</a>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="contact" aria-labelledby="contact-title">
+            <h2 class="contact__lead" id="contact-title" data-reveal>
+              Un poste, un jeu ou un outil à construire ? Écrivez-moi.
+            </h2>
+            <a class="contact__email" href="mailto:lprieu.infos@gmail.com" data-reveal
+              >lprieu.infos@<wbr />gmail.com</a
+            >
+            <ul class="contact__links">
+              <li><a class="link" href="https://www.linkedin.com/in/lprieu/">LinkedIn</a></li>
+              <li><a class="link" href="https://github.com/Firzus">GitHub</a></li>
+            </ul>
+            <p class="contact__cv"><a class="link" href="#cv">CV en PDF</a></p>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <div class="footer__columns">
+            <div>
+              <p class="footer__head">Projets</p>
+              <ul>
+                <li><a href="#lysandra">Lysandra</a></li>
+                <li><a href="#huzounet">Huzounet</a></li>
+                <li><a href="#atelier">Atelier</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="footer__head">Contact</p>
+              <ul>
+                <li><a href="mailto:lprieu.infos@gmail.com">E-mail</a></li>
+                <li><a href="https://www.linkedin.com/in/lprieu/">LinkedIn</a></li>
+                <li><a href="https://github.com/Firzus">GitHub</a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="footer__head">Langue</p>
+              <ul>
+                <li><a href="/" aria-current="page">Français</a></li>
+                <li><a href="/en/" lang="en">English</a></li>
+              </ul>
+            </div>
+            <div class="footer__credits">
+              <p class="footer__head">Images</p>
+              <p>
+                Chambre noire, XVIIᵉ siècle ; Philips Galle, Le Colosse de Rhodes, 1572 (Met, CC0) ;
+                Charles Maurand, Le commissaire-priseur, 1864 (Art Institute of Chicago, CC0) ;
+                Les automates de Vaucanson, gravure du XVIIIᵉ siècle ; Konrad Miller, carte du
+                monde de Ravenne, 1898. Domaine public, via Wikimedia Commons sauf mention.
+              </p>
+            </div>
+          </div>
+          <!-- textLength makes the name run exactly from margin to margin at any width. -->
+          <svg class="footer__wordmark footer__wordmark--line" viewBox="0 0 1000 150" aria-hidden="true">
+            <text x="0" y="122" textLength="1000" lengthAdjust="spacing">Lilian PRIEU</text>
+          </svg>
+          <svg class="footer__wordmark footer__wordmark--stack" viewBox="0 0 1000 560" aria-hidden="true">
+            <text x="0" y="245" textLength="1000" lengthAdjust="spacing">Lilian</text>
+            <text x="0" y="530" textLength="1000" lengthAdjust="spacing">PRIEU</text>
+          </svg>
+          <p class="footer__legal">© 2026 Lilian PRIEU · portfolio.lprieu.dev</p>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
