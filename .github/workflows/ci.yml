@@ -1,9 +1,10 @@
 name: CI
 
+# Checks run locally before each pull request; CI confirms main after merge.
 on:
-  pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,7 +15,6 @@ concurrency:
 
 jobs:
   check:
-    # The main branch ruleset requires this job by name.
     name: Check
     runs-on: ubuntu-latest
     timeout-minutes: 15
