@@ -1,0 +1,32 @@
+---
+import "../styles/global.css";
+import LanguageSwitcher from "../components/LanguageSwitcher.astro";
+import { localizedPages } from "../i18n/routing";
+import { m } from "../paraglide/messages.js";
+import { baseLocale, getLocale } from "../paraglide/runtime.js";
+
+const locale = getLocale();
+const pages = localizedPages(Astro.url.pathname, locale);
+const defaultPage = pages.find((page) => page.locale === baseLocale);
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{m.meta_title()}</title>
+    <meta name="description" content={m.meta_description()} />
+    {pages.map((page) => <link rel="alternate" hreflang={page.locale} href={page.absoluteHref} />)}
+    {defaultPage && <link rel="alternate" hreflang="x-default" href={defaultPage.absoluteHref} />}
+  </head>
+  <body class="bg-surface text-ink font-sans antialiased">
+    <header class="flex justify-end p-6">
+      <LanguageSwitcher pages={pages} currentLocale={locale} />
+    </header>
+    <slot />
+  </body>
+</html>

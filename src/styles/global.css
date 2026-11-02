@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/*
+ * Provisional design tokens. The prototype's palette, type scale and spacing
+ * replace these values; components use the semantic names only
+ * (bg-surface, text-ink, font-display…), so renaming a value here is enough.
+ */
+@theme {
+  --color-surface: oklch(98.5% 0.002 90);
+  --color-ink: oklch(20% 0.01 260);
+  --color-muted: oklch(50% 0.01 260);
+  --color-accent: oklch(55% 0.15 260);
+  --color-line: oklch(90% 0.005 260);
+
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-display: ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+}
