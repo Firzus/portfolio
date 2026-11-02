@@ -9,6 +9,10 @@
  * (bg-surface, text-ink, font-display…), so renaming a value here is enough.
  */
 @theme {
+  /* Removes Tailwind's default palette: a color utility only works once its
+     token is declared below, which keeps components on the site's theme. */
+  --color-*: initial;
+
   --color-surface: oklch(98.5% 0.002 90);
   --color-ink: oklch(20% 0.01 260);
   --color-muted: oklch(50% 0.01 260);
