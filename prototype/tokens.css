@@ -1,0 +1,36 @@
+/*
+ * Design tokens of the direction, named like the site's @theme block
+ * (--color-surface, --color-ink…) so they move into src/styles/global.css
+ * unchanged. The palette keeps the dealt proportions (one dark ground, one
+ * light ink, one accent on the action) with the subject's own colours: the
+ * night room and the cyan of the virtual world.
+ */
+:root {
+  --color-surface: #0a0d11;
+  --color-surface-raised: #131a22;
+  --color-ink: #e8ecef;
+  --color-muted: #9aa6b0;
+  --color-accent: #5fe3ea;
+  --color-accent-ink: #051417;
+  --color-field: #0f2a2e;
+  --color-field-ink: #e8ecef;
+  --color-scrim: rgb(5 8 11 / 0.72);
+
+  --font-display: "Clash Grotesk", "Arial Narrow", sans-serif;
+  --font-sans: "Clash Grotesk", "Arial Narrow", sans-serif;
+
+  /* Five type steps; the display step is set by the hero. */
+  --text-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --text-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --text-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+  --text-display: clamp(3.5rem, 9vw, 9.5rem);
+
+  --space-margin: clamp(1.25rem, 0.8rem + 1.6vw, 2rem);
+  --space-section: clamp(6rem, 4rem + 8vw, 11rem);
+  --stage-inset: var(--space-margin);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 400ms;
+}

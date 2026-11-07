@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="fr" class="no-js" data-mode="room">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lilian PRIEU, Software Engineer</title>
+    <meta
+      name="description"
+      content="Lilian PRIEU, Software Engineer : des jeux vidéo et les outils qui servent à les faire."
+    />
+    <script>
+      document.documentElement.classList.replace("no-js", "js");
+    </script>
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-grotesk@400,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/tokens.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <!-- Same specifiers as the npm packages, so the modules move into Astro without edits. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/node_modules/three/build/three.module.js",
+          "three/addons/": "/node_modules/three/examples/jsm/",
+          "gsap": "/node_modules/gsap/index.js"
+        }
+      }
+    </script>
+    <script type="module" src="/main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main" data-i18n="skip">Aller au contenu</a>
+
+    <div
+      class="loader"
+      data-slot="loader"
+      data-state="hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loader-title"
+    >
+      <p class="loader__corner loader__corner--tl">Lilian PRIEU</p>
+      <p class="loader__corner loader__corner--tr" data-slot="loader-percent">0 %</p>
+      <p
+        class="loader__corner loader__corner--bl"
+        data-slot="loader-status"
+        data-i18n="loader_room"
+      >
+        Chargement de la pièce
+      </p>
+      <p class="loader__corner loader__corner--br">Software Engineer</p>
+      <h2 class="loader__title" id="loader-title" aria-label="Lilian PRIEU, Software Engineer">
+        <span class="loader__line" data-slot="loader-line">Lilian PRIEU</span>
+        <span class="loader__line" data-slot="loader-line">Software Engineer</span>
+      </h2>
+      <div class="loader__bar" data-slot="loader-bar"><span></span></div>
+      <div class="loader__actions" data-slot="loader-actions">
+        <button class="button" type="button" data-action="enter-sound" data-i18n="enter_sound">
+          Entrer avec le son
+        </button>
+        <button
+          class="button button--quiet"
+          type="button"
+          data-action="enter-silent"
+          data-i18n="enter_silent"
+        >
+          Entrer sans le son
+        </button>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="stage" data-slot="stage">
+        <img
+          class="stage__still"
+          data-slot="still"
+          src="/assets/room.jpg"
+          width="1200"
+          height="1600"
+          alt="La pièce de nuit : un garçon assis à son bureau devant l'écran, un casque de réalité virtuelle posé à côté du clavier, la lumière bleue de la ville qui entre par les stores."
+          fetchpriority="high"
+        />
+        <canvas class="stage__canvas" data-slot="canvas" aria-hidden="true"></canvas>
+        <div class="visor" data-slot="visor" aria-hidden="true"><span></span><span></span></div>
+      </div>
+
+      <header class="bar" data-slot="bar">
+        <nav class="bar__links" aria-label="Site">
+          <button
+            class="link"
+            type="button"
+            command="show-modal"
+            commandfor="about"
+            data-i18n="about"
+          >
+            À propos
+          </button>
+          <button
+            class="link js-only"
+            type="button"
+            data-action="sound"
+            aria-pressed="false"
+            data-i18n="sound_off"
+          >
+            Son : coupé
+          </button>
+          <a
+            class="link"
+            href="/en/"
+            hreflang="en"
+            lang="en"
+            data-slot="lang"
+            data-i18n="lang_switch"
+            >English</a
+          >
+          <a
+            class="button button--small"
+            href="/projets/#projets"
+            data-action="headset-on"
+            data-i18n="headset_on"
+            >Mettre le casque</a
+          >
+        </nav>
+      </header>
+
+      <main id="main" class="column" data-slot="column">
+        <section class="hero" aria-labelledby="title">
+          <h1 class="hero__title" id="title">
+            <span class="hero__name">Lilian PRIEU</span>
+            <span class="hero__role">Software Engineer</span>
+          </h1>
+          <p class="hero__lead" data-i18n="lead">
+            Je crée des jeux vidéo et les outils qui servent à les faire.
+          </p>
+          <a
+            class="button hero__action"
+            href="/projets/#projets"
+            data-action="headset-on"
+            data-i18n="headset_on"
+            >Mettre le casque</a
+          >
+          <h2 class="visually-hidden" data-i18n="contact_heading">Me joindre</h2>
+          <ul class="hero__contact" aria-label="Contact">
+            <li><a class="link" href="https://www.linkedin.com/in/lprieu/">LinkedIn</a></li>
+            <li><a class="link" href="mailto:lprieu.infos@gmail.com">lprieu.infos@gmail.com</a></li>
+            <li><a class="link" href="https://github.com/Firzus">GitHub</a></li>
+          </ul>
+        </section>
+
+        <section class="work" id="projets" aria-labelledby="work-title">
+          <h2 class="work__title" id="work-title" data-i18n="work_heading">Projets</h2>
+          <p class="work__hint js-only" data-i18n="work_hint">
+            Chaque projet s'ouvre dans la galerie, casque sur la tête.
+          </p>
+          <ul class="work__list" data-slot="work-list">
+            <li class="work__item" id="lysandra">
+              <a
+                class="work__row"
+                href="/projets/lysandra/"
+                data-action="open-project"
+                data-slug="lysandra"
+              >
+                <img
+                  class="work__picture"
+                  src="/assets/lysandra-site.jpg"
+                  width="1600"
+                  height="1000"
+                  loading="lazy"
+                  alt="Page d'accueil du site de Lysandra : une île flottante dans un ciel bleu et une héroïne de dos sur une colline."
+                />
+                <span class="work__name">Lysandra</span>
+                <span class="work__kind">Jeu vidéo</span>
+                <span class="work__year">2026</span>
+              </a>
+              <div class="work__details">
+                <p>Un jeu d'aventure dans un ciel d'îles flottantes, avec une démo jouable.</p>
+                <p>Rôle à confirmer : programmation du jeu et site du projet.</p>
+                <p><a class="link" href="https://lysandra.faill.studio">Site et démo</a></p>
+              </div>
+            </li>
+            <li class="work__item" id="huzounet">
+              <a
+                class="work__row"
+                href="/projets/huzounet/"
+                data-action="open-project"
+                data-slug="huzounet"
+              >
+                <img
+                  class="work__picture"
+                  src="/assets/huzounet-site.jpg"
+                  width="1600"
+                  height="1000"
+                  loading="lazy"
+                  alt="Page d'accueil de huzounet.fr : le titre « La Référence du Mode Online » devant un œuf lumineux."
+                />
+                <span class="work__name">Huzounet</span>
+                <span class="work__kind">Site et outils pour joueurs</span>
+                <span class="work__year">2025</span>
+              </a>
+              <div class="work__details">
+                <p>
+                  Le site de référence des joueurs du mode online : équipements, monstres, marché et
+                  guides.
+                </p>
+                <p>Rôle à confirmer : conception et développement du site et de son extension.</p>
+                <p><a class="link" href="https://huzounet.fr">huzounet.fr</a></p>
+              </div>
+            </li>
+            <li class="work__item" id="atelier">
+              <a
+                class="work__row"
+                href="/projets/atelier/"
+                data-action="open-project"
+                data-slug="atelier"
+              >
+                <img
+                  class="work__picture"
+                  src="/assets/atelier-card.png"
+                  width="1600"
+                  height="1000"
+                  loading="lazy"
+                  alt="Carte titre provisoire du projet Atelier."
+                />
+                <span class="work__name">Atelier</span>
+                <span class="work__kind">Outil de production</span>
+                <span class="work__year">2026</span>
+              </a>
+              <div class="work__details">
+                <p>Phrase à écrire : ce que fait Atelier et pour qui.</p>
+                <p>Rôle à confirmer.</p>
+                <p><a class="link" href="https://github.com/Firzus">GitHub de Lilian</a></p>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="contact" aria-labelledby="contact-title">
+          <p class="contact__statement" data-i18n="contact_statement">
+            Un poste, un jeu ou un outil à construire : écrivez-moi.
+          </p>
+          <img
+            class="contact__picture"
+            src="/assets/room-desk.jpg"
+            width="600"
+            height="600"
+            loading="lazy"
+            alt="Le bureau du garçon de près : le clavier, l'écran allumé et le casque posé à côté."
+          />
+          <div class="contact__links">
+            <h2 class="contact__question" id="contact-title" data-i18n="contact_question">
+              Par où passer ?
+            </h2>
+            <p class="contact__note" data-i18n="contact_note">Réponse en français ou en anglais.</p>
+            <ul>
+              <li>
+                <a class="link link--strong" href="mailto:lprieu.infos@gmail.com"
+                  >lprieu.infos@gmail.com</a
+                >
+              </li>
+              <li>
+                <a class="link link--strong" href="https://www.linkedin.com/in/lprieu/">LinkedIn</a>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer" data-slot="footer">
+      <p class="footer__name" aria-hidden="true">Lilian PRIEU</p>
+      <div class="footer__credits">
+        <h2 data-i18n="credits_heading">Crédits</h2>
+        <p>
+          Pièce, garçon, casque et galerie modélisés en code avec three.js. Musique et bruitages
+          synthétisés dans le navigateur. Police Clash Grotesk, Indian Type Foundry, licence ITF
+          Free Font. Captures des sites de Lysandra et de Huzounet.
+        </p>
+      </div>
+    </footer>
+
+    <section
+      class="gallery"
+      data-slot="gallery"
+      aria-labelledby="gallery-title"
+      tabindex="-1"
+      inert
+    >
+      <h2 class="visually-hidden" id="gallery-title" data-i18n="gallery_heading">
+        Galerie des projets
+      </h2>
+      <button
+        class="button button--small gallery__exit"
+        type="button"
+        data-action="headset-off"
+        data-i18n="headset_off"
+      >
+        Retirer le casque
+      </button>
+      <p class="gallery__name" data-slot="gallery-name" aria-live="polite">Lysandra</p>
+      <ul class="gallery__list" data-slot="gallery-list" aria-label="Projets"></ul>
+      <div class="gallery__nav">
+        <button class="link" type="button" data-action="prev" data-i18n="prev">Précédent</button>
+        <button class="button" type="button" data-action="open-focused" data-i18n="open_project">
+          Ouvrir l'aperçu
+        </button>
+        <button class="link" type="button" data-action="next" data-i18n="next">Suivant</button>
+      </div>
+    </section>
+
+    <dialog class="panel preview" data-slot="preview" aria-labelledby="preview-title">
+      <div class="panel__inner">
+        <button
+          class="link panel__close"
+          type="button"
+          data-action="close-preview"
+          data-i18n="close_preview"
+        >
+          Fermer l'aperçu
+        </button>
+        <h2 class="panel__title" id="preview-title" data-slot="preview-title"></h2>
+        <p class="panel__lead" data-slot="preview-sentence"></p>
+        <img
+          class="panel__picture"
+          data-slot="preview-image"
+          src="/assets/lysandra-site.jpg"
+          width="1600"
+          height="1000"
+          alt=""
+        />
+        <h3 class="panel__label" data-i18n="role">Rôle</h3>
+        <p data-slot="preview-role"></p>
+        <h3 class="panel__label" data-i18n="links">Liens</h3>
+        <ul class="panel__links" data-slot="preview-links"></ul>
+      </div>
+    </dialog>
+
+    <dialog class="panel about" id="about" data-slot="about" aria-labelledby="about-title">
+      <div class="panel__inner">
+        <form method="dialog">
+          <button class="link panel__close" type="submit" data-i18n="close_about">Fermer</button>
+        </form>
+        <h2 class="panel__title" id="about-title" data-i18n="about_heading">À propos</h2>
+        <div class="about__letter" data-slot="about-text">
+          <p>
+            Je suis Lilian PRIEU, Software Engineer. Je programme des jeux vidéo et les outils qui
+            servent à les produire : moteurs de jeu, sites, extensions, petits programmes pour
+            gagner du temps.
+          </p>
+          <p>Paragraphe à écrire : le parcours, les études, les postes et les équipes.</p>
+          <p>
+            Je travaille avec des agents IA au quotidien. J'écris leurs règles et leurs skills, et
+            je publie celles qui servent à d'autres dans
+            <a class="link" href="https://github.com/Firzus/agent-skills">firzus/agent-skills</a>.
+          </p>
+          <p>
+            Paragraphe à écrire : ce que les agents changent dans ma façon de travailler, avec un
+            exemple vérifiable.
+          </p>
+        </div>
+        <p class="about__sign">Lilian PRIEU</p>
+        <p><a class="button" href="/cv-lilian-prieu.pdf" download>CV en PDF</a></p>
+      </div>
+    </dialog>
+  </body>
+</html>
