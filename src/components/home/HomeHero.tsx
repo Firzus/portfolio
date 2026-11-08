@@ -61,7 +61,7 @@ function HeroPictures() {
               href={projectHref(project.slug)}
               className="relative block size-full overflow-hidden rounded-lg"
             >
-              {/* The label below names the link; the project cards describe the pictures. */}
+              {/* Decorative here: the label below names the link and its project. */}
               <img
                 src={picture.src}
                 alt=""

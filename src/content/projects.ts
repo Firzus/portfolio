@@ -5,7 +5,10 @@ export interface Picture {
   src: string;
   width: number;
   height: number;
-  /** Message function, so the text follows the locale of the page being rendered. */
+  /**
+   * Description for where the picture stands alone (project cards, project pages). A message
+   * function, so the text follows the locale of the page being rendered.
+   */
   alt: () => string;
 }
 
