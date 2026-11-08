@@ -82,3 +82,28 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     expect(html.querySelectorAll("[data-contact] svg")).toHaveLength(3);
   });
 });
+
+async function missingPage(path: string): Promise<HTMLElement> {
+  const response = await fetch(new URL(path, server.origin), { redirect: "manual" });
+  expect(response.status).toBe(404);
+  return parse(await response.text());
+}
+
+describe.each([
+  { path: "/page-inconnue", lang: "fr", title: "Page introuvable", home: "/" },
+  { path: "/en/unknown-page", lang: "en", title: "Page not found", home: "/en/" },
+])("$path, a page that does not exist", ({ path, lang, title, home }) => {
+  test("answers 404 with a localized message and a link home", async () => {
+    const html = await missingPage(path);
+    expect(html.querySelector("html")?.getAttribute("lang")).toBe(lang);
+    expect(html.querySelector("h1")?.text).toBe(title);
+    expect(html.querySelector("main a")?.getAttribute("href")).toBe(home);
+  });
+
+  test("offers no other language version", async () => {
+    const html = await missingPage(path);
+    expect(html.querySelectorAll('link[rel="alternate"]')).toHaveLength(0);
+    expect(html.querySelectorAll("[data-language-switch]")).toHaveLength(0);
+    expect(html.querySelector("header nav")).toBeNull();
+  });
+});

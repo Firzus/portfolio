@@ -1,6 +1,15 @@
-import { HeadContent, Scripts, createRootRoute, useLocation } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Scripts,
+  createRootRoute,
+  isNotFound,
+  rootRouteId,
+  useLocation,
+  useRouterState,
+} from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { NotFoundPage } from "../components/NotFoundPage";
 import { defaultPage, localizedPages } from "../lib/site";
 import { m } from "../paraglide/messages.js";
 import { getLocale } from "../paraglide/runtime.js";
@@ -21,12 +30,22 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFoundPage,
 });
 
 function RootDocument({ children }: { children: ReactNode }) {
   const locale = getLocale();
   // The router's location has no locale prefix (see the rewrite in router.tsx).
-  const pages = localizedPages(useLocation({ select: (location) => location.pathname }));
+  const pathname = useLocation({ select: (location) => location.pathname });
+  const notFound = useRouterState({
+    // Either no route matched the URL, so only the root remains, or a route
+    // threw notFound().
+    select: (state) =>
+      state.matches.at(-1)?.routeId === rootRouteId ||
+      state.matches.some((match) => isNotFound(match.error)),
+  });
+  // A missing page has no version in another language to point to.
+  const pages = notFound ? [] : localizedPages(pathname);
   const fallback = defaultPage(pages);
 
   return (
