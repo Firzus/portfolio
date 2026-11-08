@@ -31,6 +31,12 @@
       "skillPath": "skills/gsap-timeline/SKILL.md",
       "computedHash": "54981c2feec5a9c0d57988aeb32315af32bdeadd261550d5e9db7a7b1f08b487"
     },
+    "shaders": {
+      "source": "Firzus/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web/shaders/SKILL.md",
+      "computedHash": "9c623057b57385713363f557f0811e17ce72eecd98bf707ae60a088b29d2218a"
+    },
     "tailwind-design-system": {
       "source": "wshobson/agents",
       "sourceType": "github",
