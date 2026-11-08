@@ -8,5 +8,7 @@
   "contact_email": "Email",
   "contact_github": "GitHub",
   "language_switcher_label": "Language",
-  "language_name": "English"
+  "language_name": "English",
+  "not_found_title": "Page not found",
+  "not_found_home": "Back to the home page"
 }

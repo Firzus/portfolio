@@ -29,9 +29,28 @@ jobs:
           run-install: true
       - name: Format, lint and types
         run: vp check
-      - name: Astro files
-        run: vp run check:astro
-      - name: Tests on the compiled site
+      - name: Tests on the rendered pages
         run: vp test
       - name: Translations and production build
         run: vp run build
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the image
+        run: docker build --tag portfolio .
+      - name: Serve both languages from the container
+        run: |
+          docker run --detach --name portfolio --publish 127.0.0.1:3000:3000 portfolio
+          for path in / /en/; do
+            curl --fail --silent --show-error --output /dev/null \
+              --retry 10 --retry-all-errors --retry-delay 1 "http://127.0.0.1:3000$path"
+          done
+      - name: Container logs
+        if: failure()
+        run: docker logs portfolio

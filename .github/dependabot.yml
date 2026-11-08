@@ -14,9 +14,6 @@ updates:
       # `vp migrate` updates both.
       - dependency-name: vite-plus
       - dependency-name: vite
-      # @astrojs/check supports TypeScript 5 and 6 only.
-      - dependency-name: typescript
-        update-types: [version-update:semver-major]
   - package-ecosystem: github-actions
     directory: /
     schedule:

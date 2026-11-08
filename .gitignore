@@ -3,7 +3,6 @@ node_modules/
 
 # build output
 dist/
-.astro/
 
 # design skill working files (screenshots, drawn sheets)
 .taste-skill/
@@ -16,3 +15,8 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# TanStack Start and Nitro output
+.output/
+.nitro/
+.tanstack/
