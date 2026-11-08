@@ -71,6 +71,14 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     });
   });
 
+  test("groups the contact links in a labelled footer section", async () => {
+    const html = await page(path);
+    const section = html.querySelector("footer section[aria-labelledby]");
+    const heading = html.getElementById(section?.getAttribute("aria-labelledby") ?? "");
+    expect(heading?.text).toBe("Contact");
+    expect(section?.querySelectorAll("[data-contact]")).toHaveLength(3);
+  });
+
   test("lists the three contact links with their icons in the footer", async () => {
     const html = await page(path);
     const hrefs = html
@@ -95,6 +103,8 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     const html = await page(path);
     const preload = html.querySelector('link[rel="preload"][as="font"]');
     expect(preload?.getAttribute("href")).toBe("/fonts/rubik.woff2");
+    // Without it the browser discards the preload and downloads the font a second time.
+    expect(preload?.getAttribute("crossorigin")).toBe("anonymous");
     const font = await fetch(new URL("/fonts/rubik.woff2", server.origin));
     expect(font.status).toBe(200);
     expect(font.headers.get("content-type")).toContain("font/woff2");

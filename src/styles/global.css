@@ -5,7 +5,7 @@
 
 /*
  * Rubik, served with the site (latin subset only) rather than from a font CDN: no third-party
- * request, and the page head preloads it. Variable font, weights 300 to 900, SIL Open Font License.
+ * request, and the page head preloads it. SIL Open Font License.
  */
 @font-face {
   font-family: "Rubik";
@@ -45,6 +45,8 @@
 
   --font-sans: "Rubik", system-ui, sans-serif;
   --font-display: "Rubik", system-ui, sans-serif;
+  /* Headings sit between semibold and bold, which Rubik's variable weight allows. */
+  --font-weight-heading: 650;
 
   --text-display: clamp(2.25rem, 1.2rem + 4.4vw, 4.75rem);
   --text-display--line-height: 0.94;

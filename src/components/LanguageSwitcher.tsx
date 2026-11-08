@@ -2,6 +2,7 @@ import { Language } from "iconoir-react";
 import type { LocalizedPage } from "../lib/site";
 import { m } from "../paraglide/messages.js";
 import type { Locale } from "../paraglide/runtime.js";
+import { TextLink } from "./ui/text-link";
 
 interface LanguageSwitcherProps {
   pages: LocalizedPage[];
@@ -19,16 +20,15 @@ export function LanguageSwitcher({ pages, currentLocale }: LanguageSwitcherProps
           <li key={page.locale}>
             {/* A plain link, not a router link: the full page load lets the
                 server render every text in the new locale. */}
-            <a
+            <TextLink
               href={page.href}
               hrefLang={page.locale}
               lang={page.locale}
               data-language-switch
-              className="inline-flex items-center gap-2 rounded-md text-muted transition-colors hover:text-ink motion-reduce:transition-none"
             >
-              <Language width={16} height={16} aria-hidden="true" />
+              <Language className="size-4" aria-hidden="true" />
               {m.language_name({}, { locale: page.locale })}
-            </a>
+            </TextLink>
           </li>
         ))}
       </ul>

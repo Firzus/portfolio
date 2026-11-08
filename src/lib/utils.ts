@@ -1,12 +1,15 @@
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
-// The type scale of the @theme block is not in tailwind-merge's default scale; without this its
-// steps are read as text colors and dropped when merged with one.
+// tailwind-merge only knows Tailwind's default scales. Without this, the type steps of the @theme
+// block are read as text colors and dropped when merged with one, and the other custom tokens
+// never override a conflicting class.
 const twMerge = extendTailwindMerge({
   extend: {
+    theme: { container: ["column"] },
     classGroups: {
       "font-size": [{ text: ["display", "head", "lead", "body", "small", "caption", "label"] }],
+      "font-weight": [{ font: ["heading"] }],
     },
   },
 });
