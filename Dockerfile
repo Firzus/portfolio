@@ -4,7 +4,7 @@ WORKDIR /app
 # pnpm version: keep in sync with "packageManager" in package.json.
 RUN npm install --global pnpm@12.16.1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY project.inlang/settings.json project.inlang/
+COPY project.inlang/settings.json project.inlang/paraglide.config.js project.inlang/
 COPY messages messages
 # Installing also runs `prepare`, which compiles the Paraglide messages.
 RUN pnpm install --frozen-lockfile

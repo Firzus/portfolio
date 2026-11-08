@@ -16,24 +16,8 @@ export default defineConfig({
   plugins: process.env.VITEST
     ? []
     : [
-        paraglideVitePlugin({
-          project: "./project.inlang",
-          outdir: "./src/paraglide",
-          outputStructure: "message-modules",
-          emitTsDeclarations: true,
-          strategy: ["url", "baseLocale"],
-          // English is prefixed; French, the base locale, owns the root. The
-          // specific pattern comes first because the first match wins.
-          urlPatterns: [
-            {
-              pattern: "/:path(.*)?",
-              localized: [
-                ["en", "/en/:path(.*)?"],
-                ["fr", "/:path(.*)?"],
-              ],
-            },
-          ],
-        }),
+        // Options live in project.inlang/paraglide.config.js, also read on install.
+        paraglideVitePlugin({ project: "./project.inlang" }),
         tailwindcss(),
         tanstackStart(),
         nitro(),

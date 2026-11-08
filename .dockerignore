@@ -7,6 +7,10 @@ node_modules
 .nitro
 .tanstack
 src/paraglide
+# Inlang caches and local state; only the tracked configuration is needed.
+project.inlang/*
+!project.inlang/settings.json
+!project.inlang/paraglide.config.js
 .env
 .env.*
 *.log

@@ -8,7 +8,7 @@
     "build": "vp run check:translations && vp build",
     "start": "node .output/server/index.mjs",
     "check:translations": "inlang check --project ./project.inlang --missing-translations --empty-translations --missing-variables",
-    "prepare": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
+    "prepare": "paraglide-js compile --project ./project.inlang"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

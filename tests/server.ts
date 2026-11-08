@@ -26,13 +26,18 @@ export interface RunningServer {
 /** Starts the built Node server on a free local port and waits until it answers. */
 export async function startServer(): Promise<RunningServer> {
   const port = await freePort();
+  // Nitro prefers NITRO_PORT and NITRO_HOST over PORT and HOST.
+  const { NITRO_PORT: _port, NITRO_HOST: _host, ...env } = process.env;
   const child: ChildProcess = spawn(process.execPath, [entry], {
-    env: { ...process.env, NODE_ENV: "production", PORT: String(port), HOST: "127.0.0.1" },
+    env: { ...env, NODE_ENV: "production", PORT: String(port), HOST: "127.0.0.1" },
     stdio: "inherit",
   });
+  let spawnError: Error | undefined;
+  child.once("error", (error) => (spawnError = error));
   const origin = `http://127.0.0.1:${port}`;
   const deadline = Date.now() + 15_000;
   while (Date.now() < deadline) {
+    if (spawnError) throw spawnError;
     if (child.exitCode !== null) throw new Error(`Server exited with code ${child.exitCode}.`);
     try {
       await fetch(origin);

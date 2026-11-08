@@ -17,7 +17,7 @@ Build the interface from small React components owned in this repository, follow
 
 ## Translations
 
-- Interface texts live in `messages/fr.json` (French, the base locale, served at `/`) and `messages/en.json` (served under `/en/`), and are read through `m` from `src/paraglide/messages.js`. Never write a user-visible text directly in a component.
+- Interface texts live in `messages/fr.json` (French, the base locale, served at `/`) and `messages/en.json` (served under `/en/`), and are read through `m` from `src/paraglide/messages.js`. Never write a user-visible text directly in a component, except a proper name that no language translates (such as "Lilian PRIEU").
 - Declare each route once in `src/routes/`, without locale: the router's `rewrite` (see `src/router.tsx`) maps `/en/…` to the same route.
 - Link to another language with a plain `<a>` built from `localizedPages()` in `src/lib/site.ts`, not a router link, so the server renders the page in the new locale.
 
