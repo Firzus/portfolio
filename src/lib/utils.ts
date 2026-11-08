@@ -6,9 +6,11 @@ import { extendTailwindMerge } from "tailwind-merge";
 // never override a conflicting class.
 const twMerge = extendTailwindMerge({
   extend: {
-    theme: { container: ["column"] },
+    theme: { container: ["column"], aspect: ["picture", "tile"] },
     classGroups: {
-      "font-size": [{ text: ["display", "head", "lead", "body", "small", "caption", "label"] }],
+      "font-size": [
+        { text: ["display", "head", "title", "lead", "body", "small", "caption", "label"] },
+      ],
       "font-weight": [{ font: ["heading"] }],
     },
   },

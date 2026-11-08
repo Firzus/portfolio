@@ -7,9 +7,18 @@ export default defineConfig({
   outputStructure: "message-modules",
   emitTsDeclarations: true,
   strategy: ["url", "baseLocale"],
-  // English is prefixed; French, the base locale, owns the root. The specific
-  // pattern comes first because the first match wins.
+  // English is prefixed; French, the base locale, owns the root. Patterns are
+  // tried in order and the first match wins, so translated paths come before
+  // the catch-all, and inside each one the prefixed locale comes first.
+  // Routes use the French path (`pattern`) and never see the English one.
   urlPatterns: [
+    {
+      pattern: "/projets/:slug",
+      localized: [
+        ["en", "/en/projects/:slug"],
+        ["fr", "/projets/:slug"],
+      ],
+    },
     {
       pattern: "/:path(.*)?",
       localized: [
