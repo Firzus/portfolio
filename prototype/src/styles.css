@@ -1,0 +1,88 @@
+@import "tailwindcss";
+@import "./pistes/a/theme.css";
+@import "./pistes/b/theme.css";
+@import "./pistes/c/theme.css";
+
+/*
+ * Semantic tokens. Each direction sets the raw values on its root element
+ * ([data-piste="a"] …) in its own theme.css; utilities only ever use these names.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-field: var(--field);
+  --color-field-ink: var(--field-ink);
+  --color-focus: var(--focus);
+
+  --font-display: var(--face-display);
+  --font-text: var(--face-text);
+
+  --text-display: var(--step-display);
+  --text-display--line-height: var(--leading-display);
+  --text-display--letter-spacing: var(--tracking-display);
+  --text-head: var(--step-head);
+  --text-head--line-height: var(--leading-head);
+  --text-head--letter-spacing: var(--tracking-display);
+  --text-lead: var(--step-lead);
+  --text-lead--line-height: 1.35;
+  --text-body: var(--step-body);
+  --text-body--line-height: 1.55;
+  --text-small: var(--step-small);
+  --text-small--line-height: 1.45;
+
+  --radius-control: var(--control-radius);
+}
+
+/* Defaults so the hub page renders before any direction sets its own values. */
+:root {
+  --ground: #f4f4f2;
+  --surface: #e8e8e4;
+  --ink: #111111;
+  --muted: #555555;
+  --accent: #111111;
+  --accent-ink: #ffffff;
+  --field: #111111;
+  --field-ink: #ffffff;
+  --focus: #111111;
+  --face-display: system-ui, sans-serif;
+  --face-text: system-ui, sans-serif;
+  --step-display: clamp(3rem, 2rem + 6vw, 8rem);
+  --leading-display: 0.95;
+  --tracking-display: -0.03em;
+  --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+  --leading-head: 1;
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --control-radius: 0px;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-ground font-text text-body text-ink;
+  }
+  ::selection {
+    @apply bg-accent text-accent-ink;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-focus;
+  }
+}
+
+/*
+ * Entrance hidden state: only with JavaScript running and motion allowed, so the page
+ * stays complete without JavaScript and under prefers-reduced-motion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+  }
+}
