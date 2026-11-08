@@ -3,7 +3,7 @@ import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 
-const dir = join(import.meta.dirname, "dist/client");
+const dir = join(import.meta.dirname, process.env.OUT ?? "dist", "client");
 const port = Number(process.env.PORT ?? 4319);
 const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".jpg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml", ".woff2": "font/woff2" };
 

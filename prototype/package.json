@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server.mjs",
-    "build": "vite build --outDir dist/client && vite build --ssr src/entry-server.tsx --outDir dist/server && node prerender.mjs",
+    "build": "node build.mjs",
     "preview": "node serve-static.mjs",
     "typecheck": "tsc --noEmit"
   },
