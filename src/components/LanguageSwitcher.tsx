@@ -14,7 +14,7 @@ export function LanguageSwitcher({ pages, currentLocale }: LanguageSwitcherProps
 
   return (
     <nav aria-label={m.language_switcher_label()}>
-      <ul className="flex gap-4">
+      <ul className="flex gap-4 text-caption font-medium">
         {otherPages.map((page) => (
           <li key={page.locale}>
             {/* A plain link, not a router link: the full page load lets the
@@ -24,9 +24,9 @@ export function LanguageSwitcher({ pages, currentLocale }: LanguageSwitcherProps
               hrefLang={page.locale}
               lang={page.locale}
               data-language-switch
-              className="inline-flex items-center gap-2 text-muted hover:text-ink"
+              className="inline-flex items-center gap-2 rounded-md text-muted transition-colors hover:text-ink motion-reduce:transition-none"
             >
-              <Language width={20} height={20} aria-hidden="true" />
+              <Language width={16} height={16} aria-hidden="true" />
               {m.language_name({}, { locale: page.locale })}
             </a>
           </li>

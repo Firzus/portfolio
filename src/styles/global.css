@@ -4,22 +4,76 @@
 @source not "../../.agents";
 
 /*
- * Provisional design tokens. The prototype's palette, type scale and spacing
- * replace these values; components use the semantic names only
- * (bg-surface, text-ink, font-display…), so renaming a value here is enough.
+ * Rubik, served with the site (latin subset only) rather than from a font CDN: no third-party
+ * request, and the page head preloads it. Variable font, weights 300 to 900, SIL Open Font License.
+ */
+@font-face {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("/fonts/rubik.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * The Encre palette: one family of blues and violets, from a violet-black field to a soft violet
+ * accent. Components use the semantic names only (bg-ground, text-ink, border-line…), so the
+ * whole site changes theme from this block.
  */
 @theme {
   /* Removes Tailwind's default palette: a color utility only works once its
      token is declared below, which keeps components on the site's theme. */
   --color-*: initial;
 
-  --color-surface: oklch(98.5% 0.002 90);
-  --color-ink: oklch(20% 0.01 260);
-  --color-muted: oklch(50% 0.01 260);
-  --color-accent: oklch(55% 0.15 260);
-  --color-line: oklch(90% 0.005 260);
+  /* Behind the framed column. */
+  --color-field: #08070e;
+  /* The column itself. */
+  --color-ground: #0c0b14;
+  /* A raised area inside the column. */
+  --color-surface: #14121f;
+  --color-ink: #ece9f5;
+  --color-muted: #a29db3;
+  --color-accent: #9d8cff;
+  /* Text set on the accent. */
+  --color-accent-ink: #0c0a1a;
+  --color-focus: #9d8cff;
+  /* Hairlines framing the column and its bands: the ink at low opacity. */
+  --color-line: rgb(236 233 245 / 0.08);
 
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
-  --font-display: ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
+  --font-sans: "Rubik", system-ui, sans-serif;
+  --font-display: "Rubik", system-ui, sans-serif;
+
+  --text-display: clamp(2.25rem, 1.2rem + 4.4vw, 4.75rem);
+  --text-display--line-height: 0.94;
+  --text-display--letter-spacing: -0.025em;
+  --text-head: clamp(1.875rem, 1.35rem + 1.5vw, 2.75rem);
+  --text-head--line-height: 1.04;
+  --text-head--letter-spacing: -0.025em;
+  --text-lead: clamp(1.125rem, 1.02rem + 0.35vw, 1.3125rem);
+  --text-lead--line-height: 1.35;
+  --text-body: clamp(1rem, 0.96rem + 0.15vw, 1.09375rem);
+  --text-body--line-height: 1.55;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.45;
+  /* Navigation, footer links and other secondary lines. */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.4;
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.35;
+  --text-label--letter-spacing: 0.14em;
+
+  /* Width of the framed column. */
+  --container-column: 88rem;
+}
+
+@layer base {
+  ::selection {
+    @apply bg-accent text-accent-ink;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-focus;
+  }
 }
