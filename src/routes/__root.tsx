@@ -8,8 +8,9 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { NotFoundPage } from "../components/NotFoundPage";
+import { SiteFooter } from "../components/SiteFooter";
+import { SiteHeader } from "../components/SiteHeader";
 import { defaultPage, localizedPages } from "../lib/site";
 import { m } from "../paraglide/messages.js";
 import { getLocale } from "../paraglide/runtime.js";
@@ -24,6 +25,14 @@ export const Route = createRootRoute({
       { name: "description", content: m.meta_description() },
     ],
     links: [
+      // Preloaded so the text is not first drawn in the fallback face.
+      {
+        rel: "preload",
+        href: "/fonts/rubik.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous",
+      },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "icon", href: "/favicon.ico" },
@@ -57,13 +66,14 @@ function RootDocument({ children }: { children: ReactNode }) {
         ))}
         {fallback && <link rel="alternate" hrefLang="x-default" href={fallback.absoluteHref} />}
       </head>
-      <body className="bg-surface font-sans text-ink antialiased">
-        {pages.length > 0 && (
-          <header className="flex justify-end p-6">
-            <LanguageSwitcher pages={pages} currentLocale={locale} />
-          </header>
-        )}
-        {children}
+      <body className="bg-field font-sans text-body text-ink antialiased">
+        <div className="md:px-2">
+          <div className="mx-auto flex min-h-svh max-w-column flex-col border-x border-line bg-ground">
+            <SiteHeader pages={pages} currentLocale={locale} />
+            <div className="flex-1">{children}</div>
+            <SiteFooter />
+          </div>
+        </div>
         <Scripts />
       </body>
     </html>

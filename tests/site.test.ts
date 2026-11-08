@@ -71,15 +71,53 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     });
   });
 
-  test("lists the three contact links with their icons", async () => {
+  test("groups the contact links in a labelled footer section", async () => {
     const html = await page(path);
-    const hrefs = html.querySelectorAll("[data-contact]").map((link) => link.getAttribute("href"));
+    const section = html.querySelector("footer section[aria-labelledby]");
+    const heading = html.getElementById(section?.getAttribute("aria-labelledby") ?? "");
+    expect(heading?.text).toBe("Contact");
+    expect(section?.querySelectorAll("[data-contact]")).toHaveLength(3);
+  });
+
+  test("lists the three contact links with their icons in the footer", async () => {
+    const html = await page(path);
+    const hrefs = html
+      .querySelectorAll("footer [data-contact]")
+      .map((link) => link.getAttribute("href"));
     expect(hrefs).toEqual([
       "https://www.linkedin.com/in/lprieu/",
       "mailto:lprieu.infos@gmail.com",
       "https://github.com/Firzus",
     ]);
-    expect(html.querySelectorAll("[data-contact] svg")).toHaveLength(3);
+    expect(html.querySelectorAll("footer [data-contact] svg")).toHaveLength(3);
+  });
+
+  test("frames the page with a header naming Lilian PRIEU and linking home", async () => {
+    const html = await page(path);
+    const home = html.querySelector("header [data-home]");
+    expect(home?.text).toContain("Lilian PRIEU");
+    expect(home?.getAttribute("href")).toBe(path);
+  });
+
+  test("preloads the Rubik font served by the site", async () => {
+    const html = await page(path);
+    const preload = html.querySelector('link[rel="preload"][as="font"]');
+    expect(preload?.getAttribute("href")).toBe("/fonts/rubik.woff2");
+    // Without it the browser discards the preload and downloads the font a second time.
+    expect(preload?.getAttribute("crossorigin")).toBe("anonymous");
+    const font = await fetch(new URL("/fonts/rubik.woff2", server.origin));
+    expect(font.status).toBe(200);
+    expect(font.headers.get("content-type")).toContain("font/woff2");
+  });
+
+  test("loads a stylesheet declaring the Encre palette and Rubik", async () => {
+    const html = await page(path);
+    const href = html.querySelector('link[rel="stylesheet"]')?.getAttribute("href");
+    expect(href).toBeTruthy();
+    const css = await (await fetch(new URL(href ?? "", server.origin))).text();
+    expect(css).toMatch(/@font-face\s*\{[^}]*font-family:\s*"?Rubik"?/);
+    expect(css).toMatch(/--color-ground:\s*#0c0b14/);
+    expect(css).toMatch(/--color-accent:\s*#9d8cff/);
   });
 });
 
@@ -104,6 +142,11 @@ describe.each([
     const html = await missingPage(path);
     expect(html.querySelectorAll('link[rel="alternate"]')).toHaveLength(0);
     expect(html.querySelectorAll("[data-language-switch]")).toHaveLength(0);
-    expect(html.querySelector("header")).toBeNull();
+  });
+
+  test("keeps the common frame", async () => {
+    const html = await missingPage(path);
+    expect(html.querySelector("header [data-home]")?.getAttribute("href")).toBe(home);
+    expect(html.querySelectorAll("footer [data-contact]")).toHaveLength(3);
   });
 });
