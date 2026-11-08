@@ -58,9 +58,11 @@ function RootDocument({ children }: { children: ReactNode }) {
         {fallback && <link rel="alternate" hrefLang="x-default" href={fallback.absoluteHref} />}
       </head>
       <body className="bg-surface font-sans text-ink antialiased">
-        <header className="flex justify-end p-6">
-          <LanguageSwitcher pages={pages} currentLocale={locale} />
-        </header>
+        {pages.length > 0 && (
+          <header className="flex justify-end p-6">
+            <LanguageSwitcher pages={pages} currentLocale={locale} />
+          </header>
+        )}
         {children}
         <Scripts />
       </body>

@@ -49,5 +49,8 @@ jobs:
           docker run --detach --name portfolio --publish 127.0.0.1:3000:3000 portfolio
           for path in / /en/; do
             curl --fail --silent --show-error --output /dev/null \
-              --retry 10 --retry-connrefused --retry-delay 1 "http://127.0.0.1:3000$path"
+              --retry 10 --retry-all-errors --retry-delay 1 "http://127.0.0.1:3000$path"
           done
+      - name: Container logs
+        if: failure()
+        run: docker logs portfolio

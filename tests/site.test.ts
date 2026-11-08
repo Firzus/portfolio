@@ -104,6 +104,6 @@ describe.each([
     const html = await missingPage(path);
     expect(html.querySelectorAll('link[rel="alternate"]')).toHaveLength(0);
     expect(html.querySelectorAll("[data-language-switch]")).toHaveLength(0);
-    expect(html.querySelector("header nav")).toBeNull();
+    expect(html.querySelector("header")).toBeNull();
   });
 });

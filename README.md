@@ -19,12 +19,12 @@ vp install         # also compiles the Paraglide messages
 vp run dev         # http://localhost:3000
 ```
 
-| Command        | Purpose                                                                    |
-| -------------- | -------------------------------------------------------------------------- |
-| `vp check`     | Format, lint and type check (`vp check --fix` applies fixes)               |
-| `vp test`      | Build the site, start its server and test the HTML rendered for both pages |
-| `vp run build` | Check translations, then build the server into `.output/`                  |
-| `vp run start` | Serve the build on port 3000 (`PORT` changes it)                           |
+| Command        | Purpose                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------- |
+| `vp check`     | Format, lint and type check (`vp check --fix` applies fixes)                                            |
+| `vp test`      | Build the site, start its server and test the HTML it renders in both languages, including the 404 page |
+| `vp run build` | Check translations, then build the server into `.output/`                                               |
+| `vp run start` | Serve the build on port 3000 (`PORT` changes it)                                                        |
 
 ## Translations
 
