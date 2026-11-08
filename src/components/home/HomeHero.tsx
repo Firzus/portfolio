@@ -38,7 +38,7 @@ export function HomeHero() {
           {stats.map((stat) => (
             <div key={stat.label} className="flex flex-col-reverse justify-end gap-2">
               <dt className="text-caption text-muted">{stat.label}</dt>
-              <dd className="text-lead font-medium tracking-tight tabular-nums md:text-head">
+              <dd className="text-lead font-medium tracking-tight tabular-nums md:text-title">
                 {stat.value}
               </dd>
             </div>
@@ -53,7 +53,7 @@ export function HomeHero() {
 /** One picture per project beside the title, each opening its page. */
 function HeroPictures() {
   return (
-    <ul className="grid grid-cols-2 content-center gap-3 border-line bg-deep p-6 max-lg:border-t md:p-12 lg:col-span-2 lg:border-l lg:p-16">
+    <ul className="grid grid-cols-2 content-center gap-3 border-line bg-deep p-6 max-lg:border-t md:px-8 md:py-12 lg:col-span-2 lg:border-l lg:px-11 lg:py-16">
       {projects.map((project, index) => {
         const picture = project.pictures[0];
         if (!picture) return null;
