@@ -15,8 +15,10 @@ async function sourceFiles(dir: string): Promise<string[]> {
     .filter((file) => !generated.some((part) => relative(src, file).startsWith(part)));
 }
 
-// State variants (`data-[open]:`, `aria-[current=page]:`…) select an element; they set no value.
-const stateVariant = /(?:^|[:\s"'`])(?:group-|peer-)?(?:data|aria|has|not|supports)-\[[^\]]*\]:/g;
+// Variants that select an element (`data-[open]:`, `group-[.is-open]/item:`, `nth-[3]:`…) set no
+// value, so they are removed before the search.
+const stateVariant =
+  /(?:(?:group-|peer-|in-)?(?:data|aria|has|not|supports|nth(?:-last)?(?:-of-type)?)|group|peer)-\[[^\]]*\](?:\/[\w-]+)?:/g;
 
 /**
  * Finds the styling that bypasses the tokens of the @theme block, so the theme could no longer be
@@ -25,7 +27,15 @@ const stateVariant = /(?:^|[:\s"'`])(?:group-|peer-)?(?:data|aria|has|not|suppor
  */
 export function bypassesTheme(source: string): string[] {
   const code = source.replace(stateVariant, " ");
-  const patterns = [/[\w-]+-\[[^\]]+\]/g, /[\w-]+-\(--[^)]+\)/g, /\[[\w-]+:[^\]]+\]/g, /style=\{/g];
+  const patterns = [
+    /[\w-]+-\[[^\]]+\]/g,
+    /[\w-]+-\([\w-]*:?--[^)]+\)/g,
+    // An opacity modifier with an arbitrary value (`text-ink/[.37]`, `bg-ink/(--a)`).
+    /\/[[(][^\])]+[\])]/g,
+    // No space after the colon, so a TypeScript index signature (`[key: string]`) is not taken.
+    /\[[\w-]+:[^\s\]]+\]/g,
+    /style=\{/g,
+  ];
   return patterns.flatMap((pattern) => code.match(pattern) ?? []);
 }
 
@@ -38,17 +48,28 @@ describe("bypassesTheme", () => {
     "bg-(--brand)",
     "[color:#333]",
     "md:[font-size:12px]",
+    "bg-(color:--brand)",
+    "text-ink/[.37]",
+    "bg-ink/(--a)",
     "<p style={{ color: 'red' }}>",
   ])("flags %s", (source) => {
     expect(bypassesTheme(source)).not.toEqual([]);
   });
 
-  test.each(["text-ink bg-ground", "data-[open]:bg-surface", "aria-[current=page]:text-ink"])(
-    "accepts %s",
-    (source) => {
-      expect(bypassesTheme(source)).toEqual([]);
-    },
-  );
+  test.each([
+    "text-ink bg-ground",
+    "text-ink/60",
+    "data-[open]:bg-surface",
+    "aria-[current=page]:text-ink",
+    "group-data-[open]/item:text-ink",
+    "in-data-[open]:text-ink",
+    "group-[.is-open]:text-ink",
+    "peer-[:checked]:text-ink",
+    "nth-[3]:text-ink",
+    "type Map = { [key: string]: unknown };",
+  ])("accepts %s", (source) => {
+    expect(bypassesTheme(source)).toEqual([]);
+  });
 });
 
 test("the source styles itself only with theme tokens", async () => {
