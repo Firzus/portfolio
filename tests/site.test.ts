@@ -97,6 +97,17 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     expect(home?.getAttribute("href")).toBe(path);
   });
 
+  test("keeps the header at the top of the screen, and anchors clear of it", async () => {
+    const html = await page(path);
+    const header = html.querySelector("header")?.classList;
+    expect(header?.contains("sticky")).toBe(true);
+    expect(header?.contains("top-0")).toBe(true);
+    // Opaque, so the page does not show through it while scrolling.
+    expect(header?.contains("bg-ground")).toBe(true);
+    // An in-page link (#projects) must not land its target under the header.
+    expect(html.querySelector("html")?.classList.contains("scroll-pt-16")).toBe(true);
+  });
+
   test("preloads the Rubik font served by the site", async () => {
     const html = await page(path);
     const preload = html.querySelector('link[rel="preload"][as="font"]');
