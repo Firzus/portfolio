@@ -201,14 +201,28 @@ describe.each(homes)(
       expect(pictures.length).toBeGreaterThanOrEqual(6);
       for (const picture of pictures) {
         expect(picture.getAttribute("src")).toMatch(/^\/images\/placeholders\/[\w-]+\.webp$/);
-        expect(picture.getAttribute("alt")).toMatch(/\S/);
+        expect(picture.getAttribute("alt")).toBeDefined();
         expect(picture.getAttribute("width")).toBeTruthy();
         expect(picture.getAttribute("height")).toBeTruthy();
       }
-      expect(pictures[0]?.getAttribute("alt")).toContain(lysandraAlt);
-      const file = await fetch(new URL(pictures[0]?.getAttribute("src") ?? "", server.origin));
+      const described = html.querySelectorAll("#projects img");
+      expect(described).toHaveLength(3);
+      expect(described.every((picture) => /\S/.test(picture.getAttribute("alt") ?? ""))).toBe(true);
+      expect(described[0]?.getAttribute("alt")).toContain(lysandraAlt);
+      const file = await fetch(new URL(described[0]?.getAttribute("src") ?? "", server.origin));
       expect(file.status).toBe(200);
       expect(file.headers.get("content-type")).toContain("image/webp");
+    });
+
+    test("names each hero picture link after its project alone", async () => {
+      const html = await page(path);
+      const links = html.querySelectorAll("main a").filter((link) => link.querySelector("img"));
+      const heroLinks = links.filter((link) => !link.closest("#projects"));
+      expect(heroLinks).toHaveLength(3);
+      for (const link of heroLinks) {
+        expect(link.querySelector("img")?.getAttribute("alt")).toBe("");
+        expect(link.text.trim()).toMatch(/^(Lysandra|Huzounet|Atelier)\b/);
+      }
     });
 
     test("lists the links by intent, with every contact and the CV", async () => {
@@ -235,7 +249,10 @@ describe.each(homes)(
       const marks = html.querySelectorAll("main [data-slot='provisional-mark']");
       expect(marks.length).toBeGreaterThan(0);
       expect(marks.map((mark) => mark.text.trim())).toEqual(marks.map(() => provisional));
-      expect(html.querySelector("main h1 ~ p [data-slot='provisional-mark']")).not.toBeNull();
+      const lead = html.querySelector("main h1 ~ p");
+      expect(lead?.querySelector("[data-slot='provisional-mark']")).not.toBeNull();
+      // Read aloud or copied, the mark must not run into the sentence it follows.
+      expect(lead?.text).toMatch(new RegExp(`\\S\\s+${provisional}$`));
     });
 
     test("uses no hash link standing for a missing page", async () => {

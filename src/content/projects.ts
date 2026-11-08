@@ -17,7 +17,7 @@ export interface Project {
   summary: () => string;
   /** The fact shown on the project's card. */
   fact: () => string;
-  /** The first picture stands for the project; the others illustrate its page. */
+  /** The first picture stands for the project. */
   pictures: Picture[];
   /** The project's own site, when it has one. */
   site?: string;
@@ -31,7 +31,7 @@ const picture = (name: string, alt: () => string): Picture => ({
   alt,
 });
 
-/** The single source of the projects, read by the home page and by each project page. */
+/** Single source of the projects, so the home page and the project pages cannot diverge. */
 export const projects: Project[] = [
   {
     slug: "lysandra",

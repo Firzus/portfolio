@@ -4,7 +4,7 @@ import { gutter } from "../../lib/layout";
 import { cn } from "../../lib/utils";
 import { m } from "../../paraglide/messages.js";
 import { LinkButton } from "../ui/link-button";
-import { ProvisionalMark } from "../ui/provisional";
+import { ProvisionalMark } from "../ui/provisional-mark";
 
 export function HomeHero() {
   const stats = [
@@ -31,10 +31,7 @@ export function HomeHero() {
             {m.home_hero_contact_cta()}
           </LinkButton>
         </div>
-        <dl
-          aria-label={m.home_stats_label()}
-          className="mt-14 grid max-w-xl grid-cols-3 gap-4 md:gap-8"
-        >
+        <dl className="mt-14 grid max-w-xl grid-cols-3 gap-4 md:gap-8">
           {stats.map((stat) => (
             <div key={stat.label} className="flex flex-col-reverse justify-end gap-2">
               <dt className="text-caption text-muted">{stat.label}</dt>
@@ -64,9 +61,10 @@ function HeroPictures() {
               href={projectHref(project.slug)}
               className="relative block size-full overflow-hidden rounded-lg"
             >
+              {/* The label below names the link; the project cards describe the pictures. */}
               <img
                 src={picture.src}
-                alt={picture.alt()}
+                alt=""
                 width={picture.width}
                 height={picture.height}
                 loading={first ? "eager" : "lazy"}

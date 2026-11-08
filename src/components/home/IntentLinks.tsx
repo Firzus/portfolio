@@ -4,7 +4,7 @@ import { contact } from "../../content/contact";
 import { findProject, projectHref } from "../../content/projects";
 import { m } from "../../paraglide/messages.js";
 import { Band } from "../ui/band";
-import { ProvisionalMark } from "../ui/provisional";
+import { ProvisionalMark } from "../ui/provisional-mark";
 import { RowLink, RowPlaceholder } from "../ui/row-link";
 
 interface Row {
@@ -141,7 +141,7 @@ function IntentBlock({ intent }: { intent: Intent }) {
           aria-hidden="true"
           className="grid size-14 shrink-0 place-items-center rounded-2xl bg-deep"
         >
-          <Icon className="size-7" />
+          <Icon aria-hidden="true" className="size-7" />
         </span>
         <div>
           <p className="text-caption font-medium text-muted">{intent.tag}</p>

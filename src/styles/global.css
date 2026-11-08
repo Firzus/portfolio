@@ -42,7 +42,7 @@
   --color-focus: #9d8cff;
   /* Hairlines framing the column and its bands: the ink at low opacity. */
   --color-line: rgb(236 233 245 / 0.08);
-  /* Deep violet field behind the hero pictures. */
+  /* Saturated violet field behind the hero pictures and the intent icons. */
   --color-deep: #2a1b8f;
 
   --font-sans: "Rubik", system-ui, sans-serif;
