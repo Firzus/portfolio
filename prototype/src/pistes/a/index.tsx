@@ -1,11 +1,17 @@
-import { person } from "../../content";
 import type { Piste } from "../types";
+import { Home } from "./Home";
+import { ProjectPage } from "./ProjectPage";
 
 export const piste: Piste = {
   id: "a",
-  name: "À construire",
-  pitch: "À construire.",
-  head: "",
-  Home: () => <main><h1>{person.name}, {person.title}</h1></main>,
-  Project: ({ project }) => <main><h1>{project.name}</h1></main>,
+  name: "L'affiche épinglée",
+  pitch:
+    "Le nom reste épinglé en haut de l'écran pendant que les écrans des projets passent dessous, comme les numéros successifs d'une même affiche orange et noire.",
+  head: [
+    '<link rel="preconnect" href="https://api.fontshare.com">',
+    '<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>',
+    '<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,800&display=swap">',
+  ].join(""),
+  Home,
+  Project: ProjectPage,
 };

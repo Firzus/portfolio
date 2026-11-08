@@ -1,1 +1,64 @@
-[data-piste="b"] {}
+/*
+ * Piste B, "L'instrument discret". The dealt "Frost and slate" palette is redrawn toward the
+ * inspiration site: near-black ground, one lighter surface step, off-white ink, a soft grey that
+ * still passes 4.5:1 on both grounds, and one warm yellow kept for the primary action and the
+ * marked phrase of the letter. The paper sheet of the letter uses the field pair.
+ */
+[data-piste="b"] {
+  --ground: #0c0c0c;
+  --surface: #1c1c1b;
+  --ink: #f0f0ee;
+  --muted: #a5a5a1;
+  --accent: #f5c443;
+  --accent-ink: #0c0c0c;
+  --field: #f0f0ee;
+  --field-ink: #0c0c0c;
+  --focus: #f0f0ee;
+
+  --face-display: "League Spartan", system-ui, sans-serif;
+  --face-text: "Figtree", system-ui, sans-serif;
+
+  --step-display: clamp(3.25rem, 1.6rem + 5.6vw, 7rem);
+  --leading-display: 0.88;
+  --tracking-display: -0.04em;
+  --step-head: clamp(1.75rem, 1.4rem + 0.9vw, 2.25rem);
+  --leading-head: 1;
+  --step-lead: clamp(1.25rem, 1.15rem + 0.45vw, 1.5rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-small: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --control-radius: 0px;
+}
+
+/* The ledger dims the rows the visitor is not pointing at; at rest every row stays in full ink. */
+[data-piste="b"] [data-slot="ledger-list"] [data-slot="ledger-row"] {
+  transition: color 150ms ease-out;
+}
+[data-piste="b"] [data-slot="ledger-list"][data-state="pointing"] [data-slot="ledger-row"]:not([data-active]) {
+  color: var(--muted);
+}
+
+/* Without JavaScript the rail cannot tell when the pictures have passed, so it stays solid. */
+html:not(.js) [data-piste="b"] [data-slot="rail"] {
+  background-color: var(--ground);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-piste="b"] [data-slot="hero-drift"] {
+    animation: b-drift 22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-piste="b"] [data-slot="ledger-list"] [data-slot="ledger-row"] {
+    transition: none;
+  }
+}
+
+@keyframes b-drift {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
