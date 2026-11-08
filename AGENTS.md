@@ -1,18 +1,25 @@
-Look up Astro documentation, APIs, and best practices with the Astro docs MCP server (`astro-docs`) instead of answering from memory, because Astro APIs change between major versions.
+Look up TanStack Start, TanStack Router, Base UI and Paraglide JS in their current documentation instead of answering from memory, because their APIs change between versions.
 
 ## UI components
 
-Build the interface from small components owned in this repository, following the shadcn/ui approach: the code lives here and is edited directly, each component wraps one element (button, input, select, carousel…) with default styling, and callers compose and restyle it instead of copying it. The site uses Astro without React, so components are `.astro` files built on native HTML elements and scripts.
+Build the interface from small React components owned in this repository, following the shadcn/ui approach without installing shadcn/ui: the code lives here and is edited directly, each component wraps one element (button, input, select, carousel…) with default styling, and callers compose and restyle it instead of copying it. Interactive behavior comes from [Base UI](https://base-ui.com) (`@base-ui/react`), which provides unstyled, accessible parts.
 
 - Before creating a component, look in `src/components/ui/`; extend an existing one with a variant rather than adding a near-duplicate. Page sections compose these components and live in `src/components/`.
-- Give a component with several parts one folder, one file per part and an `index.ts` re-exporting them (e.g. `card/Card.astro`, `card/CardHeader.astro`), so callers arrange the parts themselves.
-- Start from the native element with the right semantics and keyboard behavior (`<button>`, `<input>`, `<select>`, `<dialog>`, `popover`, `<details>`); add a script only for behavior the element lacks.
-- Type props as `HTMLAttributes<"element">` from `astro/types` plus the component's own props. Destructure `class`, merge it last with `cn()`, and spread the remaining attributes onto the root element, so callers can set `id`, `aria-*` or `data-*` and override any default class.
-- `cn()` lives in `src/lib/utils.ts` and combines `clsx` and `tailwind-merge`; create it, and install those packages, with the first component that needs it. `tailwind-merge` only recognizes Tailwind's default scales: register any custom token it cannot classify with `extendTailwindMerge` (a custom `--text-*` size, for example, is otherwise mistaken for a text color and dropped).
+- Give a component with several parts one folder, one file per part and an `index.ts` re-exporting them (e.g. `card/Card.tsx`, `card/CardHeader.tsx`), so callers arrange the parts themselves.
+- For an interactive widget (dialog, menu, select, tabs, tooltip…), wrap the Base UI part rather than writing focus, keyboard or ARIA handling yourself. For a static element, start from the native element with the right semantics (`<button>`, `<a>`, `<input>`).
+- Type props as `React.ComponentProps<"element">`, or the props of the wrapped Base UI part, plus the component's own props. Destructure `className`, merge it last with `cn()`, and spread the remaining props onto the root element, so callers can set `id`, `aria-*` or `data-*` and override any default class.
+- `cn()` lives in `src/lib/utils.ts` and combines `clsx` and `tailwind-merge`. `tailwind-merge` only recognizes Tailwind's default scales: register any custom token it cannot classify with `extendTailwindMerge` (a custom `--text-*` size, for example, is otherwise mistaken for a text color and dropped).
 - Declare variants with `class-variance-authority` (`variant`, `size`, default variants) and export the variants function (e.g. `buttonVariants`) so another element, such as a link, can share the look.
-- Mark each part with `data-slot="<part>"` and expose state as data attributes (`data-state="open"`), styled with Tailwind variants (`data-[state=open]:…`) rather than classes toggled from scripts.
-- Write interactive behavior in the component's `<script>` as a custom element: Astro includes that script once per page however many instances render, and each element instance keeps its own state.
+- Mark each part with `data-slot="<part>"`. Style state through the data attributes Base UI sets (`data-[open]:…`, `data-[disabled]:…`) or that you expose (`data-state="open"`), with Tailwind variants rather than conditional classes.
+- Pages are rendered on the server: a component reads no browser API (`window`, `localStorage`) while rendering, only in effects or event handlers, so the content stays readable without JavaScript.
+- Icons come from `iconoir-react`; mark decorative icons `aria-hidden="true"`.
 - Keep components accessible: every control has a label, focus is visible (`focus-visible:` with a theme token), the keyboard reaches everything, and animations respect `prefers-reduced-motion`.
+
+## Translations
+
+- Interface texts live in `messages/fr.json` (French, the base locale, served at `/`) and `messages/en.json` (served under `/en/`), and are read through `m` from `src/paraglide/messages.js`. Never write a user-visible text directly in a component.
+- Declare each route once in `src/routes/`, without locale: the router's `rewrite` (see `src/router.tsx`) maps `/en/…` to the same route.
+- Link to another language with a plain `<a>` built from `localizedPages()` in `src/lib/site.ts`, not a router link, so the server renders the page in the new locale.
 
 ## Theme
 

@@ -29,9 +29,7 @@ jobs:
           run-install: true
       - name: Format, lint and types
         run: vp check
-      - name: Astro files
-        run: vp run check:astro
-      - name: Tests on the compiled site
+      - name: Tests on the rendered pages
         run: vp test
       - name: Translations and production build
         run: vp run build
