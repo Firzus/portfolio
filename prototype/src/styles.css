@@ -1,7 +1,6 @@
 @import "tailwindcss";
-@import "./pistes/a/theme.css";
-@import "./pistes/b/theme.css";
-@import "./pistes/c/theme.css";
+@import "./pistes/d/fonts.css";
+@import "./pistes/d/theme.css";
 
 /*
  * Semantic tokens. Each direction sets the raw values on its root element
@@ -18,6 +17,7 @@
   --color-field: var(--field);
   --color-field-ink: var(--field-ink);
   --color-focus: var(--focus);
+  --color-pill: var(--pill);
 
   --font-display: var(--face-display);
   --font-text: var(--face-text);
@@ -34,6 +34,9 @@
   --text-body--line-height: 1.55;
   --text-small: var(--step-small);
   --text-small--line-height: 1.45;
+  --text-label: var(--step-label);
+  --text-label--line-height: 1.35;
+  --text-label--letter-spacing: 0.14em;
 
   --radius-control: var(--control-radius);
 }
@@ -49,6 +52,7 @@
   --field: #111111;
   --field-ink: #ffffff;
   --focus: #111111;
+  --pill: #e8e8e4;
   --face-display: system-ui, sans-serif;
   --face-text: system-ui, sans-serif;
   --step-display: clamp(3rem, 2rem + 6vw, 8rem);
@@ -59,6 +63,7 @@
   --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
   --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
   --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-label: 0.6875rem;
   --control-radius: 0px;
 }
 

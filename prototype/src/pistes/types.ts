@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import type { Project } from "../content";
 
 export type Piste = {
-  id: "a" | "b" | "c";
+  id: "d";
   name: string;
   /** One sentence shown on the hub page: what this direction does differently. */
   pitch: string;

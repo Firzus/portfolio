@@ -4,7 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="data:," />
-    <script>document.documentElement.classList.add("js");</script>
+    <script>
+      document.documentElement.classList.add("js");
+      // The loading screen plays once per session; later pages open directly.
+      try {
+        if (sessionStorage.getItem("d-loaded")) document.documentElement.classList.add("d-skip-loader");
+      } catch (e) {}
+      // Where the previous page was clicked, so the page transition can spread from that point.
+      try {
+        var origin = JSON.parse(sessionStorage.getItem("vt-origin") || "null");
+        sessionStorage.removeItem("vt-origin");
+        if (origin) {
+          document.documentElement.style.setProperty("--vt-x", origin.x + "px");
+          document.documentElement.style.setProperty("--vt-y", origin.y + "px");
+        }
+      } catch (e) {}
+    </script>
     <!--app-head-->
   </head>
   <body>

@@ -6,7 +6,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
-      "font-size": [{ text: ["display", "head", "lead", "body", "small"] }],
+      "font-size": [{ text: ["display", "head", "lead", "body", "small", "label"] }],
     },
   },
 });
