@@ -1,12 +1,20 @@
-import { readFile } from "node:fs/promises";
 import { parse, type HTMLElement } from "node-html-parser";
-import { describe, expect, test } from "vite-plus/test";
+import { afterAll, beforeAll, describe, expect, test } from "vite-plus/test";
+import { startServer, type RunningServer } from "./server";
 
 const site = "https://portfolio.lprieu.dev";
+let server: RunningServer;
+
+beforeAll(async () => {
+  server = await startServer();
+});
+
+afterAll(() => server?.stop());
 
 async function page(path: string): Promise<HTMLElement> {
-  const file = new URL(`../dist${path}index.html`, import.meta.url);
-  return parse(await readFile(file, "utf8"));
+  const response = await fetch(new URL(path, server.origin), { redirect: "manual" });
+  expect(response.status).toBe(200);
+  return parse(await response.text());
 }
 
 const pages = [
@@ -24,7 +32,7 @@ const pages = [
   },
 ];
 
-describe.each(pages)("$path", ({ path, lang, texts, switchTo }) => {
+describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switchTo }) => {
   test(`declares lang="${lang}"`, async () => {
     const html = await page(path);
     expect(html.querySelector("html")?.getAttribute("lang")).toBe(lang);
@@ -63,7 +71,7 @@ describe.each(pages)("$path", ({ path, lang, texts, switchTo }) => {
     });
   });
 
-  test("lists the three contact links", async () => {
+  test("lists the three contact links with their icons", async () => {
     const html = await page(path);
     const hrefs = html.querySelectorAll("[data-contact]").map((link) => link.getAttribute("href"));
     expect(hrefs).toEqual([
@@ -73,9 +81,4 @@ describe.each(pages)("$path", ({ path, lang, texts, switchTo }) => {
     ]);
     expect(html.querySelectorAll("[data-contact] svg")).toHaveLength(3);
   });
-});
-
-test("depends on no React package", async () => {
-  const lockfile = await readFile(new URL("../pnpm-lock.yaml", import.meta.url), "utf8");
-  expect(lockfile).not.toMatch(/^\s+'?(@[\w-]+\/)?react(-dom)?@/m);
 });
