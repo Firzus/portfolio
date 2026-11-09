@@ -50,8 +50,12 @@ describe("a run", () => {
   test("of the starting behaviour checks Is Active, then turns Self off", () => {
     expect(initialObject).toEqual(active);
     const steps = plan(initialBehaviour.instructions, initialObject);
-    expect(steps.map((step) => step.kind)).toEqual(["run", "run"]);
-    expect(steps.at(-1)).toMatchObject({ kind: "run", object: inactive });
+    // Turning the host off cancels the run, even at its last instruction.
+    expect(steps).toEqual([
+      { kind: "run", id: "n1", object: active },
+      { kind: "run", id: "n3", object: inactive },
+      { kind: "stop", id: "n3", reason: "host-disabled" },
+    ]);
   });
 
   test("stops at a Check Conditions whose conditions fail", () => {
@@ -88,14 +92,28 @@ describe("a run", () => {
     ]);
   });
 
-  test("is cancelled when it destroys Self", () => {
+  // Unity destroys an object at the end of the frame, so the run goes on until an instruction
+  // waits for the next frame.
+  test("goes on after Destroy until an instruction waits a frame, then is cancelled", () => {
+    const destroyed = { exists: false, active: false };
     const instructions: InstructionNode[] = [
       { id: "i1", type: "Destroy" },
-      { id: "i2", type: "Set Active", active: true },
+      { id: "i2", type: "Check Conditions", mode: "All", conditions: [isActive] },
+      { id: "i3", type: "Log", message: "last words" },
+      { id: "i4", type: "Log", message: "never" },
     ];
     expect(plan(instructions, active)).toEqual([
+      { kind: "run", id: "i1", object: active },
+      { kind: "run", id: "i2", object: active },
+      { kind: "log", id: "i3", message: "last words" },
+      { kind: "stop", id: "i3", reason: "host-destroyed", object: destroyed },
+    ]);
+  });
+
+  test("destroys Self at the end of a run that ends right after Destroy", () => {
+    expect(plan([{ id: "i1", type: "Destroy" }], active)).toEqual([
+      { kind: "run", id: "i1", object: active },
       { kind: "run", id: "i1", object: { exists: false, active: false } },
-      { kind: "stop", id: "i1", reason: "host-destroyed" },
     ]);
   });
 
@@ -144,5 +162,27 @@ describe("editing the behaviour", () => {
     const set = start.instructions[1];
     const next = updateInstruction(start, set?.id ?? "", { active: true });
     expect(next.instructions[1]).toMatchObject({ type: "Set Active", active: true });
+  });
+});
+
+describe("the node picker's catalog", () => {
+  test("holds every node the demo runs, under its Atelier category", async () => {
+    const { atelierCatalog } = await import("../src/content/atelier-nodes");
+    for (const path of [
+      "Flow/Check Conditions",
+      "GameObject/Set Active",
+      "Time/Wait",
+      "Debug/Log",
+    ]) {
+      expect(atelierCatalog.instruction).toContain(path);
+    }
+    expect(atelierCatalog.condition).toContain("GameObject/Is Active");
+    expect(atelierCatalog.condition).toContain("GameObject/Object Exists");
+  });
+
+  test("lists as conditions only Atelier's conditions, not its script property sources", async () => {
+    const { atelierCatalog } = await import("../src/content/atelier-nodes");
+    expect(atelierCatalog.condition).not.toContain("Scripts/Component");
+    expect(atelierCatalog.condition).not.toContain("Scripts/On Object");
   });
 });

@@ -26,9 +26,25 @@ export const editorLabels = {
   condition: "Condition",
   searchPlaceholder: "Search...",
   onInputButton: "On Input Button",
+  object: "Object",
+  targetValue: "Target",
+  pressed: "Pressed",
+  released: "Released",
+  all: "All",
+  any: "Any",
+  trueValue: "True",
+  falseValue: "False",
 };
 
 export const keyLabels: Record<InputKey, string> = { E: "E", F: "F", Q: "Q", Space: "Space" };
 
-/** The value of `KeyboardEvent.key` for each key the demo offers. */
-export const keyValues: Record<InputKey, string> = { E: "e", F: "f", Q: "q", Space: " " };
+/**
+ * The value of `KeyboardEvent.code` for each key the demo offers: the physical key, as Unity's
+ * Keyboard Key reads it, whatever the layout, Shift or Caps Lock.
+ */
+export const keyCodes: Record<InputKey, string> = {
+  E: "KeyE",
+  F: "KeyF",
+  Q: "KeyQ",
+  Space: "Space",
+};

@@ -9,7 +9,7 @@ import {
   Terminal,
   Trash,
 } from "iconoir-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type * as React from "react";
 import { cn } from "../../lib/utils";
 import { m } from "../../paraglide/messages.js";
@@ -30,10 +30,11 @@ import {
   type InputPhase,
   type InstructionNode,
   type InstructionType,
+  type SceneObject,
   type Step,
 } from "./behaviour";
 import { ChoiceField, NumberField, StaticField, TextField } from "./fields";
-import { editorLabels, keyLabels, keyValues } from "./labels";
+import { editorLabels, keyCodes, keyLabels } from "./labels";
 import { NodeCard } from "./NodeCard";
 import { NodePicker } from "./NodePicker";
 import { ScenePreview } from "./ScenePreview";
@@ -67,17 +68,18 @@ function summary(node: InstructionNode): string | undefined {
   switch (node.type) {
     case "Check Conditions": {
       const count = node.conditions.length;
-      return `${node.mode}, ${count} item${count === 1 ? "" : "s"}`;
+      return `${node.mode === "All" ? editorLabels.all : editorLabels.any}, ${count} item${count === 1 ? "" : "s"}`;
     }
     case "Set Active":
-      return `Self to ${node.active ? "True" : "False"}`;
+      return `${editorLabels.self} to ${node.active ? editorLabels.trueValue : editorLabels.falseValue}`;
     case "Toggle Active":
     case "Destroy":
-      return "Self";
+      return editorLabels.self;
     case "Wait":
-      return `${node.seconds}s, Game`;
+      return `${node.seconds}s, ${editorLabels.game}`;
     case "Log":
-      return node.message;
+      // Atelier prints a text value between quotes.
+      return `"${node.message}"`;
   }
 }
 
@@ -88,9 +90,17 @@ function summary(node: InstructionNode): string | undefined {
  */
 export function AtelierDemo({ className }: { className?: string }) {
   const [behaviour, setBehaviour] = useState(initialBehaviour);
-  const [object, setObject] = useState(initialObject);
+  const [object, setObjectState] = useState(initialObject);
+  // Read by the key handler, which can run again before React renders the last change.
+  const objectRef = useRef(initialObject);
+  const setObject = (next: SceneObject) => {
+    objectRef.current = next;
+    setObjectState(next);
+  };
   const [runningId, setRunningId] = useState<string | null>(null);
-  const [lines, setLines] = useState<string[]>([]);
+  const [lines, setLines] = useState<{ id: number; text: string }[]>([]);
+  const lineCount = useRef(0);
+  const frame = useRef<HTMLDivElement>(null);
   // A run outlives renders while it waits; the timer and the busy flag live outside the state.
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const busy = useRef(false);
@@ -98,7 +108,9 @@ export function AtelierDemo({ className }: { className?: string }) {
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const keyName = keyLabels[behaviour.key];
-  const log = (line: string) => setLines((previous) => [...previous, line].slice(-5));
+  // Each line keeps its id, so the live console announces only the new line.
+  const log = (text: string) =>
+    setLines((previous) => [...previous, { id: lineCount.current++, text }].slice(-5));
 
   function play(steps: Step[], from: number) {
     for (let index = from; index < steps.length; index++) {
@@ -119,6 +131,7 @@ export function AtelierDemo({ className }: { className?: string }) {
           }, step.seconds * 1000);
           return;
         case "stop":
+          if (step.object) setObject(step.object);
           log(
             step.reason === "conditions-failed"
               ? m.demo_log_conditions()
@@ -135,7 +148,7 @@ export function AtelierDemo({ className }: { className?: string }) {
   }
 
   function fire() {
-    if (!listens(object)) {
+    if (!listens(objectRef.current)) {
       log(m.demo_log_not_listening({ key: keyName }));
       return;
     }
@@ -146,7 +159,7 @@ export function AtelierDemo({ className }: { className?: string }) {
     }
     busy.current = true;
     log(m.demo_log_started({ key: keyName }));
-    play(plan(behaviour.instructions, object), 0);
+    play(plan(behaviour.instructions, objectRef.current), 0);
   }
 
   function resetScene() {
@@ -157,19 +170,31 @@ export function AtelierDemo({ className }: { className?: string }) {
     setLines([]);
   }
 
-  function onKey(event: React.KeyboardEvent, phase: InputPhase) {
-    if (event.key !== keyValues[behaviour.key] || phase !== behaviour.on || event.repeat) return;
+  function onKey(event: React.KeyboardEvent<HTMLDivElement>, phase: InputPhase) {
+    if (event.code !== keyCodes[behaviour.key] || phase !== behaviour.on || event.repeat) return;
+    // A browser shortcut (Ctrl+F, Cmd+Q…) is not the game's input.
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
     const target = event.target as HTMLElement;
-    // Typing in a field, or choosing in an open control, is not the game's input.
+    // Popups render outside the frame in the page, though React still bubbles their keys here.
+    if (!event.currentTarget.contains(target)) return;
+    // Typing in a field, choosing in an open control, or Space on a button keep their own use.
     if (target.closest("input, textarea, [role='combobox'], [role='listbox']")) return;
+    if (behaviour.key === "Space" && target.closest("button")) return;
     event.preventDefault();
     fire();
+  }
+
+  /** Removing the focused node's button would drop focus to the page; the frame keeps it. */
+  function remove(id: string) {
+    setBehaviour(removeNode(behaviour, id));
+    frame.current?.focus();
   }
 
   const edit = (next: typeof behaviour) => setBehaviour(next);
 
   return (
     <div
+      ref={frame}
       data-atelier-demo
       role="group"
       aria-label={m.demo_label()}
@@ -210,8 +235,8 @@ export function AtelierDemo({ className }: { className?: string }) {
             label={editorLabels.on}
             value={behaviour.on}
             items={[
-              { value: "Pressed" as const, label: "Pressed" },
-              { value: "Released" as const, label: "Released" },
+              { value: "Pressed" as const, label: editorLabels.pressed },
+              { value: "Released" as const, label: editorLabels.released },
             ]}
             onChange={(on) => edit({ ...behaviour, on })}
           />
@@ -242,7 +267,7 @@ export function AtelierDemo({ className }: { className?: string }) {
             title={node.type}
             summary={summary(node)}
             Icon={icons[node.type]}
-            onRemove={() => edit(removeNode(behaviour, node.id))}
+            onRemove={() => remove(node.id)}
             defaultOpen={node.type === "Check Conditions"}
             running={runningId === node.id}
           >
@@ -250,7 +275,7 @@ export function AtelierDemo({ className }: { className?: string }) {
               node={node}
               onChange={(fields) => edit(updateInstruction(behaviour, node.id, fields))}
               onAddCondition={(type) => edit(addCondition(behaviour, node.id, type))}
-              onRemoveCondition={(id) => edit(removeNode(behaviour, id))}
+              onRemoveCondition={remove}
             />
           </NodeCard>
         ))}
@@ -284,13 +309,17 @@ function InstructionFields({
   onAddCondition,
   onRemoveCondition,
 }: InstructionFieldsProps) {
+  const modeLabel = useId();
   switch (node.type) {
     case "Check Conditions":
       return (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-label text-editor-muted uppercase">{editorLabels.ifHeading}</p>
+            <p id={modeLabel} className="text-label text-editor-muted uppercase">
+              {editorLabels.ifHeading}
+            </p>
             <ToggleGroup
+              aria-labelledby={modeLabel}
               value={[node.mode]}
               onValueChange={(value) => {
                 const mode = value[0];
@@ -299,10 +328,10 @@ function InstructionFields({
               className="bg-editor-recess"
             >
               <ToggleGroupItem value="All" className="data-pressed:bg-editor-control">
-                All
+                {editorLabels.all}
               </ToggleGroupItem>
               <ToggleGroupItem value="Any" className="data-pressed:bg-editor-control">
-                Any
+                {editorLabels.any}
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
@@ -310,12 +339,16 @@ function InstructionFields({
             <NodeCard
               key={condition.id}
               title={condition.type}
-              summary={condition.type === "Object Exists" ? "Self" : undefined}
+              summary={condition.type === "Object Exists" ? editorLabels.targetValue : undefined}
               Icon={icons[condition.type]}
               nested
               onRemove={() => onRemoveCondition(condition.id)}
             >
-              <StaticField label={editorLabels.target} value={editorLabels.self} />
+              {condition.type === "Object Exists" ? (
+                <StaticField label={editorLabels.object} value={editorLabels.targetValue} />
+              ) : (
+                <StaticField label={editorLabels.target} value={editorLabels.self} />
+              )}
             </NodeCard>
           ))}
           <NodePicker kind="condition" runnable={runnableConditions} onPick={onAddCondition} />
@@ -329,8 +362,8 @@ function InstructionFields({
             label={editorLabels.active}
             value={node.active ? "True" : "False"}
             items={[
-              { value: "True" as const, label: "True" },
-              { value: "False" as const, label: "False" },
+              { value: "True" as const, label: editorLabels.trueValue },
+              { value: "False" as const, label: editorLabels.falseValue },
             ]}
             onChange={(value) => onChange({ active: value === "True" })}
           />

@@ -1,7 +1,7 @@
 /**
  * The slice of Atelier's kernel that the Inspector demo runs: a behaviour on one object, Self,
  * fired by a key, with the conditions and instructions that act on Self alone. The rules follow
- * Atelier's runtime (Core/Trigger.cs and Core/Flow.cs), so the demo behaves as Unity would.
+ * Atelier's runtime, so the demo behaves as Unity would.
  */
 
 export interface SceneObject {
@@ -64,7 +64,14 @@ export type Step =
       kind: "stop";
       id: string;
       reason: "conditions-failed" | "host-disabled" | "host-destroyed";
+      /** Self once the frame ends, when a Destroy earlier in the run removes it then. */
+      object?: SceneObject;
     };
+
+const destroyedObject: SceneObject = { exists: false, active: false };
+
+/** Instructions that await the next frame before the run moves on; the others finish at once. */
+const waitsForFrame: ReadonlySet<InstructionType> = new Set(["Set Active", "Log", "Wait"]);
 
 /**
  * Whether the trigger hears its key. Atelier's trigger polls its event from the host's Update,
@@ -97,13 +104,18 @@ export function passes(
 
 /**
  * The steps of one run from `object`. Nothing outside the run changes Self while it waits, so the
- * whole run can be worked out up front and then played step by step. Turning the host off cancels
- * the runs in flight (Trigger.OnDisable), so a run ends at the instruction that does it.
+ * whole run is worked out up front and then played step by step, as it stood when the key was
+ * pressed.
+ *
+ * Turning the host off cancels the runs in flight at once, even at the last instruction. Destroy
+ * only takes effect when the frame ends, so the run goes on until an instruction awaits the next
+ * frame, and is cancelled then.
  */
 export function plan(instructions: InstructionNode[], object: SceneObject): Step[] {
   const steps: Step[] = [];
   let current = object;
-  for (const [index, node] of instructions.entries()) {
+  let destroyedBy: string | undefined;
+  for (const node of instructions) {
     switch (node.type) {
       case "Check Conditions":
         if (!passes(node.conditions, node.mode, current)) {
@@ -121,23 +133,32 @@ export function plan(instructions: InstructionNode[], object: SceneObject): Step
         steps.push({ kind: "run", id: node.id, object: current });
         break;
       case "Destroy":
-        current = { exists: false, active: false };
+        destroyedBy ??= node.id;
         steps.push({ kind: "run", id: node.id, object: current });
         break;
       case "Wait":
-        steps.push({ kind: "wait", id: node.id, seconds: node.seconds });
+        // With a Destroy pending, the frame ends before the wait can.
+        if (!destroyedBy) steps.push({ kind: "wait", id: node.id, seconds: node.seconds });
         break;
       case "Log":
         steps.push({ kind: "log", id: node.id, message: node.message });
         break;
     }
-    const remaining = index < instructions.length - 1;
-    if (remaining && !listens(current)) {
-      const reason = current.exists ? "host-disabled" : "host-destroyed";
-      steps.push({ kind: "stop", id: node.id, reason });
+    if (!current.active) {
+      steps.push({
+        kind: "stop",
+        id: node.id,
+        reason: "host-disabled",
+        ...(destroyedBy && { object: destroyedObject }),
+      });
+      return steps;
+    }
+    if (destroyedBy && waitsForFrame.has(node.type)) {
+      steps.push({ kind: "stop", id: node.id, reason: "host-destroyed", object: destroyedObject });
       return steps;
     }
   }
+  if (destroyedBy) steps.push({ kind: "run", id: destroyedBy, object: destroyedObject });
   return steps;
 }
 

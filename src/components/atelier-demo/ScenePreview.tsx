@@ -6,7 +6,7 @@ import { editorLabels } from "./labels";
 
 interface ScenePreviewProps {
   object: SceneObject;
-  lines: string[];
+  lines: { id: number; text: string }[];
   keyName: string;
   onPress: () => void;
   onReset: () => void;
@@ -54,7 +54,7 @@ export function ScenePreview({ object, lines, keyName, onPress, onReset }: Scene
           {lines.length === 0 ? (
             <li className="text-editor-muted">{m.demo_console_empty()}</li>
           ) : (
-            lines.map((line, index) => <li key={`${index}-${line}`}>{line}</li>)
+            lines.map((line) => <li key={line.id}>{line.text}</li>)
           )}
         </ol>
       </div>

@@ -1,7 +1,7 @@
 /**
  * Every instruction and condition of Atelier's Core package, by its category path in the node
- * picker, copied from the Runtime sources of Firzus/atelier at commit da6bd3c8 so the demo's picker
- * lists the real catalog. The last segment of a path is the node's title.
+ * picker, copied from Atelier's runtime sources so the demo's picker lists the real catalog. The
+ * last segment of a path is the node's title.
  */
 export const atelierCatalog = {
   instruction: [
@@ -229,8 +229,6 @@ export const atelierCatalog = {
     "Save/Game Is Loaded",
     "Save/Slot Is Occupied",
     "Scenes/Scene Is Loaded",
-    "Scripts/Component",
-    "Scripts/On Object",
     "Transforms/Is Child Of",
     "Transforms/Is Sibling Of",
     "Value/Compare Number",

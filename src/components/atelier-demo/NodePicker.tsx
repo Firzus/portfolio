@@ -31,7 +31,9 @@ export function NodePicker<Type extends string>({ kind, runnable, onPick }: Node
     path,
     title: path.split("/").at(-1) ?? path,
   }));
-  const search = query.trim().toLowerCase();
+  // Like Atelier's picker: every word of the query must appear in the title; results are sorted.
+  const words = query.trim().toLowerCase().split(/s+/).filter(Boolean);
+  const search = words.length > 0;
   const prefix = folder.length > 0 ? `${folder.join("/")}/` : "";
   const inFolder = entries.filter((entry) => entry.path.startsWith(prefix));
   const subfolders = [
@@ -43,7 +45,9 @@ export function NodePicker<Type extends string>({ kind, runnable, onPick }: Node
     ),
   ];
   const nodes = search
-    ? entries.filter((entry) => entry.title.toLowerCase().includes(search))
+    ? entries
+        .filter((entry) => words.every((word) => entry.title.toLowerCase().includes(word)))
+        .sort((a, b) => a.title.localeCompare(b.title))
     : inFolder.filter((entry) => !entry.path.slice(prefix.length).includes("/"));
 
   function reset(nextOpen: boolean) {
@@ -74,6 +78,7 @@ export function NodePicker<Type extends string>({ kind, runnable, onPick }: Node
           onChange={(event) => setQuery(event.target.value)}
           placeholder={editorLabels.searchPlaceholder}
           aria-label={m.demo_picker_search()}
+          lang={getLocale()}
           className="h-7 rounded-sm bg-editor-field px-2 text-editor-ink placeholder:text-editor-muted"
         />
         <div className="flex h-7 items-center justify-center gap-1">
@@ -82,6 +87,7 @@ export function NodePicker<Type extends string>({ kind, runnable, onPick }: Node
               type="button"
               onClick={() => setFolder(folder.slice(0, -1))}
               aria-label={m.demo_picker_back()}
+              lang={getLocale()}
               className="mr-auto grid size-6 place-items-center rounded-sm hover:bg-editor-control-hover"
             >
               <NavArrowLeft aria-hidden="true" className="size-3.5" />

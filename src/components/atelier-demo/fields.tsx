@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useState } from "react";
 import type * as React from "react";
 import { cn } from "../../lib/utils";
 import { Select, SelectItem, SelectPopup, SelectTrigger } from "../ui/select";
@@ -108,19 +108,27 @@ export function NumberField({
   onChange: (value: number) => void;
 }) {
   const id = useId();
+  // The text being typed may be empty or partial ("", "0."); the value is committed on blur.
+  const [draft, setDraft] = useState<string | null>(null);
+  const commit = () => {
+    const next = Number.parseFloat(draft ?? "");
+    if (Number.isFinite(next)) onChange(Math.min(max, Math.max(min, next)));
+    setDraft(null);
+  };
   return (
     <FieldRow label={label} htmlFor={id}>
       <input
         id={id}
         type="number"
         inputMode="decimal"
-        value={value}
+        value={draft ?? value}
         min={min}
         max={max}
         step={step}
-        onChange={(event) => {
-          const next = event.target.valueAsNumber;
-          if (Number.isFinite(next)) onChange(Math.min(max, Math.max(min, next)));
+        onChange={(event) => setDraft(event.target.value)}
+        onBlur={commit}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") commit();
         }}
         className={cn(control, "w-full bg-editor-field hover:bg-editor-field")}
       />
