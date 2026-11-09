@@ -42,6 +42,8 @@
   --color-focus: #9d8cff;
   /* Hairlines framing the column and its bands: the ink at low opacity. */
   --color-line: rgb(236 233 245 / 0.08);
+  /* Saturated violet field behind the hero pictures and the intent icons. */
+  --color-deep: #2a1b8f;
 
   --font-sans: "Rubik", system-ui, sans-serif;
   --font-display: "Rubik", system-ui, sans-serif;
@@ -60,12 +62,20 @@
   --text-body--line-height: 1.55;
   --text-small: 0.875rem;
   --text-small--line-height: 1.45;
+  /* Titles of cards and of other items in a grid or list. */
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.015em;
   /* Navigation, footer links and other secondary lines. */
   --text-caption: 0.8125rem;
   --text-caption--line-height: 1.4;
   --text-label: 0.6875rem;
   --text-label--line-height: 1.35;
   --text-label--letter-spacing: 0.14em;
+
+  /* Shape of the project pictures, and of the smaller tiles beside the hero. */
+  --aspect-picture: 16 / 10;
+  --aspect-tile: 4 / 3;
 
   /* Width of the framed column. */
   --container-column: 88rem;

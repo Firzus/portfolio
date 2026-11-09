@@ -38,10 +38,8 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     expect(html.querySelector("html")?.getAttribute("lang")).toBe(lang);
   });
 
-  test("shows the name, the job title and the localized interface texts", async () => {
+  test("shows the localized interface texts", async () => {
     const html = await page(path);
-    expect(html.querySelector("h1")?.text).toBe("Lilian PRIEU");
-    expect(html.querySelector("main p")?.text).toBe("Software Engineer");
     expect(html.querySelector("header nav")?.getAttribute("aria-label")).toBe(texts.switcherLabel);
     expect(html.querySelectorAll("[data-contact]").map((link) => link.text.trim())).toContain(
       texts.email,
@@ -99,6 +97,17 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     expect(home?.getAttribute("href")).toBe(path);
   });
 
+  test("keeps the header at the top of the screen, and anchors clear of it", async () => {
+    const html = await page(path);
+    const header = html.querySelector("header")?.classList;
+    expect(header?.contains("sticky")).toBe(true);
+    expect(header?.contains("top-0")).toBe(true);
+    // Opaque, so the page does not show through it while scrolling.
+    expect(header?.contains("bg-ground")).toBe(true);
+    // An in-page link (#projects) must not land its target under the header.
+    expect(html.querySelector("html")?.classList.contains("scroll-pt-16")).toBe(true);
+  });
+
   test("preloads the Rubik font served by the site", async () => {
     const html = await page(path);
     const preload = html.querySelector('link[rel="preload"][as="font"]');
@@ -150,3 +159,117 @@ describe.each([
     expect(html.querySelectorAll("footer [data-contact]")).toHaveLength(3);
   });
 });
+
+const homes = [
+  {
+    path: "/",
+    projectPath: "/projets/",
+    pathsHeading: "Par où commencer ?",
+    provisional: "provisoire",
+    lysandraAlt: "Illustration provisoire",
+  },
+  {
+    path: "/en/",
+    projectPath: "/en/projects/",
+    pathsHeading: "Where to start?",
+    provisional: "provisional",
+    lysandraAlt: "Provisional illustration",
+  },
+];
+
+describe.each(homes)(
+  "$path, the home page",
+  ({ path, projectPath, pathsHeading, provisional, lysandraAlt }) => {
+    test("opens on the job title, with the name read only by screen readers", async () => {
+      const html = await page(path);
+      const headings = html.querySelectorAll("h1");
+      expect(headings).toHaveLength(1);
+      const heading = headings[0];
+      expect(heading?.querySelector(".sr-only")?.text).toContain("Lilian PRIEU");
+      expect(heading?.text).toContain("Lilian PRIEU");
+      heading?.querySelector(".sr-only")?.remove();
+      expect(heading?.text.trim()).toBe("Software Engineer");
+    });
+
+    test("shows one card per project, linking to its page in the current language", async () => {
+      const html = await page(path);
+      const cards = html.querySelectorAll("#projects [data-project-card]");
+      expect(cards.map((card) => card.querySelector("h3")?.text.trim())).toEqual([
+        "Lysandra",
+        "Huzounet",
+        "Atelier",
+      ]);
+      expect(cards.map((card) => card.querySelector("a")?.getAttribute("href"))).toEqual([
+        `${projectPath}lysandra`,
+        `${projectPath}huzounet`,
+        `${projectPath}atelier`,
+      ]);
+    });
+
+    test("shows the provisional pictures, described in the current language", async () => {
+      const html = await page(path);
+      const pictures = html.querySelectorAll("main img");
+      expect(pictures.length).toBeGreaterThanOrEqual(6);
+      for (const picture of pictures) {
+        expect(picture.getAttribute("src")).toMatch(/^\/images\/placeholders\/[\w-]+\.webp$/);
+        expect(picture.getAttribute("alt")).toBeDefined();
+        expect(picture.getAttribute("width")).toBeTruthy();
+        expect(picture.getAttribute("height")).toBeTruthy();
+      }
+      const described = html.querySelectorAll("#projects img");
+      expect(described).toHaveLength(3);
+      expect(described.every((picture) => /\S/.test(picture.getAttribute("alt") ?? ""))).toBe(true);
+      expect(described[0]?.getAttribute("alt")).toContain(lysandraAlt);
+      const file = await fetch(new URL(described[0]?.getAttribute("src") ?? "", server.origin));
+      expect(file.status).toBe(200);
+      expect(file.headers.get("content-type")).toContain("image/webp");
+    });
+
+    test("names each hero picture link after its project alone", async () => {
+      const html = await page(path);
+      const links = html.querySelectorAll("main a").filter((link) => link.querySelector("img"));
+      const heroLinks = links.filter((link) => !link.closest("#projects"));
+      expect(heroLinks).toHaveLength(3);
+      for (const link of heroLinks) {
+        expect(link.querySelector("img")?.getAttribute("alt")).toBe("");
+        expect(link.text.trim()).toMatch(/^(Lysandra|Huzounet|Atelier)\b/);
+      }
+    });
+
+    test("lists the links by intent, with every contact and the CV", async () => {
+      const html = await page(path);
+      const section = html
+        .querySelectorAll("main section")
+        .find((candidate) => candidate.querySelector("h2")?.text.trim() === pathsHeading);
+      expect(section).toBeDefined();
+      const hrefs = section?.querySelectorAll("a").map((link) => link.getAttribute("href"));
+      expect(hrefs).toEqual(
+        expect.arrayContaining([
+          "https://www.linkedin.com/in/lprieu/",
+          "mailto:lprieu.infos@gmail.com",
+          "https://github.com/Firzus",
+          `${projectPath}lysandra`,
+        ]),
+      );
+      const cv = section?.querySelector("[data-intent-row='cv']");
+      expect(cv?.querySelector("[data-slot='provisional-mark']")?.text.trim()).toBe(provisional);
+    });
+
+    test("marks the text Lilian has not confirmed as provisional", async () => {
+      const html = await page(path);
+      const marks = html.querySelectorAll("main [data-slot='provisional-mark']");
+      expect(marks.length).toBeGreaterThan(0);
+      expect(marks.map((mark) => mark.text.trim())).toEqual(marks.map(() => provisional));
+      const lead = html.querySelector("main h1 ~ p");
+      expect(lead?.querySelector("[data-slot='provisional-mark']")).not.toBeNull();
+      // Read aloud or copied, the mark must not run into the sentence it follows.
+      expect(lead?.text).toMatch(new RegExp(`\\S\\s+${provisional}$`));
+    });
+
+    test("uses no hash link standing for a missing page", async () => {
+      const html = await page(path);
+      const hrefs = html.querySelectorAll("main a").map((link) => link.getAttribute("href") ?? "");
+      expect(hrefs.filter((href) => href.startsWith("#") && href !== "#projects")).toEqual([]);
+    });
+  },
+);

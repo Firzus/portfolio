@@ -14,7 +14,10 @@ interface SiteHeaderProps {
 export function SiteHeader({ pages, currentLocale }: SiteHeaderProps) {
   return (
     <header
-      className={cn(gutter, "flex h-16 items-center justify-between gap-6 border-b border-line")}
+      className={cn(
+        gutter,
+        "sticky top-0 z-10 flex h-16 items-center justify-between gap-6 border-b border-line bg-ground",
+      )}
     >
       <Link
         to="/"

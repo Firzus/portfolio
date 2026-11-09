@@ -1,4 +1,5 @@
 import { Github, Linkedin, Mail } from "iconoir-react";
+import { contact } from "../content/contact";
 import { gutter } from "../lib/layout";
 import { cn } from "../lib/utils";
 import { m } from "../paraglide/messages.js";
@@ -6,9 +7,9 @@ import { TextLink } from "./ui/text-link";
 
 export function SiteFooter() {
   const contacts = [
-    { href: "https://www.linkedin.com/in/lprieu/", label: m.contact_linkedin(), Icon: Linkedin },
-    { href: "mailto:lprieu.infos@gmail.com", label: m.contact_email(), Icon: Mail },
-    { href: "https://github.com/Firzus", label: m.contact_github(), Icon: Github },
+    { href: contact.linkedin, label: m.contact_linkedin(), Icon: Linkedin },
+    { href: contact.email, label: m.contact_email(), Icon: Mail },
+    { href: contact.github, label: m.contact_github(), Icon: Github },
   ];
 
   return (

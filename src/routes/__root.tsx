@@ -58,7 +58,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   const fallback = defaultPage(pages);
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className="scroll-pt-16">
       <head>
         <HeadContent />
         {pages.map((page) => (
