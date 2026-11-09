@@ -13,6 +13,13 @@ export default defineConfig({
   // Routes use the French path (`pattern`) and never see the English one.
   urlPatterns: [
     {
+      pattern: "/agents-ia",
+      localized: [
+        ["en", "/en/ai-agents"],
+        ["fr", "/agents-ia"],
+      ],
+    },
+    {
       pattern: "/projets/:slug",
       localized: [
         ["en", "/en/projects/:slug"],
