@@ -11,7 +11,6 @@ import { Chip } from "./ui/chip";
 import { LinkButton } from "./ui/link-button";
 import { ProvisionalMark } from "./ui/provisional-mark";
 import { RowLink } from "./ui/row-link";
-import { TextLink } from "./ui/text-link";
 import { Thumbnail } from "./ui/thumbnail";
 
 const sectionHeading = "font-display text-head font-heading";
@@ -91,7 +90,7 @@ export function ProjectPage({ project }: { project: Project }) {
               <p className="mt-5 max-w-md text-body text-muted">{project.code.intro()}</p>
             </div>
             <figure className="min-w-0 overflow-hidden rounded-lg border border-line bg-surface lg:col-span-3">
-              <figcaption className="border-b border-line px-4 py-2.5 font-mono text-caption text-muted">
+              <figcaption className="border-b border-line px-4 py-2.5 text-caption text-muted">
                 {project.code.fileName}
               </figcaption>
               <pre className="overflow-x-auto p-4 text-caption leading-relaxed">
@@ -160,14 +159,7 @@ function ProjectHero({ project, picture }: { project: Project; picture?: Picture
   return (
     <section className="grid border-b border-line lg:grid-cols-5">
       <div className={cn(gutter, "flex flex-col justify-center py-14 md:py-20 lg:col-span-3")}>
-        <TextLink
-          href={`${localizeHref("/")}#projects`}
-          className="self-start text-caption font-medium"
-        >
-          <ArrowLeft aria-hidden="true" className="size-4" />
-          {m.project_all_link()}
-        </TextLink>
-        <h1 className="mt-8 font-display text-display font-heading">{project.name}</h1>
+        <h1 className="font-display text-display font-heading">{project.name}</h1>
         <p className="mt-5 text-small text-muted">
           {project.kind()} · {project.period()}
         </p>
@@ -177,14 +169,18 @@ function ProjectHero({ project, picture }: { project: Project; picture?: Picture
             {project.signature}
           </p>
         )}
-        {primary && (
-          <div className="mt-9">
+        <div className="mt-9 flex flex-wrap gap-2.5">
+          {primary && (
             <LinkButton href={primary.href}>
               {primary.label()}
               <ArrowUpRight aria-hidden="true" className="size-4" />
             </LinkButton>
-          </div>
-        )}
+          )}
+          <LinkButton href={`${localizeHref("/")}#projects`} variant="outline">
+            <ArrowLeft aria-hidden="true" className="size-4" />
+            {m.project_all_link()}
+          </LinkButton>
+        </div>
         <dl className="mt-12 grid max-w-md grid-cols-2 gap-4 md:gap-8">
           {project.stats.map((stat) => (
             <div key={stat.label()} className="flex flex-col-reverse justify-end gap-2">
