@@ -119,7 +119,12 @@ export function plan(instructions: InstructionNode[], object: SceneObject): Step
     switch (node.type) {
       case "Check Conditions":
         if (!passes(node.conditions, node.mode, current)) {
-          steps.push({ kind: "stop", id: node.id, reason: "conditions-failed" });
+          steps.push({
+            kind: "stop",
+            id: node.id,
+            reason: "conditions-failed",
+            ...(destroyedBy && { object: destroyedObject }),
+          });
           return steps;
         }
         steps.push({ kind: "run", id: node.id, object: current });

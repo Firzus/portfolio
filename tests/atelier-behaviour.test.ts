@@ -186,3 +186,16 @@ describe("the node picker's catalog", () => {
     expect(atelierCatalog.condition).not.toContain("Scripts/On Object");
   });
 });
+
+describe("the node picker's search", () => {
+  test("needs every word of the query in the title, in any order, and sorts the results", async () => {
+    const { searchNodes } = await import("../src/components/atelier-demo/search");
+    const paths = ["GameObject/Toggle Active", "GameObject/Set Active", "Time/Wait"];
+    expect(searchNodes(paths, "active set").map((node) => node.title)).toEqual(["Set Active"]);
+    expect(searchNodes(paths, "  ACTIVE ").map((node) => node.title)).toEqual([
+      "Set Active",
+      "Toggle Active",
+    ]);
+    expect(searchNodes(paths, "wait seconds")).toEqual([]);
+  });
+});

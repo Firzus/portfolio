@@ -6,17 +6,13 @@ import { m } from "../../paraglide/messages.js";
 import { getLocale } from "../../paraglide/runtime.js";
 import { Popover, PopoverPopup, PopoverTrigger } from "../ui/popover";
 import { editorLabels } from "./labels";
+import { catalogNode, searchNodes } from "./search";
 
 interface NodePickerProps<Type extends string> {
   kind: "instruction" | "condition";
   /** The nodes the demo can run; every other node of the catalog is listed but cannot be added. */
   runnable: readonly Type[];
   onPick: (type: Type) => void;
-}
-
-interface Entry {
-  path: string;
-  title: string;
 }
 
 /** Atelier's node picker: folders by category, and a search over every node of the catalog. */
@@ -27,13 +23,8 @@ export function NodePicker<Type extends string>({ kind, runnable, onPick }: Node
   const label = kind === "instruction" ? editorLabels.addInstruction : editorLabels.addCondition;
   const heading = kind === "instruction" ? editorLabels.instruction : editorLabels.condition;
 
-  const entries: Entry[] = atelierCatalog[kind].map((path) => ({
-    path,
-    title: path.split("/").at(-1) ?? path,
-  }));
-  // Like Atelier's picker: every word of the query must appear in the title; results are sorted.
-  const words = query.trim().toLowerCase().split(/s+/).filter(Boolean);
-  const search = words.length > 0;
+  const entries = atelierCatalog[kind].map(catalogNode);
+  const search = query.trim().length > 0;
   const prefix = folder.length > 0 ? `${folder.join("/")}/` : "";
   const inFolder = entries.filter((entry) => entry.path.startsWith(prefix));
   const subfolders = [
@@ -45,9 +36,7 @@ export function NodePicker<Type extends string>({ kind, runnable, onPick }: Node
     ),
   ];
   const nodes = search
-    ? entries
-        .filter((entry) => words.every((word) => entry.title.toLowerCase().includes(word)))
-        .sort((a, b) => a.title.localeCompare(b.title))
+    ? searchNodes(atelierCatalog[kind], query)
     : inFolder.filter((entry) => !entry.path.slice(prefix.length).includes("/"));
 
   function reset(nextOpen: boolean) {
