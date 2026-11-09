@@ -233,6 +233,8 @@ function ProjectFigure({ picture, eager = false, className }: ProjectFigureProps
         height={picture.height}
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
+        // The hero picture receives the clicked project picture in the page transition.
+        data-transition-hero={eager || undefined}
       />
       {picture.provisional && (
         <figcaption className="mt-2">

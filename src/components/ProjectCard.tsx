@@ -21,6 +21,7 @@ export function ProjectCard({ project, picture, className, ...props }: ProjectCa
           alt={picture.alt()}
           width={picture.width}
           height={picture.height}
+          data-transition-picture
         />
       )}
       <h3 className="mt-2 font-display text-title font-heading">{project.name}</h3>

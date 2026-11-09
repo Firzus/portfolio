@@ -8,9 +8,13 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { Loader } from "../components/motion/Loader";
+import { usePageMotion } from "../components/motion/pageScroll";
+import { ScrollBar } from "../components/motion/ScrollBar";
 import { NotFoundPage } from "../components/NotFoundPage";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { headScript } from "../lib/motion";
 import { defaultPage, localizedPages } from "../lib/site";
 import { m } from "../paraglide/messages.js";
 import { getLocale } from "../paraglide/runtime.js";
@@ -56,10 +60,13 @@ function RootDocument({ children }: { children: ReactNode }) {
   // A missing page has no version in another language to point to.
   const pages = notFound ? [] : localizedPages(pathname);
   const fallback = defaultPage(pages);
+  usePageMotion();
 
   return (
-    <html lang={locale} className="scroll-pt-16">
+    // The head script adds classes and the transition origin to <html> before hydration.
+    <html lang={locale} className="scroll-pt-16" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: headScript }} />
         <HeadContent />
         {pages.map((page) => (
           <link key={page.locale} rel="alternate" hrefLang={page.locale} href={page.absoluteHref} />
@@ -67,6 +74,8 @@ function RootDocument({ children }: { children: ReactNode }) {
         {fallback && <link rel="alternate" hrefLang="x-default" href={fallback.absoluteHref} />}
       </head>
       <body className="bg-field font-sans text-body text-ink antialiased">
+        <Loader />
+        <ScrollBar />
         <div className="md:px-2">
           <div className="mx-auto flex min-h-svh max-w-column flex-col border-x border-line bg-ground">
             <SiteHeader pages={pages} currentLocale={locale} />
