@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 /* Vendored skills contain demo markup that would otherwise add unused utilities. .claude/skills
    links to the same skills. */
@@ -104,5 +105,150 @@
   }
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-focus;
+  }
+}
+
+/*
+ * Scrollbars: inner scroll areas, and the page wherever the drop bar is not used (touch screens,
+ * no scripts), get a thin bar in the ink. With the drop bar (components/motion/ScrollBar.tsx) the
+ * page's native one is hidden, since both would show the same thing.
+ */
+html,
+html * {
+  scrollbar-width: thin;
+  scrollbar-color: --alpha(var(--color-ink) / 30%) transparent;
+}
+html.custom-scroll {
+  scrollbar-width: none;
+}
+/* For Safari before 18.2, which ignores scrollbar-width; remove once it is no longer supported. */
+html.custom-scroll::-webkit-scrollbar {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot="scrollbar-thumb"] {
+    transition-property: opacity, background-color, width;
+    transition-duration: 300ms;
+  }
+}
+
+/*
+ * Page transitions, both for plain links that load the next document and for router links that
+ * stay in this one; browsers without view transitions navigate instantly. The new page spreads
+ * like a drop from where the previous one was clicked (--vt-x, --vt-y, set by the click handler
+ * or the head script; from the bottom edge when unknown, as after the back button), over the old
+ * page sinking away. The header holds still, and a clicked project picture flows into the
+ * project page's hero picture.
+ */
+@view-transition {
+  navigation: auto;
+}
+
+/* The field behind the snapshots, so the sinking page darkens instead of greying. */
+html {
+  background-color: var(--color-field);
+}
+
+[data-slot="site-header"] {
+  view-transition-name: site-header;
+}
+[data-transition-hero] {
+  view-transition-name: project-hero;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: page-sink 750ms cubic-bezier(0.65, 0, 0.15, 1) both;
+  }
+  ::view-transition-new(root) {
+    animation: page-spread 850ms cubic-bezier(0.65, 0, 0.15, 1) both;
+  }
+  ::view-transition-group(project-hero) {
+    animation-duration: 850ms;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.15, 1);
+  }
+  ::view-transition-old(project-hero),
+  ::view-transition-new(project-hero) {
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  /* Router navigations still go through a transition; it changes the page without motion. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}
+
+@keyframes page-spread {
+  from {
+    clip-path: circle(0% at var(--vt-x, 50%) var(--vt-y, 100%));
+  }
+  to {
+    clip-path: circle(150% at var(--vt-x, 50%) var(--vt-y, 100%));
+  }
+}
+
+@keyframes page-sink {
+  to {
+    transform: scale(0.96);
+    opacity: 0.35;
+  }
+}
+
+/*
+ * Loading screen: shown only with scripts, motion allowed and on the session's first page. If
+ * the script never takes it down, the timer below fades it out so the page stays usable.
+ */
+[data-slot="loader"] {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.skip-loader) [data-slot="loader"] {
+    display: block;
+    animation: loader-failsafe 0.4s ease 8s forwards;
+  }
+}
+[data-slot="loader-drops"] {
+  filter: url(#loader-goo);
+}
+[data-slot="loader-drops"] [data-orbit] {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+  animation-name: loader-orbit;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-iteration-count: infinite;
+}
+/* Each drop orbits at its own pace and phase, so they keep meeting and parting. */
+[data-slot="loader-drops"] [data-orbit]:nth-of-type(1) {
+  animation-duration: 2.4s;
+}
+[data-slot="loader-drops"] [data-orbit]:nth-of-type(2) {
+  animation-duration: 3.1s;
+  animation-delay: -1s;
+}
+[data-slot="loader-drops"] [data-orbit]:nth-of-type(3) {
+  animation-duration: 3.8s;
+  animation-delay: -2s;
+}
+[data-slot="loader-drops"] [data-orbit]:nth-of-type(4) {
+  animation-duration: 2.7s;
+  animation-delay: -0.6s;
+}
+@keyframes loader-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes loader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
   }
 }

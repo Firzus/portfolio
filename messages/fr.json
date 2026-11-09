@@ -244,5 +244,7 @@
   "agents_picture_pull_9_caption": "La pull request des pages projet : le problème, les changements, puis les vérifications et la revue. Capture du 9 novembre 2026,",
   "agents_picture_atelier_alt": "La page d'Atelier sur ce site, avec à droite la reproduction interactive de son Inspector.",
   "agents_picture_atelier_caption": "Un résultat de cette pull request : la page d'Atelier et son Inspector interactif.",
-  "agents_picture_atelier_link": "Voir la page"
+  "agents_picture_atelier_link": "Voir la page",
+  "loader_label": "Chargement du portfolio",
+  "loader_percent_sign": " %"
 }

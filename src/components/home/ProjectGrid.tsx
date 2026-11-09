@@ -6,7 +6,7 @@ import { Band } from "../ui/band";
 export function ProjectGrid() {
   return (
     <Band id="projects" aria-labelledby="projects-heading">
-      <h2 id="projects-heading" className="font-display text-head font-heading">
+      <h2 id="projects-heading" data-reveal className="font-display text-head font-heading">
         {m.home_projects_heading()}
       </h2>
       <p className="mt-4 max-w-lg text-body text-muted">{m.home_projects_intro()}</p>

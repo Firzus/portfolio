@@ -14,13 +14,19 @@ interface ProjectCardProps extends React.ComponentProps<"li"> {
 /** A project in a list of cards: picture, name, summary, facts and the link to its page. */
 export function ProjectCard({ project, picture, className, ...props }: ProjectCardProps) {
   return (
-    <li data-project-card className={cn("flex flex-col gap-4 p-6", className)} {...props}>
+    <li
+      data-project-card
+      data-reveal
+      className={cn("flex flex-col gap-4 p-6", className)}
+      {...props}
+    >
       {picture && (
         <Thumbnail
           src={picture.src}
           alt={picture.alt()}
           width={picture.width}
           height={picture.height}
+          data-transition-picture
         />
       )}
       <h3 className="mt-2 font-display text-title font-heading">{project.name}</h3>

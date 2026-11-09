@@ -69,7 +69,7 @@ function TableOfContents() {
         "border-line bg-surface py-10 max-lg:border-t md:py-14 lg:col-span-2 lg:border-l lg:py-20",
       )}
     >
-      <h2 id="toc-heading" className="font-display text-title font-heading">
+      <h2 data-reveal id="toc-heading" className="font-display text-title font-heading">
         {m.agents_toc_label()}
       </h2>
       <ol className="mt-5 border-t border-line">
@@ -95,7 +95,7 @@ function NoteSectionBand({ section }: { section: NoteSection }) {
     <Band id={section.id} aria-labelledby={headingId}>
       <div className="grid gap-8 lg:grid-cols-5 lg:gap-16">
         <div className="lg:col-span-2">
-          <h2 id={headingId} className="font-display text-head font-heading">
+          <h2 data-reveal id={headingId} className="font-display text-head font-heading">
             {section.heading()}
           </h2>
           {section.essential && <Chip className="mt-4">{m.agents_essential()}</Chip>}
@@ -178,7 +178,7 @@ function Tools({ items }: { items: ToolLink[] }) {
   return (
     <ul className="border-t border-line">
       {items.map((tool) => (
-        <li key={tool.href}>
+        <li key={tool.href} data-reveal>
           <RowLink href={tool.href}>
             <span className="w-14 shrink-0 text-caption text-muted">{tool.type()}</span>
             <span className="flex-1">{tool.label()}</span>
@@ -195,10 +195,18 @@ function Tools({ items }: { items: ToolLink[] }) {
 
 function RequestPath() {
   return (
-    <figure data-request-path className="rounded-xl border border-line bg-surface p-4 md:p-6">
+    <figure
+      data-request-path
+      data-reveal
+      className="rounded-xl border border-line bg-surface p-4 md:p-6"
+    >
       <ol className="grid gap-3 sm:grid-cols-2">
         {requestPath.steps.map((step, index) => (
-          <li key={step.title()} className="flex gap-3 rounded-lg border border-line bg-ground p-4">
+          <li
+            key={step.title()}
+            data-reveal
+            className="flex gap-3 rounded-lg border border-line bg-ground p-4"
+          >
             <span
               aria-hidden="true"
               className="grid size-7 shrink-0 place-items-center rounded-full bg-deep text-caption font-medium tabular-nums"
@@ -230,7 +238,7 @@ function PortfolioPulls({ items }: { items: PortfolioPull[] }) {
       </h3>
       <ul aria-labelledby="portfolio-pulls-heading" className="mt-4 border-t border-line">
         {items.map((pull) => (
-          <li key={pull.number}>
+          <li key={pull.number} data-reveal>
             <RowLink href={portfolioPullHref(pull.number)} className="flex-wrap">
               <span className="w-10 shrink-0 text-caption text-accent tabular-nums">
                 #{pull.number}
@@ -255,7 +263,7 @@ function MethodChanges({ items }: { items: MethodChange[] }) {
       </h3>
       <ul aria-labelledby="method-changes-heading" className="mt-4 border-t border-line">
         {items.map((change) => (
-          <li key={change.number} className="flex gap-4 border-b border-line py-4">
+          <li key={change.number} data-reveal className="flex gap-4 border-b border-line py-4">
             <TextLink
               variant="accent"
               href={agentSkillsPullHref(change.number)}
@@ -280,7 +288,7 @@ function MethodChanges({ items }: { items: MethodChange[] }) {
 function NoteFigure({ picture }: { picture: NotePicture }) {
   const source = picture.source();
   return (
-    <figure>
+    <figure data-reveal>
       <Thumbnail
         src={picture.src}
         alt={picture.alt()}

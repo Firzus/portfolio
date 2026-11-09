@@ -31,7 +31,7 @@ export function ProjectPage({ project }: { project: Project }) {
 
       <Band aria-labelledby="context-heading">
         <div className="grid gap-8 lg:grid-cols-5 lg:gap-16">
-          <h2 id="context-heading" className={cn(sectionHeading, "lg:col-span-2")}>
+          <h2 data-reveal id="context-heading" className={cn(sectionHeading, "lg:col-span-2")}>
             {m.project_context_heading()}
           </h2>
           <div className="flex max-w-2xl flex-col gap-5 text-body text-muted lg:col-span-3">
@@ -45,25 +45,25 @@ export function ProjectPage({ project }: { project: Project }) {
       <Band aria-labelledby="role-heading">
         <div className="grid gap-12 lg:grid-cols-5 lg:gap-16">
           <div className="lg:col-span-2">
-            <h2 id="role-heading" className={sectionHeading}>
+            <h2 data-reveal id="role-heading" className={sectionHeading}>
               {m.project_role_heading()}
             </h2>
             <p className="mt-5 max-w-md text-body text-muted">{project.role()}</p>
             <ul className="mt-6 flex flex-wrap gap-1.5">
               {project.stack.map((name) => (
-                <li key={name}>
+                <li key={name} data-reveal>
                   <Chip>{name}</Chip>
                 </li>
               ))}
             </ul>
           </div>
           <div className="lg:col-span-3">
-            <h2 id="built-heading" className="font-display text-title font-heading">
+            <h2 data-reveal id="built-heading" className="font-display text-title font-heading">
               {m.project_built_heading()}
             </h2>
             <ul aria-labelledby="built-heading" className="mt-5 border-t border-line">
               {project.built.map((item) => (
-                <li key={item()} className="border-b border-line py-3.5 text-body">
+                <li key={item()} data-reveal className="border-b border-line py-3.5 text-body">
                   {item()}
                 </li>
               ))}
@@ -74,12 +74,12 @@ export function ProjectPage({ project }: { project: Project }) {
 
       {pictures.length > 0 && (
         <Band aria-labelledby="pictures-heading">
-          <h2 id="pictures-heading" className={sectionHeading}>
+          <h2 data-reveal id="pictures-heading" className={sectionHeading}>
             {m.project_pictures_heading()}
           </h2>
           <ul className="mt-10 grid gap-6 md:grid-cols-2">
             {pictures.map((picture) => (
-              <li key={picture.src} className="md:odd:last:col-span-2">
+              <li key={picture.src} data-reveal className="md:odd:last:col-span-2">
                 <ProjectFigure picture={picture} />
               </li>
             ))}
@@ -91,7 +91,7 @@ export function ProjectPage({ project }: { project: Project }) {
         <Band aria-labelledby="code-heading">
           <div className="grid gap-8 lg:grid-cols-5 lg:gap-16">
             <div className="lg:col-span-2">
-              <h2 id="code-heading" className={sectionHeading}>
+              <h2 data-reveal id="code-heading" className={sectionHeading}>
                 {m.project_code_heading()}
               </h2>
               <p className="mt-5 max-w-md text-body text-muted">{project.code.intro()}</p>
@@ -118,12 +118,12 @@ export function ProjectPage({ project }: { project: Project }) {
 
       <Band aria-labelledby="links-heading">
         <div className="grid gap-8 lg:grid-cols-5 lg:gap-16">
-          <h2 id="links-heading" className={cn(sectionHeading, "lg:col-span-2")}>
+          <h2 data-reveal id="links-heading" className={cn(sectionHeading, "lg:col-span-2")}>
             {m.project_links_heading()}
           </h2>
           <ul className="border-t border-line lg:col-span-3">
             {project.links.map((link) => (
-              <li key={link.href}>
+              <li key={link.href} data-reveal>
                 <RowLink href={link.href}>
                   <span className="w-20 shrink-0 text-caption text-muted">{link.type()}</span>
                   <span className="flex-1">{link.label()}</span>
@@ -149,7 +149,7 @@ export function ProjectPage({ project }: { project: Project }) {
       </Band>
 
       <Band aria-labelledby="others-heading">
-        <h2 id="others-heading" className={sectionHeading}>
+        <h2 data-reveal id="others-heading" className={sectionHeading}>
           {m.project_others_heading()}
         </h2>
         <ul className="mt-12 grid overflow-hidden rounded-xl border border-line md:grid-cols-2">
@@ -233,6 +233,8 @@ function ProjectFigure({ picture, eager = false, className }: ProjectFigureProps
         height={picture.height}
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
+        // The hero picture receives the clicked project picture in the page transition.
+        data-transition-hero={eager || undefined}
       />
       {picture.provisional && (
         <figcaption className="mt-2">

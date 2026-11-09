@@ -65,6 +65,7 @@ function HeroPictures() {
                 height={picture.height}
                 loading={first ? "eager" : "lazy"}
                 fetchPriority={first ? "high" : "auto"}
+                data-transition-picture
                 className="size-full object-cover"
               />
               <span className="absolute bottom-2.5 left-2.5 max-w-full truncate rounded-md bg-field/85 px-2 py-1 text-caption font-medium max-sm:right-2.5">

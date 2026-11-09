@@ -14,6 +14,7 @@ interface SiteHeaderProps {
 export function SiteHeader({ pages, currentLocale }: SiteHeaderProps) {
   return (
     <header
+      data-slot="site-header"
       className={cn(
         gutter,
         "sticky top-0 z-10 flex h-16 items-center justify-between gap-6 border-b border-line bg-ground",
@@ -21,6 +22,8 @@ export function SiteHeader({ pages, currentLocale }: SiteHeaderProps) {
     >
       <Link
         to="/"
+        // Animates like the plain links, which use cross-document view transitions.
+        viewTransition
         data-home
         className="flex items-center gap-2.5 rounded-md text-body font-semibold tracking-tight"
       >
