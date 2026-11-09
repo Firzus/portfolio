@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-/* Vendored skills contain demo markup that would otherwise add unused utilities. */
+/* Vendored skills contain demo markup that would otherwise add unused utilities. .claude/skills
+   links to the same skills. */
 @source not "../../.agents";
+@source not "../../.claude";
 
 /*
  * Rubik, served with the site (latin subset only) rather than from a font CDN: no third-party
