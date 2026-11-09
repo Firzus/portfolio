@@ -28,6 +28,8 @@ const languages = [
     title: "Travailler avec des agents IA",
     other: { path: "/en/ai-agents", locale: "en", label: "English" },
     home: "/",
+    projectPrefix: "/projets/",
+    delivery: "Livraison",
     homeHeading: "Par où commencer ?",
     sections: [
       "Pourquoi une méthode",
@@ -46,6 +48,8 @@ const languages = [
     title: "Working with AI agents",
     other: { path: "/agents-ia", locale: "fr", label: "Français" },
     home: "/en/",
+    projectPrefix: "/en/projects/",
+    delivery: "Shipping",
     homeHeading: "Where to start?",
     sections: [
       "Why a method",
@@ -62,7 +66,7 @@ const languages = [
 
 describe.each(languages)(
   "$path, the AI agents note",
-  ({ path, lang, title, other, home, homeHeading, sections }) => {
+  ({ path, lang, title, other, home, homeHeading, sections, projectPrefix, delivery }) => {
     test(`is rendered by the server in "${lang}", under its own title`, async () => {
       const html = await page(path);
       expect(html.querySelector("html")?.getAttribute("lang")).toBe(lang);
@@ -113,6 +117,7 @@ describe.each(languages)(
       expect(steps.length).toBeGreaterThanOrEqual(5);
       const text = html.querySelector("main [data-request-path]")?.text ?? "";
       for (const word of ["/work", "Quick", "Small", "Project"]) expect(text).toContain(word);
+      expect(steps.at(-1)?.text).toContain(delivery);
     });
 
     test("cites every figure and every quote to a public source", async () => {
@@ -145,9 +150,13 @@ describe.each(languages)(
         expect(picture?.getAttribute("height")).toBeTruthy();
         const file = await get(picture?.getAttribute("src") ?? "");
         expect(file.status).toBe(200);
-        expect(figure.querySelector("figcaption a")?.getAttribute("href")).toMatch(
-          /^https:\/\/github\.com\/Firzus\/|^\/(en\/)?projects?|^\/projets\//,
-        );
+        const credit = figure.querySelector("figcaption a")?.getAttribute("href") ?? "";
+        if (credit.startsWith("/")) {
+          expect(credit.startsWith(projectPrefix)).toBe(true);
+          expect((await get(credit)).status).toBe(200);
+        } else {
+          expect(credit).toMatch(/^https:\/\/github\.com\/Firzus\//);
+        }
       }
     });
 

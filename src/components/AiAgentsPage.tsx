@@ -23,10 +23,8 @@ import { LinkButton } from "./ui/link-button";
 import { PullQuote } from "./ui/pull-quote";
 import { RowLink } from "./ui/row-link";
 import { Stat } from "./ui/stat";
+import { TextLink } from "./ui/text-link";
 import { Thumbnail } from "./ui/thumbnail";
-
-const sourceLink =
-  "rounded-sm text-accent underline-offset-4 transition-colors hover:underline motion-reduce:transition-none";
 
 /** The research note on how Lilian works with coding agents, one band per section. */
 export function AiAgentsPage() {
@@ -146,7 +144,7 @@ function NoteBlock({ block }: { block: Block }) {
 function withCode(text: string): React.ReactNode[] {
   return text.split("`").map((part, index) =>
     index % 2 === 1 ? (
-      <code key={index} className="rounded-sm bg-surface px-1 py-0.5 font-mono text-small text-ink">
+      <code key={index} className="rounded-sm bg-surface px-1 py-0.5 text-small text-ink">
         {part}
       </code>
     ) : (
@@ -157,10 +155,7 @@ function withCode(text: string): React.ReactNode[] {
 
 function Figures({ items }: { items: SourcedFigure[] }) {
   return (
-    <dl
-      aria-label={m.agents_figures_label()}
-      className="grid gap-6 border-y border-line py-6 sm:grid-cols-3"
-    >
+    <dl className="grid gap-6 border-y border-line py-6 sm:grid-cols-3">
       {items.map((figure) => (
         <Stat
           key={figure.source.href}
@@ -168,9 +163,9 @@ function Figures({ items }: { items: SourcedFigure[] }) {
           label={
             <>
               {figure.label()}
-              <a href={figure.source.href} className={cn(sourceLink, "mt-1 block w-fit")}>
+              <TextLink variant="accent" href={figure.source.href} className="mt-1 block w-fit">
                 {figure.source.name}
-              </a>
+              </TextLink>
             </>
           }
         />
@@ -219,9 +214,9 @@ function RequestPath() {
       </ol>
       <figcaption className="mt-4 text-caption text-muted">
         {m.agents_path_caption()}{" "}
-        <a href={requestPath.source.href} className={sourceLink}>
+        <TextLink variant="accent" href={requestPath.source.href}>
           {requestPath.source.name}
-        </a>
+        </TextLink>
       </figcaption>
     </figure>
   );
@@ -261,13 +256,14 @@ function MethodChanges({ items }: { items: MethodChange[] }) {
       <ul aria-labelledby="method-changes-heading" className="mt-4 border-t border-line">
         {items.map((change) => (
           <li key={change.number} className="flex gap-4 border-b border-line py-4">
-            <a
+            <TextLink
+              variant="accent"
               href={agentSkillsPullHref(change.number)}
               aria-label={`agent-skills#${change.number}`}
-              className={cn(sourceLink, "w-12 shrink-0 text-caption tabular-nums")}
+              className="w-12 shrink-0 text-caption tabular-nums"
             >
               #{change.number}
-            </a>
+            </TextLink>
             <div className="min-w-0 flex-1">
               <p className="text-body">{withCode(change.change())}</p>
               <p className="mt-1 text-small text-muted">
@@ -293,9 +289,9 @@ function NoteFigure({ picture }: { picture: NotePicture }) {
       />
       <figcaption className="mt-3 text-caption text-muted">
         {withCode(picture.caption())}{" "}
-        <a href={source.href} className={sourceLink}>
+        <TextLink variant="accent" href={source.href}>
           {source.name}
-        </a>
+        </TextLink>
       </figcaption>
     </figure>
   );

@@ -1,5 +1,5 @@
 import { m } from "../paraglide/messages.js";
-import { localizeHref } from "../paraglide/runtime.js";
+import { projectHref } from "./projects";
 
 /**
  * The commit of agent-skills the quotes and counts were read at, so each source link shows the
@@ -282,7 +282,7 @@ export const noteSections: NoteSection[] = [
         "portfolio-atelier",
         m.agents_picture_atelier_alt,
         m.agents_picture_atelier_caption,
-        () => ({ href: localizeHref("/projets/atelier"), name: m.agents_picture_atelier_link() }),
+        () => ({ href: projectHref("atelier"), name: m.agents_picture_atelier_link() }),
       ),
       { kind: "text", text: m.agents_case_2 },
       { kind: "text", text: m.agents_case_3 },
