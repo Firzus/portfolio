@@ -167,6 +167,8 @@ const homes = [
     pathsHeading: "Par où commencer ?",
     provisional: "provisoire",
     lysandraAlt: "Illustration provisoire",
+    huzounetAlt: "La liste des équipements de huzounet.fr",
+    atelierAlt: "Le sélecteur d'instructions d'Atelier",
   },
   {
     path: "/en/",
@@ -174,12 +176,14 @@ const homes = [
     pathsHeading: "Where to start?",
     provisional: "provisional",
     lysandraAlt: "Provisional illustration",
+    huzounetAlt: "The huzounet.fr equipment list",
+    atelierAlt: "Atelier's instruction picker",
   },
 ];
 
 describe.each(homes)(
   "$path, the home page",
-  ({ path, projectPath, pathsHeading, provisional, lysandraAlt }) => {
+  ({ path, projectPath, pathsHeading, provisional, lysandraAlt, huzounetAlt, atelierAlt }) => {
     test("opens on the job title, with the name read only by screen readers", async () => {
       const html = await page(path);
       const headings = html.querySelectorAll("h1");
@@ -206,12 +210,14 @@ describe.each(homes)(
       ]);
     });
 
-    test("shows the provisional pictures, described in the current language", async () => {
+    test("shows the real media of Huzounet and Atelier, described in the current language", async () => {
       const html = await page(path);
       const pictures = html.querySelectorAll("main img");
       expect(pictures.length).toBeGreaterThanOrEqual(6);
       for (const picture of pictures) {
-        expect(picture.getAttribute("src")).toMatch(/^\/images\/placeholders\/[\w-]+\.webp$/);
+        expect(picture.getAttribute("src")).toMatch(
+          /^\/images\/(placeholders|projects\/(huzounet|atelier))\/[\w-]+\.(webp|avif)$/,
+        );
         expect(picture.getAttribute("alt")).toBeDefined();
         expect(picture.getAttribute("width")).toBeTruthy();
         expect(picture.getAttribute("height")).toBeTruthy();
@@ -220,9 +226,18 @@ describe.each(homes)(
       expect(described).toHaveLength(3);
       expect(described.every((picture) => /\S/.test(picture.getAttribute("alt") ?? ""))).toBe(true);
       expect(described[0]?.getAttribute("alt")).toContain(lysandraAlt);
-      const file = await fetch(new URL(described[0]?.getAttribute("src") ?? "", server.origin));
-      expect(file.status).toBe(200);
-      expect(file.headers.get("content-type")).toContain("image/webp");
+      expect(described[1]?.getAttribute("src")).toMatch(/^\/images\/projects\/huzounet\//);
+      expect(described[1]?.getAttribute("alt")).toContain(huzounetAlt);
+      expect(described[2]?.getAttribute("src")).toMatch(/^\/images\/projects\/atelier\//);
+      expect(described[2]?.getAttribute("alt")).toContain(atelierAlt);
+      for (const picture of pictures) {
+        const src = picture.getAttribute("src") ?? "";
+        const file = await fetch(new URL(src, server.origin));
+        expect(file.status).toBe(200);
+        expect(file.headers.get("content-type")).toContain(
+          src.endsWith(".avif") ? "image/avif" : "image/webp",
+        );
+      }
     });
 
     test("names each hero picture link after its project alone", async () => {
