@@ -163,7 +163,7 @@ function IntentBlock({ intent }: { intent: Intent }) {
       <div className="flex gap-5 lg:col-span-2">
         {/* A drop that slowly changes shape, filled with a live shader, under a crisp pictogram
             that lifts while the block is hovered. */}
-        <span
+        <div
           aria-hidden="true"
           data-drop
           className="relative isolate grid size-14 shrink-0 place-items-center overflow-hidden"
@@ -173,7 +173,7 @@ function IntentBlock({ intent }: { intent: Intent }) {
             aria-hidden="true"
             className="size-7 transition-transform duration-500 ease-out group-hover/intent:-translate-y-0.5 group-hover/intent:scale-110 motion-reduce:transition-none"
           />
-        </span>
+        </div>
         <div>
           <p className="text-caption font-medium text-muted">{intent.tag}</p>
           <h3 className="mt-1 font-display text-title">{intent.question}</h3>

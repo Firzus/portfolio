@@ -142,7 +142,7 @@ describe("the stylesheet", () => {
   test("lets the current menu link carry the pill's fill without scripts", async () => {
     const css = await stylesheet();
     expect(css).toMatch(
-      /html:not\(\.js\)\s*\[data-slot=["']?nav-link["']?\]\[aria-current=["']?page["']?\]\s*\{\s*background(-color)?:\s*var\(--color-pill\)/,
+      /html:not\(\.js\)[^{]*\[aria-current=["']?page["']?\][^{]*\{\s*background-color:\s*var\(--color-pill\)/,
     );
   });
 });

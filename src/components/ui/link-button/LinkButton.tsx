@@ -10,8 +10,9 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /** The main action of a section, drawn on a live accent shader (see LinkButton). */
-        solid: "relative isolate overflow-hidden bg-accent text-accent-ink hover:text-ground",
+        /** The main action of a section. LinkButton also draws it on a live accent shader. */
+        solid:
+          "relative isolate overflow-hidden bg-accent text-accent-ink hover:bg-ink hover:text-ground",
         /** A secondary action beside the main one. */
         outline: "border border-ink/12 text-ink hover:border-ink/30",
       },
@@ -30,7 +31,18 @@ export type LinkButtonProps = React.ComponentProps<"a"> & VariantProps<typeof bu
  * A link that looks like a button, for actions that navigate. The solid variant flows on a liquid
  * shader and is pulled toward the pointer like a drop.
  */
-export function LinkButton({ className, variant, size, children, ref, ...props }: LinkButtonProps) {
+export function LinkButton({
+  className,
+  variant,
+  size,
+  children,
+  ref,
+  onPointerEnter,
+  onPointerLeave,
+  onFocus,
+  onBlur,
+  ...props
+}: LinkButtonProps) {
   const solid = (variant ?? "solid") === "solid";
   const { hover, bind } = useHover();
   const magnet = useMagnetic<HTMLAnchorElement>(0.28);
@@ -41,13 +53,32 @@ export function LinkButton({ className, variant, size, children, ref, ...props }
       data-slot="link-button"
       data-variant={variant ?? "solid"}
       className={cn(buttonVariants({ variant, size }), className)}
-      {...(solid ? bind : {})}
+      onPointerEnter={(e) => {
+        if (solid) bind.onPointerEnter();
+        onPointerEnter?.(e);
+      }}
+      onPointerLeave={(e) => {
+        if (solid) bind.onPointerLeave();
+        onPointerLeave?.(e);
+      }}
+      onFocus={(e) => {
+        if (solid) bind.onFocus();
+        onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        if (solid) bind.onBlur();
+        onBlur?.(e);
+      }}
       {...props}
     >
       {solid ? (
         <>
           <ShaderLayer scene="button" hover={hover} className="-z-10" />
-          <span data-magnetic-inner className="inline-flex items-center gap-2">
+          <span
+            data-slot="link-button-label"
+            data-magnetic-inner
+            className="inline-flex items-center gap-2"
+          >
             {children}
           </span>
         </>

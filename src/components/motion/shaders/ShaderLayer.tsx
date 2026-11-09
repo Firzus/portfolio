@@ -3,7 +3,9 @@ import { loaderDone, prefersReducedMotion } from "../../../lib/motion";
 import { cn } from "../../../lib/utils";
 import type { Scene } from "./scenes";
 
-const ShaderScene = lazy(() => import("./scenes"));
+// The shader is decoration: a module that fails to load (a redeploy while the tab stays open, a
+// network error) leaves the static fill rather than taking the page down with it.
+const ShaderScene = lazy(() => import("./scenes").catch(() => ({ default: () => null })));
 
 interface ShaderLayerProps {
   scene: Scene;
@@ -34,6 +36,7 @@ export function ShaderLayer({ scene, hover = false, className }: ShaderLayerProp
     <div
       aria-hidden="true"
       data-scene={scene}
+      data-state={ready ? "ready" : undefined}
       className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
     >
       {live && (
@@ -42,10 +45,7 @@ export function ShaderLayer({ scene, hover = false, className }: ShaderLayerProp
             scene={scene}
             hover={hover}
             onReady={() => setReady(true)}
-            className={cn(
-              "size-full transition-opacity duration-700 ease-out",
-              ready ? "opacity-100" : "opacity-0",
-            )}
+            className="size-full opacity-0 transition-opacity duration-700 ease-out in-data-[state=ready]:opacity-100"
           />
         </Suspense>
       )}

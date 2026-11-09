@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FilmGrain, FlowingGradient, Liquify, Shader } from "shaders/react";
 
 /*
@@ -43,7 +43,9 @@ interface SceneProps {
 }
 
 export default function ShaderScene({ scene, hover, className, onReady }: SceneProps) {
-  const [ink] = useState(readInks);
+  const [ink, setInk] = useState<Inks>();
+  useEffect(() => setInk(readInks()), []);
+  if (!ink) return null;
   return (
     <Shader className={className} colorSpace="srgb" disableTelemetry onReady={onReady}>
       {layers(scene, hover, ink)}

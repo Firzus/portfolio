@@ -12,7 +12,7 @@ import { Menu, MenuLinkItem, MenuPopup, MenuTrigger } from "./ui/menu";
  */
 export function MainNav({ current }: { current?: NavItem }) {
   const links = navLinks();
-  const list = useRef<HTMLUListElement>(null);
+  const list = useRef<HTMLElement>(null);
   const pill = useLiquidPill(
     list,
     "[data-slot='nav-link']",
@@ -24,24 +24,30 @@ export function MainNav({ current }: { current?: NavItem }) {
 
   return (
     <>
-      <nav data-slot="main-nav" aria-label={m.nav_label()} className="js:max-md:hidden">
-        <ul ref={list} className="relative isolate flex items-center gap-1">
-          <span
-            ref={pill}
-            data-slot="nav-pill"
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 -z-10"
-          >
-            <span className="absolute top-0 left-0 rounded-md bg-pill opacity-0" />
-            <span className="absolute top-0 left-0 rounded-md bg-pill opacity-0" />
-          </span>
+      <nav
+        ref={list}
+        data-slot="main-nav"
+        aria-label={m.nav_label()}
+        className="relative isolate js:max-md:hidden"
+      >
+        <span
+          ref={pill}
+          data-slot="nav-pill"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10"
+        >
+          <span className="absolute top-0 left-0 rounded-md bg-pill opacity-0" />
+          <span className="absolute top-0 left-0 rounded-md bg-pill opacity-0" />
+        </span>
+        <ul className="flex items-center gap-1">
           {links.map((link) => (
             <li key={link.item}>
               <a
                 href={link.href}
                 data-slot="nav-link"
                 aria-current={link.item === current ? "page" : undefined}
-                className="block rounded-md px-2.5 py-1.5 text-caption font-medium text-muted transition-colors hover:text-ink aria-[current=page]:text-ink motion-reduce:transition-none"
+                // Without scripts the pill is never placed, so the current link carries its fill.
+                className="block rounded-md px-2.5 py-1.5 text-caption font-medium text-muted transition-colors hover:text-ink aria-[current=page]:text-ink motion-reduce:transition-none no-js:aria-[current=page]:bg-pill"
               >
                 {link.label}
               </a>
@@ -50,23 +56,26 @@ export function MainNav({ current }: { current?: NavItem }) {
         </ul>
       </nav>
       {enhanced && (
-        <Menu>
-          <MenuTrigger className="order-last md:hidden">
-            {m.nav_menu()}
-            <NavArrowDown aria-hidden="true" className="size-4" />
-          </MenuTrigger>
-          <MenuPopup>
-            {links.map((link) => (
-              <MenuLinkItem
-                key={link.item}
-                href={link.href}
-                aria-current={link.item === current ? "page" : undefined}
-              >
-                {link.label}
-              </MenuLinkItem>
-            ))}
-          </MenuPopup>
-        </Menu>
+        // A landmark of its own, since the list's is hidden at this width.
+        <nav aria-label={m.nav_label()} className="order-last md:hidden">
+          <Menu>
+            <MenuTrigger>
+              {m.nav_menu()}
+              <NavArrowDown aria-hidden="true" className="size-4" />
+            </MenuTrigger>
+            <MenuPopup>
+              {links.map((link) => (
+                <MenuLinkItem
+                  key={link.item}
+                  href={link.href}
+                  aria-current={link.item === current ? "page" : undefined}
+                >
+                  {link.label}
+                </MenuLinkItem>
+              ))}
+            </MenuPopup>
+          </Menu>
+        </nav>
       )}
     </>
   );

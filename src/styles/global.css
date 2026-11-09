@@ -332,10 +332,6 @@ html {
 [data-slot="nav-pill"] {
   filter: url(#fluid-goo);
 }
-/* Without scripts the pill is never placed, so the current link carries its fill itself. */
-html:not(.js) [data-slot="nav-link"][aria-current="page"] {
-  background-color: var(--color-pill);
-}
 
 /* The fill a link row pours in from the pointer (components/motion/fluid.ts), empty at rest. */
 [data-slot="row-fill"] {

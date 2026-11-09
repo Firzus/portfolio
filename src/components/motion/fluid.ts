@@ -6,8 +6,9 @@ import { hasFinePointer, prefersReducedMotion } from "../../lib/motion";
  * Pointer effects that move the components like the liquid of the shaders: springs that follow
  * the pointer and settle with a small elastic overshoot, a pill merged by the goo filter, a fill
  * that pours from the pointer and a ripple over pictures (filters in FluidDefs.tsx). They read the
- * browser, so they run in effects and handlers only, and do nothing under reduced motion or
- * without a pointer that hovers, except the ripple, which plays once on touch screens.
+ * browser, so they run in effects and handlers only. Under reduced motion or without a pointer
+ * that hovers they do not animate: the pill still moves to the hovered or focused link, but
+ * jumps there, and the ripple plays once on touch screens instead of on hover.
  */
 
 const fluid = () => hasFinePointer() && !prefersReducedMotion();
@@ -153,6 +154,12 @@ export function usePour() {
 }
 
 /**
+ * Releases the picture that holds the ripple filter. Every picture drives the same filter, so a
+ * picture still flattening out would keep writing over the next one's ripple.
+ */
+let releaseRipple: (() => void) | undefined;
+
+/**
  * Ripples a picture while it, or the link around it, is hovered: the shared displacement filter
  * is attached to that picture only, swells, drifts, then flattens out and is detached on leave.
  * Touch screens cannot hover, so there each picture ripples once as it comes into view instead.
@@ -173,7 +180,17 @@ export function useRipple<T extends HTMLElement>() {
       noise.setAttribute("baseFrequency", `${state.fx.toFixed(4)} ${state.fy.toFixed(4)}`);
     };
     let drift: gsap.core.Tween | undefined;
+    const release = () => {
+      drift?.kill();
+      gsap.killTweensOf([state, el]);
+      gsap.set(el, { scale: 1 });
+      state.scale = 0;
+      el.style.filter = "";
+      if (releaseRipple === release) releaseRipple = undefined;
+    };
     const enter = () => {
+      if (releaseRipple !== release) releaseRipple?.();
+      releaseRipple = release;
       el.style.filter = "url(#fluid-ripple)";
       gsap.to(state, {
         scale: 22,
@@ -202,16 +219,9 @@ export function useRipple<T extends HTMLElement>() {
         ease: settle,
         onUpdate: apply,
         overwrite: "auto",
-        onComplete: () => {
-          el.style.filter = "";
-        },
+        onComplete: release,
       });
       gsap.to(el, { scale: 1, duration: 0.9, ease: settle });
-    };
-    const cleanup = () => {
-      drift?.kill();
-      gsap.killTweensOf([state, el]);
-      el.style.filter = "";
     };
     if (touch) {
       let timer = 0;
@@ -228,7 +238,7 @@ export function useRipple<T extends HTMLElement>() {
       return () => {
         seen.disconnect();
         window.clearTimeout(timer);
-        cleanup();
+        release();
       };
     }
     const host = el.closest("a") ?? el;
@@ -237,7 +247,7 @@ export function useRipple<T extends HTMLElement>() {
     return () => {
       host.removeEventListener("pointerenter", enter);
       host.removeEventListener("pointerleave", leave);
-      cleanup();
+      release();
     };
   }, []);
   return ref;
