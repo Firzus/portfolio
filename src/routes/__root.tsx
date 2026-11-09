@@ -11,6 +11,7 @@ import type { ReactNode } from "react";
 import { Loader } from "../components/motion/Loader";
 import { usePageMotion } from "../components/motion/pageScroll";
 import { ScrollBar } from "../components/motion/ScrollBar";
+import { useReveal } from "../components/motion/useReveal";
 import { NotFoundPage } from "../components/NotFoundPage";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -61,6 +62,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   const pages = notFound ? [] : localizedPages(pathname);
   const fallback = defaultPage(pages);
   usePageMotion();
+  useReveal(pathname);
 
   return (
     // The head script adds classes and the transition origin to <html> before hydration.

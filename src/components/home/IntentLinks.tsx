@@ -133,7 +133,7 @@ export function IntentLinks() {
   return (
     <Band aria-labelledby="intents-heading">
       <div className="lg:pl-24">
-        <h2 id="intents-heading" className="font-display text-head font-heading">
+        <h2 id="intents-heading" data-reveal className="font-display text-head font-heading">
           {m.home_paths_heading()}
         </h2>
         <p className="mt-4 max-w-md text-body text-muted">{m.home_paths_intro()}</p>
@@ -165,7 +165,7 @@ function IntentBlock({ intent }: { intent: Intent }) {
       </div>
       <ul className="border-t border-line lg:col-span-3">
         {intent.rows.map((row) => (
-          <li key={row.key} data-intent-row={row.key}>
+          <li key={row.key} data-intent-row={row.key} data-reveal>
             <IntentRow row={row} />
           </li>
         ))}
