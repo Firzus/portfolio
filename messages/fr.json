@@ -54,7 +54,7 @@
   "project_huzounet_picture_home": "L'accueil de huzounet.fr, « La Référence du Mode Online », au-dessus d'un Dofus lumineux.",
   "project_huzounet_picture_equipments": "La liste des équipements de huzounet.fr : des stuffs par élément, filtrés par mode, niveau, budget et classe.",
   "project_huzounet_picture_market": "Le marché de huzounet.fr : prix, bénéfice et rentabilité du craft de chaque objet sur le serveur choisi.",
-  "project_huzounet_picture_mobile": "huzounet.fr sur mobile : la page d'accueil et la liste des équipements.",
+  "project_huzounet_picture_mobile": "huzounet.fr sur mobile : la liste des équipements et la page des monstres.",
   "project_atelier_kind": "Outil pour Unity",
   "project_atelier_summary": "Un noyau de script visuel pour Unity : assembler le gameplay dans l'Inspector ou en C#.",
   "project_atelier_picture_behaviour": "Un comportement Atelier dans l'Inspector de Unity : à l'appui sur E, si l'objet est actif, il est désactivé.",
