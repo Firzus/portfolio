@@ -1,6 +1,7 @@
 .git
 .github
 .agents
+.claude
 .taste-skill
 node_modules
 .output

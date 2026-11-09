@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-/* Vendored skills contain demo markup that would otherwise add unused utilities. */
+/* Vendored skills contain demo markup that would otherwise add unused utilities. .claude/skills
+   links to the same skills. */
 @source not "../../.agents";
+@source not "../../.claude";
 
 /*
  * Rubik, served with the site (latin subset only) rather than from a font CDN: no third-party
@@ -44,6 +46,21 @@
   --color-line: rgb(236 233 245 / 0.08);
   /* Saturated violet field behind the hero pictures and the intent icons. */
   --color-deep: #2a1b8f;
+
+  /* Unity's dark Editor skin, for the reproduction of Atelier's Inspector: the window behind the
+     node cards, the cards and the recess of a nested node, the dropdowns and text fields, the
+     hairlines and the two text tones. Running is Atelier's own wash for the node being played. */
+  --color-editor-window: #202020;
+  --color-editor-card: #3c3c3c;
+  --color-editor-card-hover: #454545;
+  --color-editor-recess: #2e2e2e;
+  --color-editor-control: #515151;
+  --color-editor-control-hover: #5a5a5a;
+  --color-editor-field: #1c1c1c;
+  --color-editor-line: #262626;
+  --color-editor-ink: #d2d2d2;
+  --color-editor-muted: #b0b0b0;
+  --color-editor-running: rgb(99 218 123 / 0.22);
 
   --font-sans: "Rubik", system-ui, sans-serif;
   --font-display: "Rubik", system-ui, sans-serif;

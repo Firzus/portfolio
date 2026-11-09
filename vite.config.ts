@@ -6,9 +6,10 @@ import { nitro } from "nitro/vite";
 import { defineConfig } from "vite-plus";
 
 // Skills under .agents/ are vendored from their upstream repositories
-// (see skills-lock.json); formatting or linting them would diverge from it.
+// (see skills-lock.json), and .claude/skills links to them; formatting or
+// linting them would diverge from upstream.
 // The route tree and the Paraglide output are generated.
-const ignored = [".agents/**", "src/routeTree.gen.ts", "src/paraglide/**"];
+const ignored = [".agents/**", ".claude/**", "src/routeTree.gen.ts", "src/paraglide/**"];
 
 export default defineConfig({
   // The tests run the built server rather than the source, so the app plugins
