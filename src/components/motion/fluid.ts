@@ -176,6 +176,8 @@ export function useRipple<T extends HTMLElement>() {
     if (!map || !noise) return;
     const state = { scale: 0, fx: 0.012, fy: 0.02 };
     const apply = () => {
+      // A released picture's late tweens (the touch timer's leave) must not flatten the owner's.
+      if (releaseRipple !== release) return;
       map.setAttribute("scale", state.scale.toFixed(2));
       noise.setAttribute("baseFrequency", `${state.fx.toFixed(4)} ${state.fy.toFixed(4)}`);
     };
