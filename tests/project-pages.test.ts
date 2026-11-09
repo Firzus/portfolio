@@ -186,3 +186,40 @@ describe.each([
     expect(html.querySelectorAll('link[rel="alternate"]')).toHaveLength(0);
   });
 });
+
+describe.each([
+  { path: "/projets/atelier", press: "Appuyer sur E", reset: "Réinitialiser" },
+  { path: "/en/projects/atelier", press: "Press E", reset: "Reset" },
+])("$path, Atelier's interactive Inspector", ({ path, press, reset }) => {
+  test("is rendered by the server in its starting state, in Atelier's own English", async () => {
+    const html = await page(path);
+    const demo = html.querySelector("main [data-atelier-demo]");
+    expect(demo).not.toBeNull();
+    const inspector = demo?.querySelector("[data-atelier-inspector]");
+    expect(inspector?.getAttribute("lang")).toBe("en");
+    const titles = inspector
+      ?.querySelectorAll("[data-node-title]")
+      .map((title) => title.text.trim());
+    expect(titles).toEqual(["On Input Button", "Check Conditions", "Is Active", "Set Active"]);
+  });
+
+  test("offers the controls to try it, named in the page's language", async () => {
+    const html = await page(path);
+    const buttons = html
+      .querySelectorAll("main [data-atelier-demo] button")
+      .map((button) => button.text.trim() || button.getAttribute("aria-label"));
+    expect(buttons).toEqual(expect.arrayContaining([press, reset]));
+    const unnamed = html
+      .querySelectorAll("main [data-atelier-demo] button")
+      .filter((button) => !button.text.trim() && !button.getAttribute("aria-label"));
+    expect(unnamed).toEqual([]);
+  });
+
+  test("replaces the captures it reproduces, and keeps the custom condition's", async () => {
+    const html = await page(path);
+    const sources = html.querySelectorAll("main img").map((img) => img.getAttribute("src"));
+    expect(sources).not.toContain("/images/projects/atelier/behaviour.avif");
+    expect(sources).not.toContain("/images/projects/atelier/node-picker.avif");
+    expect(sources).toContain("/images/projects/atelier/custom-node.avif");
+  });
+});

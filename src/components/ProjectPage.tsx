@@ -5,6 +5,7 @@ import { gutter } from "../lib/layout";
 import { cn } from "../lib/utils";
 import { m } from "../paraglide/messages.js";
 import { localizeHref } from "../paraglide/runtime.js";
+import { AtelierDemo } from "./atelier-demo/AtelierDemo";
 import { ProjectCard } from "./ProjectCard";
 import { Band } from "./ui/band";
 import { Chip } from "./ui/chip";
@@ -18,10 +19,15 @@ const sectionHeading = "font-display text-head font-heading";
 
 /** A project's case study: what it is, Lilian's role, what was built, pictures and links. */
 export function ProjectPage({ project }: { project: Project }) {
-  const [lead, ...pictures] = project.pictures;
+  const shown = project.demo
+    ? project.pictures.filter((picture) => !picture.reproducedByDemo)
+    : project.pictures;
+  // With a demo, the demo stands at the top and every remaining picture goes to the gallery.
+  const [lead, ...rest] = shown;
+  const pictures = project.demo ? shown : rest;
   return (
     <main>
-      <ProjectHero project={project} picture={lead} />
+      <ProjectHero project={project} picture={project.demo ? undefined : lead} />
 
       <Band aria-labelledby="context-heading">
         <div className="grid gap-8 lg:grid-cols-5 lg:gap-16">
@@ -196,6 +202,11 @@ function ProjectHero({ project, picture }: { project: Project; picture?: Picture
           ))}
         </dl>
       </div>
+      {project.demo === "atelier-inspector" && (
+        <div className="border-line bg-deep p-4 max-lg:border-t md:p-8 lg:col-span-2 lg:border-l">
+          <AtelierDemo />
+        </div>
+      )}
       {picture && (
         <div className="flex items-center border-line bg-deep p-6 max-lg:border-t md:px-8 md:py-12 lg:col-span-2 lg:border-l lg:px-11">
           <ProjectFigure picture={picture} eager className="w-full" />

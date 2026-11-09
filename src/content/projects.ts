@@ -13,6 +13,8 @@ export interface Picture {
   alt: () => string;
   /** A stand-in until Lilian provides the real picture; the page marks it as provisional. */
   provisional?: boolean;
+  /** Shown on the home page only: on the project page, the project's demo reproduces it. */
+  reproducedByDemo?: boolean;
 }
 
 export interface Stat {
@@ -57,6 +59,8 @@ export interface Project {
   stats: Stat[];
   links: ProjectLink[];
   code?: CodeSample;
+  /** A working reproduction of the project, shown at the top of its page instead of a picture. */
+  demo?: "atelier-inspector";
 }
 
 // Provisional pictures, reprinted as violet duotones, until Lilian provides the real ones.
@@ -164,12 +168,19 @@ export const projects: Project[] = [
     summary: m.project_atelier_summary,
     fact: () => "Unity 6, URP",
     pictures: [
-      media("atelier", "behaviour", m.project_atelier_picture_behaviour),
-      media("atelier", "node-picker", m.project_atelier_picture_node_picker),
+      {
+        ...media("atelier", "behaviour", m.project_atelier_picture_behaviour),
+        reproducedByDemo: true,
+      },
+      {
+        ...media("atelier", "node-picker", m.project_atelier_picture_node_picker),
+        reproducedByDemo: true,
+      },
       media("atelier", "custom-node", m.project_atelier_picture_custom_node),
     ],
     period: m.project_atelier_period,
     signature: m.project_atelier_signature,
+    demo: "atelier-inspector",
     context: [
       m.project_atelier_context_1,
       m.project_atelier_context_2,
