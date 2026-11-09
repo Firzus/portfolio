@@ -60,7 +60,17 @@ export function Loader() {
     const q = gsap.utils.selector(el);
     const counter = el.querySelector("[data-slot='loader-count']");
     const wave = el.querySelector("[data-slot='loader-wave']");
-    if (!counter || !wave) return;
+    if (!counter || !wave) {
+      signalLoaderDone();
+      return;
+    }
+    // The stylesheet's timer hid the screen because the page never finished loading in time.
+    const onFailsafe = (e: AnimationEvent) => {
+      if (e.target !== el) return;
+      signalLoaderDone();
+      setDone(true);
+    };
+    el.addEventListener("animationend", onFailsafe);
     const shown = { value: 0 };
     let target = 0.15;
 
@@ -138,7 +148,14 @@ export function Loader() {
             setDone(true);
           },
         })
-        .to(shown, { value: 1, duration: 0.6, ease: "power2.inOut", onUpdate: render })
+        .to(shown, {
+          value: 1,
+          duration: 0.6,
+          ease: "power2.inOut",
+          onUpdate: render,
+          // Replaces a fill still easing toward the fonts' share, which would end below 100 %.
+          overwrite: true,
+        })
         // The letters settle back into their drawn shape as the fill completes.
         .to(swell, { amount: 0, duration: 0.6, ease: "power2.inOut" }, "<")
         .to(
@@ -147,7 +164,7 @@ export function Loader() {
           ">-0.1",
         )
         .to(
-          q("[data-slot='loader-content']"),
+          q("[data-slot='loader-content'], [data-slot='loader-meta']"),
           { y: -40, opacity: 0, duration: 0.45, ease: "power2.in" },
           "<0.15",
         )
@@ -161,6 +178,7 @@ export function Loader() {
 
     return () => {
       cancelled = true;
+      el.removeEventListener("animationend", onFailsafe);
       stop();
       exit?.kill();
     };
@@ -218,10 +236,17 @@ export function Loader() {
           </g>
         </svg>
       </div>
-      <p className="absolute right-6 bottom-6 text-small text-ink/70 tabular-nums md:right-10 md:bottom-8">
-        <span data-slot="loader-count">000</span> %
+      <p
+        data-slot="loader-meta"
+        className="absolute right-6 bottom-6 text-small text-ink/70 tabular-nums md:right-10 md:bottom-8"
+      >
+        <span data-slot="loader-count">000</span>
+        {m.loader_percent_sign()}
       </p>
-      <p className="absolute bottom-6 left-6 text-small text-muted md:bottom-8 md:left-10">
+      <p
+        data-slot="loader-meta"
+        className="absolute bottom-6 left-6 text-small text-muted md:bottom-8 md:left-10"
+      >
         {m.loader_label()}
       </p>
     </div>

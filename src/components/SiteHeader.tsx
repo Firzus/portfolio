@@ -22,6 +22,8 @@ export function SiteHeader({ pages, currentLocale }: SiteHeaderProps) {
     >
       <Link
         to="/"
+        // Animates like the plain links, which use cross-document view transitions.
+        viewTransition
         data-home
         className="flex items-center gap-2.5 rounded-md text-body font-semibold tracking-tight"
       >

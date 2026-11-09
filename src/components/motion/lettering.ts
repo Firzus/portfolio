@@ -1,6 +1,5 @@
-// Traced from the source bitmap of the name lettering; the bitmap, the tracing script and the
-// procedure live under prototype/lettering/ on the prototype/fir-419-direction-aihero branch.
-// Retrace there rather than edit the path by hand.
+// Traced from a hand-lettering bitmap into one path; retrace the bitmap rather than edit the
+// path by hand, since its points are only meaningful as a whole.
 export const nameMark = {
   width: 1896,
   height: 402,

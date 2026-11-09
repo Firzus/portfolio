@@ -55,6 +55,13 @@ describe("the page head", () => {
     const script = head?.querySelectorAll("script").find((s) => s.text.includes("classList.add"));
     expect(script?.text).toContain('"js"');
   });
+
+  test("hides the native scrollbar before the first paint where the drop replaces it", async () => {
+    const head = (await page("/")).querySelector("head");
+    const script = head?.querySelectorAll("script").find((s) => s.text.includes("classList.add"));
+    expect(script?.text).toContain("(hover: hover) and (pointer: fine)");
+    expect(script?.text).toContain('"custom-scroll"');
+  });
 });
 
 describe("the stylesheet", () => {

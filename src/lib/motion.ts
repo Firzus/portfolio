@@ -21,8 +21,9 @@ export const loaderPlayedKey = "loader-played";
 export const transitionOriginKey = "transition-origin";
 
 /**
- * Runs in the head before the first paint, so the stylesheet knows at once whether scripts run
- * and whether the loading screen already played this session, and the page transition starts
- * from where the previous page was clicked.
+ * Runs in the head before the first paint, so the stylesheet knows at once whether scripts run,
+ * whether the drop replaces the native scrollbar (adding it later shifts the page sideways), and
+ * whether the loading screen already played this session, and the page transition starts from
+ * where the previous page was clicked.
  */
-export const headScript = `(function(){var d=document.documentElement;d.classList.add("js");try{if(sessionStorage.getItem("${loaderPlayedKey}"))d.classList.add("skip-loader");var o=JSON.parse(sessionStorage.getItem("${transitionOriginKey}")||"null");sessionStorage.removeItem("${transitionOriginKey}");if(o){d.style.setProperty("--vt-x",o.x+"px");d.style.setProperty("--vt-y",o.y+"px")}}catch(e){}})();`;
+export const headScript = `(function(){var d=document.documentElement;d.classList.add("js");if(matchMedia("(hover: hover) and (pointer: fine)").matches)d.classList.add("custom-scroll");try{if(sessionStorage.getItem("${loaderPlayedKey}"))d.classList.add("skip-loader");var o=JSON.parse(sessionStorage.getItem("${transitionOriginKey}")||"null");sessionStorage.removeItem("${transitionOriginKey}");if(o){d.style.setProperty("--vt-x",o.x+"px");d.style.setProperty("--vt-y",o.y+"px")}}catch(e){}})();`;

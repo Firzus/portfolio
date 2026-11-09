@@ -245,5 +245,6 @@
   "agents_picture_atelier_alt": "Atelier's page on this site, with the interactive reproduction of its Inspector on the right.",
   "agents_picture_atelier_caption": "One result of that pull request: Atelier's page and its interactive Inspector.",
   "agents_picture_atelier_link": "See the page",
-  "loader_label": "Loading the portfolio"
+  "loader_label": "Loading the portfolio",
+  "loader_percent_sign": "%"
 }

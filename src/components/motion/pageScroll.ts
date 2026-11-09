@@ -1,3 +1,4 @@
+import { useRouter } from "@tanstack/react-router";
 import Lenis from "lenis";
 import { useEffect } from "react";
 import { prefersReducedMotion, transitionOriginKey } from "../../lib/motion";
@@ -19,11 +20,21 @@ export function scrollPageTo(y: number, immediate: boolean) {
  *   picture is named so the browser morphs it into the project page's hero picture.
  */
 export function usePageMotion() {
+  const router = useRouter();
   useEffect(() => {
     const lenis = prefersReducedMotion()
       ? undefined
-      : new Lenis({ autoRaf: true, anchors: true, lerp: 0.09 });
+      : // Nested scroll areas (the Atelier demo's lists) keep the wheel instead of the page.
+        new Lenis({ autoRaf: true, anchors: true, allowNestedScroll: true, lerp: 0.09 });
     pageScroll.lenis = lenis;
+    // Inertia still running would carry on over the router's scroll to the top or its restored
+    // position, so it stops when the router changes page.
+    const stopInertia = router.subscribe("onBeforeNavigate", (event) => {
+      if (!event.pathChanged || !lenis) return;
+      // Stopping resets the scroller to where the page is, dropping the inertia.
+      lenis.stop();
+      lenis.start();
+    });
 
     const root = document.documentElement;
     const named = new Set<HTMLElement>();
@@ -37,10 +48,9 @@ export function usePageMotion() {
     };
 
     const onClick = (e: MouseEvent) => {
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
-        return;
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const link = (e.target as Element).closest("a");
-      if (!link || link.target) return;
+      if (!link || link.target || link.hasAttribute("download")) return;
       const url = new URL(link.href, location.href);
       if (url.origin !== location.origin || url.pathname === location.pathname) return;
 
@@ -73,14 +83,16 @@ export function usePageMotion() {
     // A page restored from the back-forward cache still carries the names of the last click.
     const onShow = (e: PageTransitionEvent) => e.persisted && clearNames();
 
-    document.addEventListener("click", onClick);
+    // Captured, because a router link cancels the click before it bubbles here.
+    document.addEventListener("click", onClick, true);
     window.addEventListener("pageshow", onShow);
     return () => {
-      document.removeEventListener("click", onClick);
+      document.removeEventListener("click", onClick, true);
+      stopInertia();
       window.removeEventListener("pageshow", onShow);
       clearNames();
       lenis?.destroy();
       pageScroll.lenis = undefined;
     };
-  }, []);
+  }, [router]);
 }

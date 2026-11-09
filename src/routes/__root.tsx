@@ -62,7 +62,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   const pages = notFound ? [] : localizedPages(pathname);
   const fallback = defaultPage(pages);
   usePageMotion();
-  useReveal(pathname);
+  useReveal();
 
   return (
     // The head script adds classes and the transition origin to <html> before hydration.

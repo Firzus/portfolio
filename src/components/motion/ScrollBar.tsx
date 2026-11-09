@@ -105,6 +105,9 @@ export function ScrollBar() {
     resize.observe(document.body);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", layout);
+    // The idle timer leaves the drop lit while it is held or hovered, so it restarts on release.
+    bar.addEventListener("pointerup", wake);
+    bar.addEventListener("pointerleave", wake);
     return () => {
       cancelAnimationFrame(frame);
       window.clearTimeout(idle);
@@ -112,6 +115,8 @@ export function ScrollBar() {
       resize.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", layout);
+      bar.removeEventListener("pointerup", wake);
+      bar.removeEventListener("pointerleave", wake);
     };
   }, [active]);
 

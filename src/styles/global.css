@@ -121,6 +121,7 @@ html * {
 html.custom-scroll {
   scrollbar-width: none;
 }
+/* For Safari before 18.2, which ignores scrollbar-width; remove once it is no longer supported. */
 html.custom-scroll::-webkit-scrollbar {
   display: none;
 }
