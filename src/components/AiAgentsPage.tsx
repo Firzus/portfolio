@@ -8,6 +8,7 @@ import {
   requestPath,
   type Block,
   type MethodChange,
+  type NotePicture,
   type NoteSection,
   type PortfolioPull,
   type SourcedFigure,
@@ -22,6 +23,7 @@ import { LinkButton } from "./ui/link-button";
 import { PullQuote } from "./ui/pull-quote";
 import { RowLink } from "./ui/row-link";
 import { Stat } from "./ui/stat";
+import { Thumbnail } from "./ui/thumbnail";
 
 const sourceLink =
   "rounded-sm text-accent underline-offset-4 transition-colors hover:underline motion-reduce:transition-none";
@@ -31,10 +33,9 @@ export function AiAgentsPage() {
   return (
     <main>
       <NoteHero />
-      <TableOfContents />
       <article>
-        {noteSections.map((section, index) => (
-          <NoteSectionBand key={section.id} section={section} number={index + 1} />
+        {noteSections.map((section) => (
+          <NoteSectionBand key={section.id} section={section} />
         ))}
       </article>
     </main>
@@ -43,35 +44,43 @@ export function AiAgentsPage() {
 
 function NoteHero() {
   return (
-    <section className={cn(gutter, "border-b border-line py-14 md:py-20")}>
-      <p className="text-small text-muted">{m.agents_kind()}</p>
-      <h1 className="mt-5 max-w-4xl font-display text-display font-heading">{m.agents_title()}</h1>
-      <p className="mt-6 max-w-2xl text-lead">{m.agents_lede()}</p>
-      <p className="mt-5 max-w-2xl text-body text-muted">{m.agents_short_read()}</p>
-      <div className="mt-9">
-        <LinkButton href={agentSkillsRepository}>
-          {m.agents_repository_link()}
-          <ArrowUpRight aria-hidden="true" className="size-4" />
-        </LinkButton>
+    <section className="grid border-b border-line lg:grid-cols-5">
+      <div className={cn(gutter, "py-14 md:py-20 lg:col-span-3")}>
+        <h1 className="font-display text-display font-heading">{m.agents_title()}</h1>
+        <p className="mt-5 text-small text-muted">{m.agents_kind()}</p>
+        <p className="mt-6 max-w-2xl text-lead">{m.agents_lede()}</p>
+        <p className="mt-5 max-w-2xl text-body text-muted">{m.agents_short_read()}</p>
+        <div className="mt-9">
+          <LinkButton href={agentSkillsRepository}>
+            {m.agents_repository_link()}
+            <ArrowUpRight aria-hidden="true" className="size-4" />
+          </LinkButton>
+        </div>
       </div>
+      <TableOfContents />
     </section>
   );
 }
 
 function TableOfContents() {
   return (
-    <nav aria-label={m.agents_toc_label()} className={cn(gutter, "border-b border-line py-10")}>
-      <p className="text-label font-medium text-muted uppercase">{m.agents_toc_label()}</p>
-      <ol className="mt-5 grid gap-x-10 border-t border-line md:grid-cols-2">
-        {noteSections.map((section, index) => (
+    <nav
+      aria-labelledby="toc-heading"
+      className={cn(
+        gutter,
+        "border-line bg-surface py-10 max-lg:border-t md:py-14 lg:col-span-2 lg:border-l lg:py-20",
+      )}
+    >
+      <h2 id="toc-heading" className="font-display text-title font-heading">
+        {m.agents_toc_label()}
+      </h2>
+      <ol className="mt-5 border-t border-line">
+        {noteSections.map((section) => (
           <li key={section.id} className="border-b border-line">
             <a
               href={`#${section.id}`}
-              className="group flex items-baseline gap-4 rounded-sm py-3 transition-colors hover:text-accent motion-reduce:transition-none"
+              className="flex items-baseline gap-4 rounded-sm py-3 transition-colors hover:text-accent motion-reduce:transition-none"
             >
-              <span className="w-6 shrink-0 text-caption text-muted tabular-nums">
-                {sectionNumber(index + 1)}
-              </span>
               <span className="flex-1">{section.heading()}</span>
               {section.essential && <Chip>{m.agents_essential()}</Chip>}
             </a>
@@ -82,23 +91,18 @@ function TableOfContents() {
   );
 }
 
-function sectionNumber(number: number): string {
-  return String(number).padStart(2, "0");
-}
-
-function NoteSectionBand({ section, number }: { section: NoteSection; number: number }) {
+function NoteSectionBand({ section }: { section: NoteSection }) {
   const headingId = `${section.id}-heading`;
   return (
     <Band id={section.id} aria-labelledby={headingId}>
       <div className="grid gap-8 lg:grid-cols-5 lg:gap-16">
         <div className="lg:col-span-2">
-          <p className="text-caption text-muted tabular-nums">{sectionNumber(number)}</p>
-          <h2 id={headingId} className="mt-2 font-display text-head font-heading">
+          <h2 id={headingId} className="font-display text-head font-heading">
             {section.heading()}
           </h2>
           {section.essential && <Chip className="mt-4">{m.agents_essential()}</Chip>}
         </div>
-        <div className="flex max-w-2xl min-w-0 flex-col gap-8 lg:col-span-3">
+        <div className="flex min-w-0 flex-col gap-8 lg:col-span-3">
           {section.blocks.map((block, index) => (
             <NoteBlock key={index} block={block} />
           ))}
@@ -111,7 +115,7 @@ function NoteSectionBand({ section, number }: { section: NoteSection; number: nu
 function NoteBlock({ block }: { block: Block }) {
   switch (block.kind) {
     case "text":
-      return <p className="text-body text-muted">{withCode(block.text())}</p>;
+      return <p className="max-w-2xl text-body text-muted">{withCode(block.text())}</p>;
     case "quote":
       return (
         <PullQuote
@@ -129,6 +133,8 @@ function NoteBlock({ block }: { block: Block }) {
       return <Tools items={block.items} />;
     case "request-path":
       return <RequestPath />;
+    case "picture":
+      return <NoteFigure picture={block.picture} />;
     case "portfolio-pulls":
       return <PortfolioPulls items={block.items} />;
     case "method-changes":
@@ -272,5 +278,25 @@ function MethodChanges({ items }: { items: MethodChange[] }) {
         ))}
       </ul>
     </div>
+  );
+}
+
+function NoteFigure({ picture }: { picture: NotePicture }) {
+  const source = picture.source();
+  return (
+    <figure>
+      <Thumbnail
+        src={picture.src}
+        alt={picture.alt()}
+        width={picture.width}
+        height={picture.height}
+      />
+      <figcaption className="mt-3 text-caption text-muted">
+        {withCode(picture.caption())}{" "}
+        <a href={source.href} className={sourceLink}>
+          {source.name}
+        </a>
+      </figcaption>
+    </figure>
   );
 }

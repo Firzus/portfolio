@@ -1,4 +1,5 @@
 import { m } from "../paraglide/messages.js";
+import { localizeHref } from "../paraglide/runtime.js";
 
 /**
  * The commit of agent-skills the quotes and counts were read at, so each source link shows the
@@ -41,6 +42,16 @@ export interface PortfolioPull {
   tests: number;
 }
 
+export interface NotePicture {
+  src: string;
+  width: number;
+  height: number;
+  alt: () => string;
+  caption: () => string;
+  /** The page the capture shows, linked after the caption; read at render, as it may be localized. */
+  source: () => Source;
+}
+
 export interface MethodChange {
   number: number;
   change: () => string;
@@ -58,6 +69,7 @@ export type Block =
   | { kind: "figures"; items: SourcedFigure[] }
   | { kind: "tools"; items: ToolLink[] }
   | { kind: "request-path" }
+  | { kind: "picture"; picture: NotePicture }
   | { kind: "portfolio-pulls"; items: PortfolioPull[] }
   | { kind: "method-changes"; items: MethodChange[] };
 
@@ -99,6 +111,24 @@ const operatingPolicy = agentSkillsFile(
 export const portfolioPullHref = (number: number) => `${portfolio}/pull/${number}`;
 export const agentSkillsPullHref = (number: number) => `${agentSkills}/pull/${number}`;
 
+// A capture at 1000 by 625 CSS pixels, exported at twice that size, the shape of the project pictures.
+const capture = (
+  name: string,
+  alt: () => string,
+  caption: () => string,
+  source: () => Source,
+): Block => ({
+  kind: "picture",
+  picture: {
+    src: `/images/ai-agents/${name}.avif`,
+    width: 2000,
+    height: 1250,
+    alt,
+    caption,
+    source,
+  },
+});
+
 const portfolioPull = (number: number): Source => ({
   href: portfolioPullHref(number),
   name: `portfolio#${number}`,
@@ -114,6 +144,12 @@ export const noteSections: NoteSection[] = [
       { kind: "text", text: m.agents_why_1 },
       { kind: "quote", text: m.agents_why_quote, source: readme },
       { kind: "text", text: m.agents_why_2 },
+      capture(
+        "agent-skills-readme",
+        m.agents_picture_readme_alt,
+        m.agents_picture_readme_caption,
+        () => readme,
+      ),
     ],
   },
   {
@@ -164,6 +200,12 @@ export const noteSections: NoteSection[] = [
       { kind: "text", text: m.agents_path_1 },
       { kind: "text", text: m.agents_path_2 },
       { kind: "request-path" },
+      capture(
+        "agent-skills-pull-182",
+        m.agents_picture_pull_182_alt,
+        m.agents_picture_pull_182_caption,
+        () => ({ href: agentSkillsPullHref(182), name: "agent-skills#182" }),
+      ),
       { kind: "quote", text: m.agents_path_quote, source: workSkill },
       { kind: "text", text: m.agents_path_3 },
     ],
@@ -230,6 +272,18 @@ export const noteSections: NoteSection[] = [
           { number: 9, issue: "FIR-426", summary: m.agents_case_pull_9, tests: 143 },
         ],
       },
+      capture(
+        "portfolio-pull-9",
+        m.agents_picture_pull_9_alt,
+        m.agents_picture_pull_9_caption,
+        () => portfolioPull(9),
+      ),
+      capture(
+        "portfolio-atelier",
+        m.agents_picture_atelier_alt,
+        m.agents_picture_atelier_caption,
+        () => ({ href: localizeHref("/projets/atelier"), name: m.agents_picture_atelier_link() }),
+      ),
       { kind: "text", text: m.agents_case_2 },
       { kind: "text", text: m.agents_case_3 },
     ],

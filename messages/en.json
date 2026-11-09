@@ -236,5 +236,14 @@
   "intent_agents_tag": "Method",
   "intent_agents_question": "See how I work with AI agents?",
   "intent_agents_row": "AI agents: the method, its tools and its evidence",
-  "row_type_note": "Note"
+  "row_type_note": "Note",
+  "agents_picture_readme_alt": "The top of agent-skills' README on GitHub: the repository's title and the sentence that sums up the method.",
+  "agents_picture_readme_caption": "agent-skills' README, which presents the method in one sentence. Captured on November 9, 2026,",
+  "agents_picture_pull_182_alt": "agent-skills' pull request 182 on GitHub, merged: it replaces the former workflow with /work, tracked in Linear.",
+  "agents_picture_pull_182_caption": "The pull request that introduced `/work` and the Quick, Small and Project sizes. Captured on November 9, 2026,",
+  "agents_picture_pull_9_alt": "The portfolio's pull request 9 on GitHub, merged, with its description opening on the problem to solve.",
+  "agents_picture_pull_9_caption": "The pull request of the project pages: the problem, the changes, then the checks and the review. Captured on November 9, 2026,",
+  "agents_picture_atelier_alt": "Atelier's page on this site, with the interactive reproduction of its Inspector on the right.",
+  "agents_picture_atelier_caption": "One result of that pull request: Atelier's page and its interactive Inspector.",
+  "agents_picture_atelier_link": "See the page"
 }

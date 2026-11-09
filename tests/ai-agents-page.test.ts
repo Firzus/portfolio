@@ -134,6 +134,23 @@ describe.each(languages)(
       }
     });
 
+    test("shows described captures served by the site, each credited to the page it shows", async () => {
+      const html = await page(path);
+      const figures = html.querySelectorAll("main figure").filter((f) => f.querySelector("img"));
+      expect(figures.length).toBeGreaterThanOrEqual(4);
+      for (const figure of figures) {
+        const picture = figure.querySelector("img");
+        expect(picture?.getAttribute("alt")).toMatch(/\S/);
+        expect(picture?.getAttribute("width")).toBeTruthy();
+        expect(picture?.getAttribute("height")).toBeTruthy();
+        const file = await get(picture?.getAttribute("src") ?? "");
+        expect(file.status).toBe(200);
+        expect(figure.querySelector("figcaption a")?.getAttribute("href")).toMatch(
+          /^https:\/\/github\.com\/Firzus\/|^\/(en\/)?projects?|^\/projets\//,
+        );
+      }
+    });
+
     test("is reached from the home page's « where to start » links", async () => {
       const html = await page(home);
       const section = html
