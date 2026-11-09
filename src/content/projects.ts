@@ -34,6 +34,14 @@ const picture = (name: string, alt: () => string): Picture => ({
   alt,
 });
 
+// A capture of the project set on an Encre background, exported at twice its 1000 by 625 layout.
+const media = (slug: string, name: string, alt: () => string): Picture => ({
+  src: `/images/projects/${slug}/${name}.avif`,
+  width: 2000,
+  height: 1250,
+  alt,
+});
+
 /** Single source of the projects, so the home page and the project pages cannot diverge. */
 export const projects: Project[] = [
   {
@@ -57,8 +65,10 @@ export const projects: Project[] = [
     summary: m.project_huzounet_summary,
     fact: m.project_huzounet_fact,
     pictures: [
-      picture("huzounet-1", m.project_huzounet_picture_1),
-      picture("huzounet-2", m.project_huzounet_picture_2),
+      media("huzounet", "home", m.project_huzounet_picture_home),
+      media("huzounet", "equipments", m.project_huzounet_picture_equipments),
+      media("huzounet", "market", m.project_huzounet_picture_market),
+      media("huzounet", "mobile", m.project_huzounet_picture_mobile),
     ],
     site: "https://huzounet.fr",
   },
@@ -70,8 +80,9 @@ export const projects: Project[] = [
     summary: m.project_atelier_summary,
     fact: () => "Unity 6, URP",
     pictures: [
-      picture("atelier-1", m.project_atelier_picture_1),
-      picture("atelier-2", m.project_atelier_picture_2),
+      media("atelier", "behaviour", m.project_atelier_picture_behaviour),
+      media("atelier", "node-picker", m.project_atelier_picture_node_picker),
+      media("atelier", "custom-node", m.project_atelier_picture_custom_node),
     ],
   },
 ];

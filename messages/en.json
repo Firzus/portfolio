@@ -51,10 +51,13 @@
   "project_huzounet_kind": "Site and tools for players",
   "project_huzounet_summary": "The reference site for players of Dofus online: items, monsters, market and tools.",
   "project_huzounet_fact": "1,901 PvM and PvP builds",
-  "project_huzounet_picture_1": "Provisional illustration: a glowing egg on a pedestal, surrounded by shelves of equipment.",
-  "project_huzounet_picture_2": "Provisional illustration: a world map, scales and a ledger on a merchant's table.",
+  "project_huzounet_picture_home": "The huzounet.fr home page, “La Référence du Mode Online”, over a glowing Dofus egg.",
+  "project_huzounet_picture_equipments": "The huzounet.fr equipment list: builds by element, filtered by mode, level, budget and class.",
+  "project_huzounet_picture_market": "The huzounet.fr market: price, profit and crafting return of each item on the chosen server.",
+  "project_huzounet_picture_mobile": "huzounet.fr on mobile: the home page and the equipment list.",
   "project_atelier_kind": "Tool for Unity",
   "project_atelier_summary": "A visual scripting core for Unity: assemble gameplay in the Inspector or in C#.",
-  "project_atelier_picture_1": "Provisional illustration: blocks and cards linked by threads on a workbench.",
-  "project_atelier_picture_2": "Provisional illustration: an articulated figure holds a rippling cloth banner."
+  "project_atelier_picture_behaviour": "An Atelier behaviour in the Unity Inspector: when E is pressed, if the object is active, it is deactivated.",
+  "project_atelier_picture_node_picker": "Atelier's instruction picker, sorted by category (Audio, Cameras, Characters…), open over a behaviour.",
+  "project_atelier_picture_custom_node": "A condition written in C#, “Is On Screen”, added in the Inspector next to the built-in “Is Active” condition."
 }

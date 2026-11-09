@@ -51,10 +51,13 @@
   "project_huzounet_kind": "Site et outils pour joueurs",
   "project_huzounet_summary": "Le site de référence des joueurs du mode online de Dofus : équipements, monstres, marché et outils.",
   "project_huzounet_fact": "1 901 stuffs PvM et PvP",
-  "project_huzounet_picture_1": "Illustration provisoire : un œuf lumineux sur un socle, entouré d'étagères d'équipements.",
-  "project_huzounet_picture_2": "Illustration provisoire : une carte du monde, une balance et un registre sur une table de marchand.",
+  "project_huzounet_picture_home": "L'accueil de huzounet.fr, « La Référence du Mode Online », au-dessus d'un Dofus lumineux.",
+  "project_huzounet_picture_equipments": "La liste des équipements de huzounet.fr : des stuffs par élément, filtrés par mode, niveau, budget et classe.",
+  "project_huzounet_picture_market": "Le marché de huzounet.fr : prix, bénéfice et rentabilité du craft de chaque objet sur le serveur choisi.",
+  "project_huzounet_picture_mobile": "huzounet.fr sur mobile : la page d'accueil et la liste des équipements.",
   "project_atelier_kind": "Outil pour Unity",
   "project_atelier_summary": "Un noyau de script visuel pour Unity : assembler le gameplay dans l'Inspector ou en C#.",
-  "project_atelier_picture_1": "Illustration provisoire : des blocs et des cartes reliés par des fils sur un établi.",
-  "project_atelier_picture_2": "Illustration provisoire : une figurine articulée tient une bannière de tissu qui ondule."
+  "project_atelier_picture_behaviour": "Un comportement Atelier dans l'Inspector de Unity : à l'appui sur E, si l'objet est actif, il est désactivé.",
+  "project_atelier_picture_node_picker": "Le sélecteur d'instructions d'Atelier, rangées par catégorie (Audio, Cameras, Characters…), ouvert au-dessus d'un comportement.",
+  "project_atelier_picture_custom_node": "Une condition écrite en C#, « Is On Screen », ajoutée dans l'Inspector à côté de la condition intégrée « Is Active »."
 }
