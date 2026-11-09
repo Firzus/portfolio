@@ -4,20 +4,26 @@ import type { LocalizedPage } from "../lib/site";
 import { cn } from "../lib/utils";
 import type { Locale } from "../paraglide/runtime.js";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { MainNav } from "./MainNav";
+import type { NavItem } from "./navigation";
 
 interface SiteHeaderProps {
   /** The current page in every locale; empty when the page has no other version. */
   pages: LocalizedPage[];
   currentLocale: Locale;
+  /** The menu section the page belongs to, if any. */
+  current?: NavItem;
 }
 
-export function SiteHeader({ pages, currentLocale }: SiteHeaderProps) {
+export function SiteHeader({ pages, currentLocale, current }: SiteHeaderProps) {
   return (
     <header
       data-slot="site-header"
       className={cn(
         gutter,
-        "sticky top-0 z-10 flex h-16 items-center justify-between gap-6 border-b border-line bg-ground",
+        "sticky top-0 z-10 flex h-16 items-center gap-6 border-b border-line bg-ground",
+        // Without scripts the menu stays a list, which needs a second line on a phone.
+        "no-js:max-md:h-auto no-js:max-md:flex-wrap no-js:max-md:gap-y-3 no-js:max-md:py-3",
       )}
     >
       <Link
@@ -35,7 +41,10 @@ export function SiteHeader({ pages, currentLocale }: SiteHeaderProps) {
         </span>
         Lilian PRIEU
       </Link>
-      <LanguageSwitcher pages={pages} currentLocale={currentLocale} />
+      <MainNav current={current} />
+      <div className="ml-auto">
+        <LanguageSwitcher pages={pages} currentLocale={currentLocale} />
+      </div>
     </header>
   );
 }

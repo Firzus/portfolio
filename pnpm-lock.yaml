@@ -205,6 +205,9 @@ importers:
       react-dom:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
+      shaders:
+        specifier: ^4.0.7
+        version: 4.0.7(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       tailwind-merge:
         specifier: ^3.7.0
         version: 3.7.0
@@ -2124,6 +2127,27 @@ packages:
     resolution: {integrity: sha512-ocL7l8aqYWy/dXDHQF3Z8bt5R4Z9IBB4hASCkBDQhl3ZUclxVEzRMQNmRNshiEEIPF1g7uz+2nENDqg+9TU86A==}
     engines: {node: '>=20'}
 
+  shaders@4.0.7:
+    resolution: {integrity: sha512-v/EQv2U6TQccRuoWX0D5lhkJsIizigCRVadsavY8olKLwb4uhHFi+JlIREEMYD4pvywjLnwVpMNpTtJgzR/FwQ==}
+    hasBin: true
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+      solid-js: ^1.8.0
+      svelte: ^5
+      vue: ^3.5.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      solid-js:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
@@ -2158,6 +2182,10 @@ packages:
     resolution: {integrity: sha512-nIZ2N2dFpjBsg2hgitKu7mA+FvsIJuGJOwysRngmVRRmWgR/UyPjwJj8c/fT/dhm8EkHnF5EOogRf+0Z2qrimA==}
     engines: {node: '>=20.0.0'}
 
+  tinyest@0.3.4:
+    resolution: {integrity: sha512-81EcMHTCQ2IPweOGk9SpMgjbenR9ZJRsAE84btEv0DhvVKwhe7qBy28hWgatoXa9ppWzmtpHiJ+e86SiaAtY6w==}
+    engines: {node: '>=12.20.0'}
+
   tinyexec@1.3.1:
     resolution: {integrity: sha512-GCvB3aoys96IuDFBMcTB46JOR6mdMtAToqwiW8JlWhsoh1mhHi/xn9ss/Dg7N555GiJyEt2qzoG/NHCwM6h1EA==}
     engines: {node: '>=18'}
@@ -2180,6 +2208,17 @@ packages:
 
   tslib@2.9.1:
     resolution: {integrity: sha512-a4Ux9VKuIMHsOS7ENbEq6hK2ZGYIT27Rtl0E4eD9KqwxhKiQeMZE/9xb3IdYwWaSOyIBQLExhQgXDTYoiCxnWA==}
+
+  tsover-runtime@0.0.7:
+    resolution: {integrity: sha512-FHHwMJzZbnP23+fU1PxXljy7j0RRRosL2r1/CRUNTqfW+l7m35JsUkM615x/cAzw4GqRdXPIl3axKMj9qzpZtQ==}
+
+  typed-binary@4.3.5:
+    resolution: {integrity: sha512-irziT9zxcyZs8TawuZBab1kQTACM3Q6wGWDh/a5IB2iWbueu+jbkN5ofoSvp28Em1w4ZEa7y44Jx7pHmgBGZdw==}
+
+  typegpu@0.12.3:
+    resolution: {integrity: sha512-zYwQEhnPPwhq5vQKmollXRK1LCVjStOnL+2B0PiebqvAzYPr25rPNR4r3olLoow5sKKjyj3kzHKEcpD5SyDzGQ==}
+    engines: {node: '>=12.20.0'}
+    hasBin: true
 
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
@@ -4085,6 +4124,13 @@ snapshots:
 
   seroval@1.7.9: {}
 
+  shaders@4.0.7(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
+    dependencies:
+      typegpu: 0.12.3
+    optionalDependencies:
+      react: 19.3.1
+      react-dom: 19.3.1(react@19.3.1)
+
   sirv@3.0.2:
     dependencies:
       '@polka/url': 1.0.0-next.29
@@ -4107,6 +4153,8 @@ snapshots:
 
   tinybench@6.2.2: {}
 
+  tinyest@0.3.4: {}
+
   tinyexec@1.3.1: {}
 
   tinyglobby@0.2.17:
@@ -4122,6 +4170,16 @@ snapshots:
 
   tslib@2.9.1:
     optional: true
+
+  tsover-runtime@0.0.7: {}
+
+  typed-binary@4.3.5: {}
+
+  typegpu@0.12.3:
+    dependencies:
+      tinyest: 0.3.4
+      tsover-runtime: 0.0.7
+      typed-binary: 4.3.5
 
   typescript@6.0.3: {}
 

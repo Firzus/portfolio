@@ -47,6 +47,9 @@
   --color-line: rgb(236 233 245 / 0.08);
   /* Saturated violet field behind the hero pictures and the intent icons. */
   --color-deep: #2a1b8f;
+  /* Fill of the menu's liquid pill. Opaque on purpose: the goo filter thresholds alpha, so a
+     translucent fill would vanish. */
+  --color-pill: #221f33;
 
   /* Unity's dark Editor skin, for the reproduction of Atelier's Inspector: the window behind the
      node cards, the cards and the recess of a nested node, the dropdowns and text fields, the
@@ -98,6 +101,24 @@
   /* Width of the framed column. */
   --container-column: 88rem;
 }
+
+/*
+ * Shader colours, read by the scripts of components/motion/shaders rather than by utilities,
+ * hence `static`: Tailwind would otherwise drop them as unused. The hero and the intent icons
+ * flow from the ground through deep, mid and bright; the primary button folds light and dark
+ * around the accent, its darkest fold keeping 6:1 or more against the button text.
+ */
+@theme static {
+  --color-shader-mid: #4b3df0;
+  --color-shader-bright: #a48bff;
+  --color-shader-button-dark: #8f7cff;
+  --color-shader-button-light: #cfc5ff;
+  --color-shader-button-fold: #9483ff;
+}
+
+/* Applies once the head script has marked the document as scripted, before the first paint. */
+@custom-variant js (html.js &);
+@custom-variant no-js (html:not(.js) &);
 
 @layer base {
   ::selection {
@@ -251,4 +272,72 @@ html {
     opacity: 0;
     visibility: hidden;
   }
+}
+
+/*
+ * Static fills under each shader: what shows before the canvas is ready, and when it never runs
+ * (no scripts, reduced motion, no usable GPU). The button's fill takes the hover colour that the
+ * live shader replaces with a faster flow.
+ */
+[data-scene="hero"] {
+  background-color: var(--color-deep);
+}
+[data-scene="button"] {
+  background-color: var(--color-accent);
+}
+[data-slot="link-button"]:hover [data-scene="button"] {
+  background-color: var(--color-ink);
+}
+[data-scene^="icon-"] {
+  background-color: var(--color-shader-mid);
+}
+
+/* Icon drops keep changing shape like a drop of ink, each one out of step with the others. */
+[data-drop] {
+  border-radius: 46% 54% 58% 42% / 44% 46% 54% 56%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-drop] {
+    animation: drop-shape 9s ease-in-out infinite alternate;
+  }
+  [data-intent]:nth-child(2) [data-drop] {
+    animation-delay: -2.3s;
+  }
+  [data-intent]:nth-child(3) [data-drop] {
+    animation-delay: -4.6s;
+  }
+  [data-intent]:nth-child(4) [data-drop] {
+    animation-delay: -6.9s;
+  }
+  [data-intent]:nth-child(5) [data-drop] {
+    animation-delay: -9.2s;
+  }
+}
+@keyframes drop-shape {
+  0% {
+    border-radius: 46% 54% 58% 42% / 44% 46% 54% 56%;
+  }
+  33% {
+    border-radius: 58% 42% 44% 56% / 52% 60% 40% 48%;
+  }
+  66% {
+    border-radius: 40% 60% 52% 48% / 60% 42% 58% 40%;
+  }
+  100% {
+    border-radius: 54% 46% 40% 60% / 42% 54% 46% 58%;
+  }
+}
+
+/* The two shapes of the menu pill, merged into one drop by the goo filter. */
+[data-slot="nav-pill"] {
+  filter: url(#fluid-goo);
+}
+/* Without scripts the pill is never placed, so the current link carries its fill itself. */
+html:not(.js) [data-slot="nav-link"][aria-current="page"] {
+  background-color: var(--color-pill);
+}
+
+/* The fill a link row pours in from the pointer (components/motion/fluid.ts), empty at rest. */
+[data-slot="row-fill"] {
+  clip-path: circle(0%);
 }

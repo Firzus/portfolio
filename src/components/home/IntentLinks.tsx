@@ -3,6 +3,8 @@ import type * as React from "react";
 import { contact } from "../../content/contact";
 import { findProject, projectHref } from "../../content/projects";
 import { m } from "../../paraglide/messages.js";
+import { ShaderLayer, useHover } from "../motion/shaders/ShaderLayer";
+import type { Scene } from "../motion/shaders/scenes";
 import { localizeHref } from "../../paraglide/runtime.js";
 import { Band } from "../ui/band";
 import { ProvisionalMark } from "../ui/provisional-mark";
@@ -19,6 +21,7 @@ interface Row {
 
 interface Intent {
   key: string;
+  scene: Scene;
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   tag: string;
   question: string;
@@ -38,6 +41,7 @@ function intents(): Intent[] {
   return [
     {
       key: "play",
+      scene: "icon-play",
       Icon: Gamepad,
       tag: m.intent_play_tag(),
       question: m.intent_play_question(),
@@ -54,6 +58,7 @@ function intents(): Intent[] {
     },
     {
       key: "tools",
+      scene: "icon-tools",
       Icon: Tools,
       tag: m.intent_tools_tag(),
       question: m.intent_tools_question(),
@@ -70,6 +75,7 @@ function intents(): Intent[] {
     },
     {
       key: "unity",
+      scene: "icon-unity",
       Icon: Puzzle,
       tag: m.intent_unity_tag(),
       question: m.intent_unity_question(),
@@ -84,6 +90,7 @@ function intents(): Intent[] {
     },
     {
       key: "agents",
+      scene: "icon-agents",
       Icon: Brain,
       tag: m.intent_agents_tag(),
       question: m.intent_agents_question(),
@@ -98,6 +105,7 @@ function intents(): Intent[] {
     },
     {
       key: "contact",
+      scene: "icon-contact",
       Icon: Mail,
       tag: m.intent_contact_tag(),
       question: m.intent_contact_question(),
@@ -149,14 +157,22 @@ export function IntentLinks() {
 
 function IntentBlock({ intent }: { intent: Intent }) {
   const { Icon } = intent;
+  const { hover, bind } = useHover();
   return (
-    <div className="grid gap-6 lg:grid-cols-5 lg:gap-16">
+    <div {...bind} data-intent className="group/intent grid gap-6 lg:grid-cols-5 lg:gap-16">
       <div className="flex gap-5 lg:col-span-2">
+        {/* A drop that slowly changes shape, filled with a live shader, under a crisp pictogram
+            that lifts while the block is hovered. */}
         <span
           aria-hidden="true"
-          className="grid size-14 shrink-0 place-items-center rounded-2xl bg-deep"
+          data-drop
+          className="relative isolate grid size-14 shrink-0 place-items-center overflow-hidden"
         >
-          <Icon aria-hidden="true" className="size-7" />
+          <ShaderLayer scene={intent.scene} hover={hover} className="-z-10" />
+          <Icon
+            aria-hidden="true"
+            className="size-7 transition-transform duration-500 ease-out group-hover/intent:-translate-y-0.5 group-hover/intent:scale-110 motion-reduce:transition-none"
+          />
         </span>
         <div>
           <p className="text-caption font-medium text-muted">{intent.tag}</p>

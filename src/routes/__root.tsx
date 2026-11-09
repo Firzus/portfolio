@@ -8,12 +8,14 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { FluidDefs } from "../components/motion/FluidDefs";
 import { Loader } from "../components/motion/Loader";
 import { usePageMotion } from "../components/motion/pageScroll";
 import { ScrollBar } from "../components/motion/ScrollBar";
 import { useReveal } from "../components/motion/useReveal";
 import { NotFoundPage } from "../components/NotFoundPage";
 import { SiteFooter } from "../components/SiteFooter";
+import { currentNavItem } from "../components/navigation";
 import { SiteHeader } from "../components/SiteHeader";
 import { headScript } from "../lib/motion";
 import { defaultPage, localizedPages } from "../lib/site";
@@ -76,11 +78,16 @@ function RootDocument({ children }: { children: ReactNode }) {
         {fallback && <link rel="alternate" hrefLang="x-default" href={fallback.absoluteHref} />}
       </head>
       <body className="bg-field font-sans text-body text-ink antialiased">
+        <FluidDefs />
         <Loader />
         <ScrollBar />
         <div className="md:px-2">
           <div className="mx-auto flex min-h-svh max-w-column flex-col border-x border-line bg-ground">
-            <SiteHeader pages={pages} currentLocale={locale} />
+            <SiteHeader
+              pages={pages}
+              currentLocale={locale}
+              current={notFound ? undefined : currentNavItem(pathname)}
+            />
             <div className="flex-1">{children}</div>
             <SiteFooter />
           </div>

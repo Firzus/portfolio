@@ -40,7 +40,10 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
 
   test("shows the localized interface texts", async () => {
     const html = await page(path);
-    expect(html.querySelector("header nav")?.getAttribute("aria-label")).toBe(texts.switcherLabel);
+    const switcher = html
+      .querySelectorAll("header nav")
+      .find((nav) => nav.querySelector("[data-language-switch]"));
+    expect(switcher?.getAttribute("aria-label")).toBe(texts.switcherLabel);
     expect(html.querySelectorAll("[data-contact]").map((link) => link.text.trim())).toContain(
       texts.email,
     );
