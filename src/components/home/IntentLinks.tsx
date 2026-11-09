@@ -1,8 +1,9 @@
-import { ArrowRight, ArrowUpRight, Gamepad, Mail, Puzzle, Tools } from "iconoir-react";
+import { ArrowRight, ArrowUpRight, Brain, Gamepad, Mail, Puzzle, Tools } from "iconoir-react";
 import type * as React from "react";
 import { contact } from "../../content/contact";
 import { findProject, projectHref } from "../../content/projects";
 import { m } from "../../paraglide/messages.js";
+import { localizeHref } from "../../paraglide/runtime.js";
 import { Band } from "../ui/band";
 import { ProvisionalMark } from "../ui/provisional-mark";
 import { RowLink, RowPlaceholder } from "../ui/row-link";
@@ -78,6 +79,20 @@ function intents(): Intent[] {
           key: "atelier-repository",
           type: m.row_type_repository(),
           label: m.intent_unity_repository(),
+        },
+      ],
+    },
+    {
+      key: "agents",
+      Icon: Brain,
+      tag: m.intent_agents_tag(),
+      question: m.intent_agents_question(),
+      rows: [
+        {
+          key: "agents-note",
+          type: m.row_type_note(),
+          label: m.intent_agents_row(),
+          href: localizeHref("/agents-ia"),
         },
       ],
     },
