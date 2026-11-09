@@ -31,7 +31,8 @@ export function usePageMotion() {
     // position, so it stops when the router changes page.
     const stopInertia = router.subscribe("onBeforeNavigate", (event) => {
       if (!event.pathChanged || !lenis) return;
-      // Stopping resets the scroller to where the page is, dropping the inertia.
+      // Stopping resets the scroller to where the page is, dropping the inertia; call reset()
+      // directly instead once Lenis makes it public.
       lenis.stop();
       lenis.start();
     });

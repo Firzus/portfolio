@@ -64,11 +64,19 @@ export function Loader() {
       signalLoaderDone();
       return;
     }
-    // The stylesheet's timer hid the screen because the page never finished loading in time.
-    const onFailsafe = (e: AnimationEvent) => {
-      if (e.target !== el) return;
+    /** Takes the screen down for good; later full loads of the session skip it. */
+    const finish = () => {
+      try {
+        sessionStorage.setItem(loaderPlayedKey, "1");
+      } catch {
+        // Storage can be refused (private mode); the loader then plays on every full load.
+      }
       signalLoaderDone();
       setDone(true);
+    };
+    // The stylesheet's timer hid the screen because the page never finished loading in time.
+    const onFailsafe = (e: AnimationEvent) => {
+      if (e.target === el) finish();
     };
     el.addEventListener("animationend", onFailsafe);
     const shown = { value: 0 };
@@ -138,14 +146,8 @@ export function Loader() {
       exit = gsap
         .timeline({
           onComplete: () => {
-            try {
-              sessionStorage.setItem(loaderPlayedKey, "1");
-            } catch {
-              // Storage can be refused (private mode); the loader then plays on every full load.
-            }
-            signalLoaderDone();
             stop();
-            setDone(true);
+            finish();
           },
         })
         .to(shown, {

@@ -10,9 +10,10 @@ import { thumbLayout } from "./scrollbarLayout";
  * accent while held, and fades when the page is still. It can be dragged, and a click on the
  * track scrolls there.
  *
- * It replaces the native bar only on screens with a fine pointer (the root class custom-scroll,
- * set here); touch screens keep their own overlay bar. Keyboard and wheel scrolling are
- * untouched, and it is hidden from assistive technology, which scrolls the page by other means.
+ * It replaces the native bar only on screens with a fine pointer, where the head script sets the
+ * root class custom-scroll that hides the native one; touch screens keep their own overlay bar.
+ * Keyboard and wheel scrolling are untouched, and it is hidden from assistive technology, which
+ * scrolls the page by other means.
  */
 export function ScrollBar() {
   const track = useRef<HTMLDivElement>(null);
