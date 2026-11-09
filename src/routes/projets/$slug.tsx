@@ -13,7 +13,7 @@ export const Route = createFileRoute("/projets/$slug")({
     if (!project) return {};
     return {
       meta: [
-        { title: `${project.name}, ${m.project_meta_suffix()} · Lilian PRIEU` },
+        { title: m.project_meta_title({ name: project.name }) },
         { name: "description", content: project.summary() },
       ],
     };

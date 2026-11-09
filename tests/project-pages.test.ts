@@ -139,6 +139,25 @@ test("shows Atelier's C# condition as text, not as a picture", async () => {
     const html = await page(path);
     const code = html.querySelector("main pre code");
     expect(code?.text).toContain("public class IsOnScreenCondition : Condition");
+    // Its long lines scroll sideways, so the keyboard must reach it, and it needs a name.
+    const pre = html.querySelector("main pre");
+    expect(pre?.getAttribute("tabindex")).toBe("0");
+    const name = html.getElementById(pre?.getAttribute("aria-labelledby") ?? "");
+    expect(name?.text.trim()).toBe("IsOnScreenCondition.cs");
+  }
+});
+
+test("describes Lysandra on the home page as on its own page", async () => {
+  for (const path of ["/", "/en/"]) {
+    const html = await page(path);
+    expect(html.querySelector("#projects")?.text).not.toMatch(/aventure|adventure/i);
+  }
+});
+
+test("gives Huzounet's build count once, as the exact figure", async () => {
+  for (const path of ["/projets/huzounet", "/en/projects/huzounet"]) {
+    const html = await page(path);
+    expect(html.querySelector("main")?.text).not.toMatch(/\b1[\s, ]?900\b/);
   }
 });
 

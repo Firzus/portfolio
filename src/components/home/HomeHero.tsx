@@ -5,6 +5,7 @@ import { cn } from "../../lib/utils";
 import { m } from "../../paraglide/messages.js";
 import { LinkButton } from "../ui/link-button";
 import { ProvisionalMark } from "../ui/provisional-mark";
+import { Stat } from "../ui/stat";
 
 export function HomeHero() {
   const stats = [
@@ -33,12 +34,7 @@ export function HomeHero() {
         </div>
         <dl className="mt-14 grid max-w-xl grid-cols-3 gap-4 md:gap-8">
           {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col-reverse justify-end gap-2">
-              <dt className="text-caption text-muted">{stat.label}</dt>
-              <dd className="text-lead font-medium tracking-tight tabular-nums md:text-title">
-                {stat.value}
-              </dd>
-            </div>
+            <Stat key={stat.label} value={stat.value} label={stat.label} />
           ))}
         </dl>
       </div>

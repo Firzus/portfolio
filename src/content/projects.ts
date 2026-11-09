@@ -48,7 +48,7 @@ export interface Project {
   /** Studio or frame of the project and its dates, shown under the name on its page. */
   period: () => string;
   /** A line that stays in English in every locale. */
-  signature?: string;
+  signature?: () => string;
   context: (() => string)[];
   role: () => string;
   built: (() => string)[];
@@ -169,7 +169,7 @@ export const projects: Project[] = [
       media("atelier", "custom-node", m.project_atelier_picture_custom_node),
     ],
     period: m.project_atelier_period,
-    signature: "Assemble gameplay. In the Inspector or in C#.",
+    signature: m.project_atelier_signature,
     context: [
       m.project_atelier_context_1,
       m.project_atelier_context_2,

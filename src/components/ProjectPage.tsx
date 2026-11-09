@@ -11,6 +11,7 @@ import { Chip } from "./ui/chip";
 import { LinkButton } from "./ui/link-button";
 import { ProvisionalMark } from "./ui/provisional-mark";
 import { RowLink } from "./ui/row-link";
+import { Stat } from "./ui/stat";
 import { Thumbnail } from "./ui/thumbnail";
 
 const sectionHeading = "font-display text-head font-heading";
@@ -90,11 +91,19 @@ export function ProjectPage({ project }: { project: Project }) {
               <p className="mt-5 max-w-md text-body text-muted">{project.code.intro()}</p>
             </div>
             <figure className="min-w-0 overflow-hidden rounded-lg border border-line bg-surface lg:col-span-3">
-              <figcaption className="border-b border-line px-4 py-2.5 text-caption text-muted">
+              <figcaption
+                id="code-name"
+                className="border-b border-line px-4 py-2.5 text-caption text-muted"
+              >
                 {project.code.fileName}
               </figcaption>
-              <pre className="overflow-x-auto p-4 text-caption leading-relaxed">
-                <code className="font-mono">{project.code.source}</code>
+              {/* Focusable, so the keyboard can scroll its long lines sideways. */}
+              <pre
+                tabIndex={0}
+                aria-labelledby="code-name"
+                className="overflow-x-auto p-4 text-caption leading-relaxed"
+              >
+                <code>{project.code.source}</code>
               </pre>
             </figure>
           </div>
@@ -166,7 +175,7 @@ function ProjectHero({ project, picture }: { project: Project; picture?: Picture
         <p className="mt-6 max-w-md text-lead">{project.summary()}</p>
         {project.signature && (
           <p lang="en" className="mt-4 text-body font-medium text-accent">
-            {project.signature}
+            {project.signature()}
           </p>
         )}
         <div className="mt-9 flex flex-wrap gap-2.5">
@@ -183,12 +192,7 @@ function ProjectHero({ project, picture }: { project: Project; picture?: Picture
         </div>
         <dl className="mt-12 grid max-w-md grid-cols-2 gap-4 md:gap-8">
           {project.stats.map((stat) => (
-            <div key={stat.label()} className="flex flex-col-reverse justify-end gap-2">
-              <dt className="text-caption text-muted">{stat.label()}</dt>
-              <dd className="text-lead font-medium tracking-tight tabular-nums md:text-title">
-                {stat.value()}
-              </dd>
-            </div>
+            <Stat key={stat.label()} value={stat.value()} label={stat.label()} />
           ))}
         </dl>
       </div>
