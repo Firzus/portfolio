@@ -140,7 +140,7 @@ function intents(): Intent[] {
 export function IntentLinks() {
   return (
     <Band aria-labelledby="intents-heading">
-      <div className="lg:pl-24">
+      <div>
         <h2 id="intents-heading" data-reveal className="font-display text-head font-heading">
           {m.home_paths_heading()}
         </h2>

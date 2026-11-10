@@ -27,14 +27,14 @@ const french = {
   prefix: "/projets/",
   other: { prefix: "/en/projects/", locale: "en", label: "English" },
   home: "/",
-  headings: ["Contexte", "Rôle", "Ce que Lilian a construit", "Images", "Liens", "Autres projets"],
+  headings: ["Contexte", "Rôle", "Ce que j'ai construit", "Images", "Liens", "Autres projets"],
 };
 const english = {
   lang: "en",
   prefix: "/en/projects/",
   other: { prefix: "/projets/", locale: "fr", label: "Français" },
   home: "/en/",
-  headings: ["Context", "Role", "What Lilian built", "Pictures", "Links", "Other projects"],
+  headings: ["Context", "Role", "What I built", "Pictures", "Links", "Other projects"],
 };
 
 const projects = [
@@ -96,7 +96,10 @@ describe.each(cases)(
       const pictures = html.querySelectorAll("main img");
       expect(pictures.length).toBeGreaterThanOrEqual(2);
       for (const picture of pictures) {
-        expect(picture.getAttribute("alt")).toMatch(/\S/);
+        // A brand logo beside the project's name is decoration, marked so with an empty alt.
+        if (!picture.closest("[data-atelier-stage]")) {
+          expect(picture.getAttribute("alt")).toMatch(/\S/);
+        }
         expect(picture.getAttribute("width")).toBeTruthy();
         expect(picture.getAttribute("height")).toBeTruthy();
         const file = await get(picture.getAttribute("src") ?? "");
@@ -221,5 +224,33 @@ describe.each([
     expect(sources).not.toContain("/images/projects/atelier/behaviour.avif");
     expect(sources).not.toContain("/images/projects/atelier/node-picker.avif");
     expect(sources).toContain("/images/projects/atelier/custom-node.avif");
+  });
+});
+
+describe.each(["/projets/atelier", "/en/projects/atelier"])("%s, Atelier's branding", (path) => {
+  test("opens on Atelier's logo over its signature gradient, the demo further down", async () => {
+    const html = await page(path);
+    const hero = html.querySelector("main > section");
+    const logo = hero?.querySelector("[data-atelier-stage] img");
+    expect(logo?.getAttribute("src")).toBe(
+      "/images/projects/atelier/brand/atelier-lockup-vertical.svg",
+    );
+    expect(logo?.getAttribute("alt")).toBe("");
+    // A live shader of the brand colours flows behind the logo, over the gradient as its fill.
+    const scene = hero?.querySelector("[data-atelier-stage] [data-scene=atelier]");
+    expect(scene?.getAttribute("aria-hidden")).toBe("true");
+    expect(hero?.querySelector("[data-atelier-demo]")).toBeNull();
+    expect(
+      html.querySelector("main [aria-labelledby=demo-heading] [data-atelier-demo]"),
+    ).toBeTruthy();
+  });
+
+  test("shows the Inspector first and keeps the invitation to try it discreet", async () => {
+    const demo = (await page(path)).querySelector("main [data-atelier-demo]");
+    const first = demo?.querySelector(":scope > *");
+    expect(first?.querySelector("[data-atelier-inspector]")).toBeTruthy();
+    expect(demo?.querySelector("[data-demo-hint]")?.getAttribute("class")).toContain(
+      "text-caption",
+    );
   });
 });

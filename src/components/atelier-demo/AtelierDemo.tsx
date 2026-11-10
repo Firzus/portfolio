@@ -37,6 +37,7 @@ import { ChoiceField, NumberField, StaticField, TextField } from "./fields";
 import { editorLabels, keyCodes, keyLabels } from "./labels";
 import { NodeCard } from "./NodeCard";
 import { NodePicker } from "./NodePicker";
+import { AtelierMark } from "./AtelierMark";
 import { ScenePreview } from "./ScenePreview";
 
 const runnableInstructions: InstructionType[] = [
@@ -202,96 +203,114 @@ export function AtelierDemo({ className }: { className?: string }) {
       tabIndex={-1}
       onKeyDown={(event) => onKey(event, "Pressed")}
       onKeyUp={(event) => onKey(event, "Released")}
-      className={cn("flex flex-col gap-4 outline-none", className)}
+      className={cn("flex flex-col gap-3 outline-none", className)}
     >
-      <p className="text-small text-ink">{m.demo_hint({ key: keyName })}</p>
-      {/* data-ui tells the design inspector (inspect.mjs) this reproduces an interface: it
-          counts as a picture and keeps Unity's own sizes, labels and lines. */}
-      <div
-        data-atelier-inspector
-        data-ui
-        lang="en"
-        className="flex flex-col gap-2 rounded-lg bg-editor-window p-3 text-caption text-editor-ink"
-      >
-        <p className="text-label text-editor-muted uppercase">{editorLabels.whenHeading}</p>
-        <NodeCard
-          title={editorLabels.onInputButton}
-          summary={behaviour.on}
-          Icon={Gamepad}
-          defaultOpen
+      {/* Shown like a capture of the editor window; that it also runs is left for the reader to
+          find, with one quiet line under it. */}
+      <div className="overflow-hidden rounded-xl bg-editor-window shadow-2xl ring-1 ring-ink/10">
+        <div
+          lang="en"
+          className="flex h-9 items-center gap-2 border-b border-editor-line px-3 text-caption text-editor-muted"
         >
-          <StaticField label={editorLabels.button} value={editorLabels.keyboardKey} />
-          <ChoiceField
-            label={editorLabels.key}
-            indent
-            value={behaviour.key}
-            items={(Object.keys(keyLabels) as InputKey[]).map((key) => ({
-              value: key,
-              label: keyLabels[key],
-            }))}
-            onChange={(key) => edit({ ...behaviour, key })}
-          />
-          <ChoiceField
-            label={editorLabels.on}
-            value={behaviour.on}
-            items={[
-              { value: "Pressed" as const, label: editorLabels.pressed },
-              { value: "Released" as const, label: editorLabels.released },
-            ]}
-            onChange={(on) => edit({ ...behaviour, on })}
-          />
-        </NodeCard>
-
-        <div className="mt-1 flex items-center justify-between">
-          <p className="text-label text-editor-muted uppercase">{editorLabels.thenHeading}</p>
-          <div className="flex items-center gap-1">
-            <span className="flex items-center gap-1 rounded-sm bg-editor-card px-1.5 py-0.5 text-editor-muted">
-              <Prohibition aria-hidden="true" className="size-3.5" />
-              {editorLabels.ignore}
-            </span>
-            <button
-              type="button"
-              onClick={fire}
-              aria-label={m.demo_run()}
-              lang={getLocale()}
-              className="grid size-6 place-items-center rounded-sm bg-editor-card hover:bg-editor-card-hover"
-            >
-              <Play aria-hidden="true" className="size-3.5" />
-            </button>
-          </div>
+          <AtelierMark className="size-3.5 text-atelier-red" />
+          <span className="font-medium text-editor-ink">{editorLabels.inspector}</span>
+          <span className="ml-auto">{editorLabels.behaviour}</span>
         </div>
-
-        {behaviour.instructions.map((node) => (
+        {/* data-ui tells the design inspector (inspect.mjs) this reproduces an interface: it
+          counts as a picture and keeps Unity's own sizes, labels and lines. */}
+        <div
+          data-atelier-inspector
+          data-ui
+          lang="en"
+          className="flex flex-col gap-2 p-3 text-caption text-editor-ink"
+        >
+          <p className="text-label text-editor-muted uppercase">{editorLabels.whenHeading}</p>
           <NodeCard
-            key={node.id}
-            title={node.type}
-            summary={summary(node)}
-            Icon={icons[node.type]}
-            onRemove={() => remove(node.id)}
-            defaultOpen={node.type === "Check Conditions"}
-            running={runningId === node.id}
+            title={editorLabels.onInputButton}
+            summary={behaviour.on}
+            Icon={Gamepad}
+            defaultOpen
           >
-            <InstructionFields
-              node={node}
-              onChange={(fields) => edit(updateInstruction(behaviour, node.id, fields))}
-              onAddCondition={(type) => edit(addCondition(behaviour, node.id, type))}
-              onRemoveCondition={remove}
+            <StaticField label={editorLabels.button} value={editorLabels.keyboardKey} />
+            <ChoiceField
+              label={editorLabels.key}
+              indent
+              value={behaviour.key}
+              items={(Object.keys(keyLabels) as InputKey[]).map((key) => ({
+                value: key,
+                label: keyLabels[key],
+              }))}
+              onChange={(key) => edit({ ...behaviour, key })}
+            />
+            <ChoiceField
+              label={editorLabels.on}
+              value={behaviour.on}
+              items={[
+                { value: "Pressed" as const, label: editorLabels.pressed },
+                { value: "Released" as const, label: editorLabels.released },
+              ]}
+              onChange={(on) => edit({ ...behaviour, on })}
             />
           </NodeCard>
-        ))}
-        <NodePicker
-          kind="instruction"
-          runnable={runnableInstructions}
-          onPick={(type) => edit(addInstruction(behaviour, type))}
+
+          <div className="mt-1 flex items-center justify-between">
+            <p className="text-label text-editor-muted uppercase">{editorLabels.thenHeading}</p>
+            <div className="flex items-center gap-1">
+              <span className="flex items-center gap-1 rounded-sm bg-editor-card px-1.5 py-0.5 text-editor-muted">
+                <Prohibition aria-hidden="true" className="size-3.5" />
+                {editorLabels.ignore}
+              </span>
+              <button
+                type="button"
+                onClick={fire}
+                aria-label={m.demo_run()}
+                lang={getLocale()}
+                className="grid size-6 place-items-center rounded-sm bg-editor-card hover:bg-editor-card-hover"
+              >
+                <Play aria-hidden="true" className="size-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {behaviour.instructions.map((node) => (
+            <NodeCard
+              key={node.id}
+              title={node.type}
+              summary={summary(node)}
+              Icon={icons[node.type]}
+              onRemove={() => remove(node.id)}
+              defaultOpen={node.type === "Check Conditions"}
+              running={runningId === node.id}
+            >
+              <InstructionFields
+                node={node}
+                onChange={(fields) => edit(updateInstruction(behaviour, node.id, fields))}
+                onAddCondition={(type) => edit(addCondition(behaviour, node.id, type))}
+                onRemoveCondition={remove}
+              />
+            </NodeCard>
+          ))}
+          <NodePicker
+            kind="instruction"
+            runnable={runnableInstructions}
+            onPick={(type) => edit(addInstruction(behaviour, type))}
+          />
+        </div>
+        <ScenePreview
+          object={object}
+          lines={lines}
+          keyName={keyName}
+          onPress={fire}
+          onReset={resetScene}
         />
       </div>
-      <ScenePreview
-        object={object}
-        lines={lines}
-        keyName={keyName}
-        onPress={fire}
-        onReset={resetScene}
-      />
+      <p data-demo-hint className="flex items-center gap-2 text-caption text-muted">
+        <span
+          aria-hidden="true"
+          className="size-1.5 shrink-0 rounded-full bg-accent motion-safe:animate-pulse"
+        />
+        {m.demo_hint({ key: keyName })}
+      </p>
     </div>
   );
 }

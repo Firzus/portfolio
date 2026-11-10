@@ -1,9 +1,11 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { useMemo } from "react";
+import { externalLinkProps, isExternal } from "../../../lib/site";
 import { cn, mergeRefs } from "../../../lib/utils";
 import { useMagnetic } from "../../motion/fluid";
 import { ShaderLayer, useHover } from "../../motion/shaders/ShaderLayer";
+import { NewTabNote } from "../new-tab-note";
 
 export const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 rounded-lg font-medium whitespace-nowrap transition-colors motion-reduce:transition-none",
@@ -29,7 +31,7 @@ export type LinkButtonProps = React.ComponentProps<"a"> & VariantProps<typeof bu
 
 /**
  * A link that looks like a button, for actions that navigate. The solid variant flows on a liquid
- * shader and is pulled toward the pointer like a drop.
+ * shader and is pulled toward the pointer like a drop. A link to another site opens in a new tab.
  */
 export function LinkButton({
   className,
@@ -69,6 +71,7 @@ export function LinkButton({
         if (solid) bind.onBlur();
         onBlur?.(e);
       }}
+      {...externalLinkProps(props.href)}
       {...props}
     >
       {solid ? (
@@ -80,10 +83,14 @@ export function LinkButton({
             className="inline-flex items-center gap-2"
           >
             {children}
+            {isExternal(props.href) && <NewTabNote />}
           </span>
         </>
       ) : (
-        children
+        <>
+          {children}
+          {isExternal(props.href) && <NewTabNote />}
+        </>
       )}
     </a>
   );

@@ -7,7 +7,7 @@ export function Band({ className, children, ...props }: React.ComponentProps<"se
   return (
     <section
       data-slot="band"
-      className={cn(gutter, "border-b border-line py-16 md:py-24", className)}
+      className={cn(gutter, "border-b border-line py-14 md:py-20", className)}
       {...props}
     >
       {children}

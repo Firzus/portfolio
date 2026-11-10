@@ -5,16 +5,9 @@ import { cn } from "../../lib/utils";
 import { m } from "../../paraglide/messages.js";
 import { ShaderLayer, useHover } from "../motion/shaders/ShaderLayer";
 import { LinkButton } from "../ui/link-button";
-import { ProvisionalMark } from "../ui/provisional-mark";
-import { Stat } from "../ui/stat";
+import { GithubActivity } from "./GithubActivity";
 
 export function HomeHero() {
-  const stats = [
-    { value: String(projects.length), label: m.home_stat_projects() },
-    { value: m.home_stat_huzounet_value(), label: m.home_stat_huzounet() },
-    { value: "MIT", label: m.home_stat_atelier() },
-  ];
-
   return (
     <section className="grid border-b border-line lg:grid-cols-5">
       <div className={cn(gutter, "flex flex-col justify-center py-16 md:py-24 lg:col-span-3")}>
@@ -23,21 +16,14 @@ export function HomeHero() {
           <span className="sr-only">Lilian PRIEU, </span>
           {m.job_title()}
         </h1>
-        <p className="mt-7 max-w-md text-lead">
-          {m.home_hero_lead()}
-          <ProvisionalMark />
-        </p>
+        <p className="mt-7 max-w-md text-lead">{m.home_hero_lead()}</p>
         <div className="mt-9 flex flex-wrap gap-2.5">
           <LinkButton href="#projects">{m.home_hero_projects_cta()}</LinkButton>
           <LinkButton href={contact.email} variant="outline">
             {m.home_hero_contact_cta()}
           </LinkButton>
         </div>
-        <dl className="mt-14 grid max-w-xl grid-cols-3 gap-4 md:gap-8">
-          {stats.map((stat) => (
-            <Stat key={stat.label} value={stat.value} label={stat.label} />
-          ))}
-        </dl>
+        <GithubActivity />
       </div>
       <HeroPictures />
     </section>

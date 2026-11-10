@@ -10,6 +10,7 @@ import { FilmGrain, FlowingGradient, Liquify, Shader } from "shaders/react";
 export type Scene =
   | "hero"
   | "button"
+  | "atelier"
   | "icon-play"
   | "icon-tools"
   | "icon-unity"
@@ -25,6 +26,9 @@ const tokens = {
   button: "--color-accent",
   buttonLight: "--color-shader-button-light",
   buttonFold: "--color-shader-button-fold",
+  atelierRed: "--color-atelier-red",
+  atelierViolet: "--color-atelier-violet",
+  atelierDeep: "--color-atelier-deep",
 };
 type Inks = Record<keyof typeof tokens, string>;
 
@@ -88,12 +92,30 @@ function layers(scene: Scene, hover: boolean, ink: Inks) {
           <Liquify intensity={14} stiffness={2} damping={1.5} radius={1.4} edges="mirror" />
         </>
       );
+    case "atelier":
+      // Atelier's own signature, red melting into violet, under the grain its brand always
+      // carries; violet leads, as in its gradient, and the pointer stirs it like the home hero.
+      return (
+        <>
+          <FlowingGradient
+            colorA={ink.atelierDeep}
+            colorB={ink.atelierViolet}
+            colorC={ink.atelierRed}
+            colorD={ink.atelierViolet}
+            speed={hover ? 0.55 : 0.25}
+            distortion={0.6}
+            seed={19}
+          />
+          <Liquify intensity={26} stiffness={2} damping={1.5} radius={1.3} edges="mirror" />
+          <FilmGrain strength={0.2} animated />
+        </>
+      );
     default:
       return <Icon scene={scene} hover={hover} ink={ink} />;
   }
 }
 
-type IconScene = Exclude<Scene, "hero" | "button">;
+type IconScene = Exclude<Scene, "hero" | "button" | "atelier">;
 type Mix = [keyof Inks, keyof Inks, keyof Inks, keyof Inks, number];
 
 /** Each icon drop mixes the palette in its own order, with its own seed. */

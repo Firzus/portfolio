@@ -5,10 +5,10 @@ import { hasFinePointer, prefersReducedMotion } from "../../lib/motion";
 /*
  * Pointer effects that move the components like the liquid of the shaders: springs that follow
  * the pointer and settle with a small elastic overshoot, a pill merged by the goo filter, a fill
- * that pours from the pointer and a ripple over pictures (filters in FluidDefs.tsx). They read the
- * browser, so they run in effects and handlers only. Under reduced motion or without a pointer
- * that hovers they do not animate: the pill still moves to the hovered or focused link, but
- * jumps there, and the ripple plays once on touch screens instead of on hover.
+ * that pours from the pointer, and a ripple over pictures on touch screens (filters in
+ * FluidDefs.tsx). They read the browser, so they run in effects and handlers only. Under reduced
+ * motion or without a pointer that hovers they do not animate, except that ripple: the pill still
+ * moves to the hovered or focused link, but jumps there.
  */
 
 const fluid = () => hasFinePointer() && !prefersReducedMotion();
@@ -61,6 +61,8 @@ export function useMagnetic<T extends HTMLElement>(strength = 0.3) {
  */
 export function useLiquidPill(list: RefObject<HTMLElement | null>, items: string, current: number) {
   const layer = useRef<HTMLSpanElement>(null);
+  // The pill jumps to the current item on mount and flows to it when the current item changes.
+  const placed = useRef(false);
   useEffect(() => {
     const root = list.current;
     const host = layer.current;
@@ -91,26 +93,45 @@ export function useLiquidPill(list: RefObject<HTMLElement | null>, items: string
       gsap.to(lead, { ...to, duration: 0.45, ease: "power3.out", overwrite: true });
       gsap.to(trail, { ...to, duration: 0.75, ease: "elastic.out(1, 0.7)", overwrite: true });
     };
-    place(current, false);
+    // Where the pill rests: on the item under the pointer or the keyboard focus, so a change of
+    // current item meanwhile (a click that scrolls to a section) does not pull it away.
+    const rest = () => {
+      const held =
+        root.querySelector<HTMLElement>(`:is(${items}):hover`) ??
+        root.querySelector<HTMLElement>(`:is(${items}):focus-visible`);
+      return held ? targets().indexOf(held) : current;
+    };
+    place(rest(), placed.current);
+    placed.current = true;
     const over = (e: Event) => {
       const item = (e.target as HTMLElement).closest<HTMLElement>(items);
       const index = item ? targets().indexOf(item) : -1;
       if (index >= 0) place(index, true);
     };
-    const out = () => place(current, true);
-    // The font and the window change the links' widths after the first placement.
-    const resize = new ResizeObserver(() => place(current, false));
+    const leave = () => place(current, true);
+    // A clicked link can lose focus while the pointer is still on it (the browser moves focus on
+    // a jump to a section), and the pill must not leave it then.
+    const blur = (e: FocusEvent) => {
+      if (!root.contains(e.relatedTarget as Node | null)) place(rest(), true);
+    };
+    // The font and the window change the links' widths after the first placement. The observer
+    // also reports once on observe, which is skipped so the placement above keeps its animation.
+    let observed = false;
+    const resize = new ResizeObserver(() => {
+      if (observed) place(rest(), false);
+      observed = true;
+    });
     resize.observe(root);
     root.addEventListener("pointerover", over);
     root.addEventListener("focusin", over);
-    root.addEventListener("pointerleave", out);
-    root.addEventListener("focusout", out);
+    root.addEventListener("pointerleave", leave);
+    root.addEventListener("focusout", blur);
     return () => {
       resize.disconnect();
       root.removeEventListener("pointerover", over);
       root.removeEventListener("focusin", over);
-      root.removeEventListener("pointerleave", out);
-      root.removeEventListener("focusout", out);
+      root.removeEventListener("pointerleave", leave);
+      root.removeEventListener("focusout", blur);
       gsap.killTweensOf(shapes);
     };
   }, [list, items, current]);
@@ -160,17 +181,16 @@ export function usePour() {
 let releaseRipple: (() => void) | undefined;
 
 /**
- * Ripples a picture while it, or the link around it, is hovered: the shared displacement filter
- * is attached to that picture only, swells, drifts, then flattens out and is detached on leave.
- * Touch screens cannot hover, so there each picture ripples once as it comes into view instead.
+ * On touch screens, ripples each picture once as it comes into view: the shared displacement
+ * filter is attached to that picture only, swells, drifts, then flattens out and is detached.
+ * Pointers that hover get no ripple, so the picture stays still while it is read.
  */
 export function useRipple<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || prefersReducedMotion()) return;
-    const touch = !hasFinePointer() && window.matchMedia("(pointer: coarse)").matches;
-    if (!hasFinePointer() && !touch) return;
+    if (hasFinePointer() || !window.matchMedia("(pointer: coarse)").matches) return;
     const map = document.querySelector("[data-slot='ripple-map']");
     const noise = document.querySelector("[data-slot='ripple-noise']");
     if (!map || !noise) return;
@@ -225,30 +245,20 @@ export function useRipple<T extends HTMLElement>() {
       });
       gsap.to(el, { scale: 1, duration: 0.9, ease: settle });
     };
-    if (touch) {
-      let timer = 0;
-      const seen = new IntersectionObserver(
-        ([entry]) => {
-          if (!entry?.isIntersecting) return;
-          seen.disconnect();
-          enter();
-          timer = window.setTimeout(leave, 700);
-        },
-        { threshold: 0.6 },
-      );
-      seen.observe(el);
-      return () => {
+    let timer = 0;
+    const seen = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
         seen.disconnect();
-        window.clearTimeout(timer);
-        release();
-      };
-    }
-    const host = el.closest("a") ?? el;
-    host.addEventListener("pointerenter", enter);
-    host.addEventListener("pointerleave", leave);
+        enter();
+        timer = window.setTimeout(leave, 700);
+      },
+      { threshold: 0.6 },
+    );
+    seen.observe(el);
     return () => {
-      host.removeEventListener("pointerenter", enter);
-      host.removeEventListener("pointerleave", leave);
+      seen.disconnect();
+      window.clearTimeout(timer);
       release();
     };
   }, []);

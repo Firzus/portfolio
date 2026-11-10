@@ -5,7 +5,7 @@ import { useRipple } from "../../motion/fluid";
 
 /**
  * A project picture in a hairline frame, at the shape shared by every project picture. It
- * ripples while hovered, or once as it comes into view on a touch screen.
+ * ripples once as it comes into view on a touch screen.
  */
 export function Thumbnail({
   className,

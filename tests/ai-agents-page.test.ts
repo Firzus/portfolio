@@ -25,7 +25,7 @@ const languages = [
   {
     path: "/agents-ia",
     lang: "fr",
-    title: "Travailler avec des agents IA",
+    title: "Travailler avec des agents",
     other: { path: "/en/ai-agents", locale: "en", label: "English" },
     home: "/",
     projectPrefix: "/projets/",
@@ -45,7 +45,7 @@ const languages = [
   {
     path: "/en/ai-agents",
     lang: "en",
-    title: "Working with AI agents",
+    title: "Working with agents",
     other: { path: "/agents-ia", locale: "fr", label: "Français" },
     home: "/en/",
     projectPrefix: "/en/projects/",

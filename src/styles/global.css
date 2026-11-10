@@ -66,11 +66,24 @@
   --color-editor-muted: #b0b0b0;
   --color-editor-running: rgb(99 218 123 / 0.22);
 
+  /* Atelier's own brand colours, from its brand kit, for its project page only: the signature
+     gradient runs from hot red to violet and ends in deep violet; paper is its light ink. */
+  --color-atelier-red: #ff5140;
+  --color-atelier-ember: #e63a2e;
+  --color-atelier-violet: #5b3fa8;
+  --color-atelier-deep: #31215f;
+  --color-atelier-paper: #f4f1ec;
+
   --font-sans: "Rubik", system-ui, sans-serif;
   --font-display: "Rubik", system-ui, sans-serif;
   /* Headings sit between semibold and bold, which Rubik's variable weight allows. */
   --font-weight-heading: 650;
 
+  /* Links of the full-screen phone menu, the largest type that keeps the longest label on one
+     line down to a 320px screen. */
+  --text-menu: clamp(2.5rem, 14vw, 4.5rem);
+  --text-menu--line-height: 1;
+  --text-menu--letter-spacing: -0.03em;
   --text-display: clamp(2.25rem, 1.2rem + 4.4vw, 4.75rem);
   --text-display--line-height: 0.94;
   --text-display--letter-spacing: -0.025em;
@@ -126,6 +139,11 @@
   }
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-focus;
+  }
+  /* Tailwind v4 leaves buttons on the default arrow; every button here acts like a link. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
   }
 }
 
@@ -292,7 +310,8 @@ html {
   background-color: var(--color-shader-mid);
 }
 
-/* Icon drops keep changing shape like a drop of ink, each one out of step with the others. */
+/* Icon and step drops keep changing shape like a drop of ink, each one out of step with its
+   neighbours. */
 [data-drop] {
   border-radius: 46% 54% 58% 42% / 44% 46% 54% 56%;
 }
@@ -300,16 +319,16 @@ html {
   [data-drop] {
     animation: drop-shape 9s ease-in-out infinite alternate;
   }
-  [data-intent]:nth-child(2) [data-drop] {
+  :is([data-intent], [data-step]):nth-child(5n + 2) [data-drop] {
     animation-delay: -2.3s;
   }
-  [data-intent]:nth-child(3) [data-drop] {
+  :is([data-intent], [data-step]):nth-child(5n + 3) [data-drop] {
     animation-delay: -4.6s;
   }
-  [data-intent]:nth-child(4) [data-drop] {
+  :is([data-intent], [data-step]):nth-child(5n + 4) [data-drop] {
     animation-delay: -6.9s;
   }
-  [data-intent]:nth-child(5) [data-drop] {
+  :is([data-intent], [data-step]):nth-child(5n + 5) [data-drop] {
     animation-delay: -9.2s;
   }
 }
@@ -336,4 +355,156 @@ html {
 /* The fill a link row pours in from the pointer (components/motion/fluid.ts), empty at rest. */
 [data-slot="row-fill"] {
   clip-path: circle(0%);
+}
+
+/*
+ * The full-screen phone menu (components/MainNav.tsx) spreads like ink from its button, at the top
+ * right, and drains back into it; its links rise one after the other from under their hairline.
+ * Under reduced motion it simply appears and disappears.
+ */
+/*
+ * The menu button's two lines fold into the close button's cross. The close button sits where the
+ * trigger was, so while the sheet comes in its cross is still the trigger's two lines, then folds.
+ */
+[data-slot="menu-icon"] > span:first-child {
+  translate: 0 -3px;
+}
+[data-slot="menu-icon"] > span:last-child {
+  translate: 0 3px;
+}
+[data-slot="menu-icon"][data-state="open"] > span:first-child {
+  translate: 0 0;
+  rotate: 45deg;
+}
+[data-slot="menu-icon"][data-state="open"] > span:last-child {
+  translate: 0 0;
+  rotate: -45deg;
+}
+[data-slot="dialog-popup"][data-starting-style] [data-slot="menu-icon"] > span:first-child,
+[data-slot="dialog-popup"][data-ending-style] [data-slot="menu-icon"] > span:first-child {
+  translate: 0 -3px;
+  rotate: 0deg;
+}
+[data-slot="dialog-popup"][data-starting-style] [data-slot="menu-icon"] > span:last-child,
+[data-slot="dialog-popup"][data-ending-style] [data-slot="menu-icon"] > span:last-child {
+  translate: 0 3px;
+  rotate: 0deg;
+}
+@media (hover: hover) {
+  /* Only the trigger's lines shorten; the cross must turn around its centre. */
+  [data-slot="dialog-trigger"] [data-slot="menu-icon"] > span:last-child {
+    transform-origin: right;
+  }
+  [data-slot="dialog-trigger"]:hover [data-slot="menu-icon"] > span:last-child {
+    scale: 0.55 1;
+  }
+}
+[data-slot="dialog-popup"] {
+  clip-path: circle(150% at calc(100% - 3rem) 2rem);
+}
+[data-slot="dialog-popup"][data-starting-style],
+[data-slot="dialog-popup"][data-ending-style] {
+  clip-path: circle(0% at calc(100% - 3rem) 2rem);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* The lines close up first, then turn; reversed on the way back. */
+  [data-slot="menu-icon"] > span {
+    transition:
+      translate 0.2s cubic-bezier(0.65, 0, 0.35, 1) 0.2s,
+      rotate 0.3s cubic-bezier(0.34, 1.4, 0.64, 1),
+      scale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  [data-slot="menu-icon"][data-state="open"] > span {
+    transition:
+      translate 0.2s cubic-bezier(0.65, 0, 0.35, 1) 0.15s,
+      rotate 0.35s cubic-bezier(0.34, 1.4, 0.64, 1) 0.35s,
+      scale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  [data-slot="dialog-popup"][data-ending-style] [data-slot="menu-icon"] > span {
+    transition:
+      rotate 0.25s cubic-bezier(0.65, 0, 0.35, 1),
+      translate 0.2s cubic-bezier(0.65, 0, 0.35, 1) 0.2s;
+  }
+  [data-slot="menu-label"] {
+    display: inline-block;
+    transition:
+      translate 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s,
+      opacity 0.3s ease 0.15s;
+  }
+  [data-slot="dialog-popup"][data-starting-style] [data-slot="menu-label"] {
+    translate: 0 0.5rem;
+    opacity: 0;
+  }
+  [data-slot="dialog-popup"] {
+    transition: clip-path 0.8s cubic-bezier(0.65, 0, 0.15, 1);
+  }
+  [data-slot="dialog-popup"][data-ending-style] {
+    transition-duration: 0.55s;
+  }
+  [data-slot="nav-sheet-link"] {
+    transition:
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.18s,
+      opacity 0.5s ease 0.18s;
+  }
+  li:nth-child(2) > [data-slot="nav-sheet-link"] {
+    transition-delay: 0.26s;
+  }
+  li:nth-child(3) > [data-slot="nav-sheet-link"] {
+    transition-delay: 0.34s;
+  }
+  [data-slot="nav-sheet-tools"] {
+    transition: opacity 0.5s ease 0.5s;
+  }
+  [data-slot="dialog-popup"][data-starting-style] [data-slot="nav-sheet-link"] {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  [data-slot="dialog-popup"][data-starting-style] [data-slot="nav-sheet-tools"] {
+    opacity: 0;
+  }
+  /* Closing: the links leave together, before the ink drains. */
+  [data-slot="dialog-popup"][data-ending-style] li > [data-slot="nav-sheet-link"] {
+    transform: translateY(-40%);
+    opacity: 0;
+    transition-duration: 0.3s;
+    transition-delay: 0s;
+  }
+}
+
+/*
+ * Atelier's signature gradient, as its brand kit carries it: never flat, always under a grain
+ * (fractal noise at 70 %, blended as an overlay). It is the fill of the Atelier shader before and
+ * without it; the live shader draws its own grain, so this one goes once the shader is ready.
+ */
+[data-scene="atelier"] {
+  background-image: linear-gradient(
+    150deg,
+    var(--color-atelier-red) 0%,
+    var(--color-atelier-ember) 22%,
+    var(--color-atelier-violet) 62%,
+    var(--color-atelier-deep) 100%
+  );
+}
+[data-scene="atelier"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-scene="atelier"][data-state="ready"]::after {
+  content: none;
+}
+
+/*
+ * The footer's liquid shows only as a glow rising from the bottom right, so the links above stay
+ * on a calm ground; the name melts into it, fading out toward its foot.
+ */
+[data-footer-glow] {
+  mask-image: radial-gradient(140% 120% at 80% 120%, black 25%, transparent 78%);
+}
+[data-footer-name] svg {
+  mask-image: linear-gradient(to bottom, black 10%, transparent 100%);
 }

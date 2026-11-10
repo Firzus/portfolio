@@ -33,10 +33,10 @@ async function stylesheet(): Promise<string> {
 const navigation = [
   { path: "/", label: "Navigation principale", current: "Accueil" },
   { path: "/projets/lysandra", label: "Navigation principale", current: "Projets" },
-  { path: "/agents-ia", label: "Navigation principale", current: "Agents IA" },
+  { path: "/agents-ia", label: "Navigation principale", current: "Agents" },
   { path: "/en/", label: "Main navigation", current: "Home" },
   { path: "/en/projects/atelier", label: "Main navigation", current: "Projects" },
-  { path: "/en/ai-agents", label: "Main navigation", current: "AI agents" },
+  { path: "/en/ai-agents", label: "Main navigation", current: "Agents" },
 ];
 
 describe.each(navigation)("the header menu on $path", ({ path, label, current }) => {
@@ -81,6 +81,8 @@ describe("the home page rendered by the server", () => {
     const names = scenes.map((scene) => scene.getAttribute("data-scene") ?? "");
     expect(names.sort((a, b) => a.localeCompare(b))).toEqual([
       "button",
+      // The hero's, and the footer's glow.
+      "hero",
       "hero",
       "icon-agents",
       "icon-contact",
@@ -115,6 +117,53 @@ describe("the home page rendered by the server", () => {
   });
 });
 
+describe("the full-screen phone menu", () => {
+  test("opens from a closed circle and closes back into it", async () => {
+    const css = await stylesheet();
+    expect(css).toMatch(
+      /\[data-slot=["']?dialog-popup["']?\]\[data-starting-style\][^{]*\{\s*clip-path:\s*circle\(0/,
+    );
+    expect(css).toMatch(
+      /\[data-slot=["']?dialog-popup["']?\]\[data-ending-style\][^{]*\{\s*clip-path:\s*circle\(0/,
+    );
+  });
+
+  test("animates only when the reader allows motion", async () => {
+    const css = await stylesheet();
+    const outside = css.replace(
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g,
+      "",
+    );
+    expect(css).toMatch(/\[data-slot=["']?dialog-popup["']?\][^{]*\{[^}]*transition/);
+    expect(outside).not.toMatch(/\[data-slot=["']?dialog-popup["']?\][^{]*\{[^}]*transition/);
+    expect(outside).not.toMatch(/\[data-slot=["']?nav-sheet-link["']?\][^{]*\{[^}]*transition/);
+    expect(outside).not.toMatch(/\[data-slot=["']?nav-sheet-tools["']?\][^{]*\{[^}]*transition/);
+  });
+});
+
+describe("the phone menu's button", () => {
+  test("turns its two lines into a cross as the menu opens, and back as it closes", async () => {
+    const css = await stylesheet();
+    expect(css).toMatch(
+      /\[data-slot=["']?menu-icon["']?\]\[data-state=["']?open["']?\][^{]*\{[^}]*rotate:\s*45deg/,
+    );
+    // While the sheet comes in or goes out, the close button's icon is still the two lines.
+    expect(css).toMatch(
+      /\[data-slot=["']?dialog-popup["']?\]\[data-starting-style\][^{]*\[data-slot=["']?menu-icon["']?\][^{]*\{[^}]*rotate:\s*0/,
+    );
+  });
+
+  test("moves its lines only when the reader allows motion", async () => {
+    const css = await stylesheet();
+    const outside = css.replace(
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g,
+      "",
+    );
+    expect(css).toMatch(/\[data-slot=["']?menu-icon["']?\][^{]*\{[^}]*transition/);
+    expect(outside).not.toMatch(/\[data-slot=["']?menu-icon["']?\][^{]*\{[^}]*transition/);
+  });
+});
+
 describe("the stylesheet", () => {
   test("declares the shader colours as theme tokens", async () => {
     const css = await stylesheet();
@@ -144,5 +193,18 @@ describe("the stylesheet", () => {
     expect(css).toMatch(
       /html:not\(\.js\)[^{]*\[aria-current=["']?page["']?\][^{]*\{\s*background-color:\s*var\(--color-pill\)/,
     );
+  });
+});
+
+describe("the request path steps on the AI agents page", () => {
+  test("number each step in a shader drop, like the intent icons", async () => {
+    const steps = (await page("/agents-ia")).querySelectorAll("[data-step]");
+    expect(steps.length).toBeGreaterThan(0);
+    steps.forEach((step, index) => {
+      const drop = step.querySelector("[data-drop]");
+      expect(drop?.getAttribute("aria-hidden")).toBe("true");
+      expect(drop?.querySelector("[data-scene]")?.getAttribute("data-scene")).toMatch(/^icon-/);
+      expect(drop?.text.trim()).toBe(String(index + 1));
+    });
   });
 });

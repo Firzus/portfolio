@@ -1,0 +1,1 @@
+export { NewTabNote } from "./NewTabNote";

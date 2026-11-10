@@ -10,7 +10,7 @@ const twMerge = extendTailwindMerge({
     theme: { container: ["column"], aspect: ["picture", "tile"] },
     classGroups: {
       "font-size": [
-        { text: ["display", "head", "title", "lead", "body", "small", "caption", "label"] },
+        { text: ["menu", "display", "head", "title", "lead", "body", "small", "caption", "label"] },
       ],
       "font-weight": [{ font: ["heading"] }],
     },
