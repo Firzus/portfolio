@@ -23,10 +23,10 @@ async function page(path: string): Promise<HTMLElement> {
 
 const languages = [
   {
-    path: "/agents-ia",
+    path: "/agents",
     lang: "fr",
-    title: "Travailler avec des agents IA",
-    other: { path: "/en/ai-agents", locale: "en", label: "English" },
+    title: "Travailler avec des agents",
+    other: { path: "/en/agents", locale: "en", label: "English" },
     home: "/",
     projectPrefix: "/projets/",
     delivery: "Livraison",
@@ -43,10 +43,10 @@ const languages = [
     ],
   },
   {
-    path: "/en/ai-agents",
+    path: "/en/agents",
     lang: "en",
-    title: "Working with AI agents",
-    other: { path: "/agents-ia", locale: "fr", label: "Français" },
+    title: "Working with agents",
+    other: { path: "/agents", locale: "fr", label: "Français" },
     home: "/en/",
     projectPrefix: "/en/projects/",
     delivery: "Shipping",
@@ -87,9 +87,9 @@ describe.each(languages)(
           .map((alternate) => [alternate.getAttribute("hreflang"), alternate.getAttribute("href")]),
       );
       expect(alternates).toEqual({
-        fr: `${site}/agents-ia`,
-        en: `${site}/en/ai-agents`,
-        "x-default": `${site}/agents-ia`,
+        fr: `${site}/agents`,
+        en: `${site}/en/agents`,
+        "x-default": `${site}/agents`,
       });
     });
 
@@ -171,13 +171,15 @@ describe.each(languages)(
   },
 );
 
-test("redirects the French segment under /en/ to the English address", async () => {
-  const response = await get("/en/agents-ia");
-  expect(response.status).toBe(301);
-  expect(response.headers.get("location")).toBe("/en/ai-agents");
-});
-
-test("does not answer under the English segment without /en/", async () => {
-  const response = await get("/ai-agents");
-  expect(response.status).toBe(404);
-});
+test.each([
+  ["/agents-ia", "/agents"],
+  ["/en/ai-agents", "/en/agents"],
+  ["/en/agents-ia", "/en/agents"],
+])(
+  "moves the former address %s permanently to %s, so shared links still work",
+  async (from, to) => {
+    const response = await get(from);
+    expect(response.status).toBe(301);
+    expect(response.headers.get("location")).toBe(to);
+  },
+);

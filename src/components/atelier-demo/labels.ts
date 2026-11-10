@@ -5,6 +5,8 @@ import type { InputKey } from "./behaviour";
  * so they stay in English in every locale, inside an element marked `lang="en"`.
  */
 export const editorLabels = {
+  inspector: "Inspector",
+  behaviour: "Behaviour",
   whenHeading: "WHEN",
   thenHeading: "THEN",
   ifHeading: "IF",

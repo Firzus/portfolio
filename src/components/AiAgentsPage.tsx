@@ -1,5 +1,6 @@
-import { ArrowUpRight } from "iconoir-react";
+import { ArrowUp, ArrowUpRight } from "iconoir-react";
 import type * as React from "react";
+import { useEffect, useState } from "react";
 import {
   agentSkillsPullHref,
   agentSkillsRepository,
@@ -17,6 +18,8 @@ import {
 import { gutter } from "../lib/layout";
 import { cn } from "../lib/utils";
 import { m } from "../paraglide/messages.js";
+import { ShaderLayer } from "./motion/shaders/ShaderLayer";
+import type { Scene } from "./motion/shaders/scenes";
 import { Band } from "./ui/band";
 import { Chip } from "./ui/chip";
 import { LinkButton } from "./ui/link-button";
@@ -36,6 +39,7 @@ export function AiAgentsPage() {
           <NoteSectionBand key={section.id} section={section} />
         ))}
       </article>
+      <TocReturn />
     </main>
   );
 }
@@ -86,6 +90,35 @@ function TableOfContents() {
         ))}
       </ol>
     </nav>
+  );
+}
+
+/**
+ * A way back to the contents, once they have scrolled out of view: the note is long and its
+ * contents sit at the top only. Hidden and out of the tab order while the contents are on screen.
+ */
+function TocReturn() {
+  const [away, setAway] = useState(false);
+  useEffect(() => {
+    const toc = document.getElementById("toc-heading")?.closest("nav");
+    if (!toc) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry) setAway(!entry.isIntersecting && entry.boundingClientRect.bottom < 0);
+    });
+    observer.observe(toc);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <a
+      href="#toc-heading"
+      data-toc-return
+      data-state={away ? "shown" : "hidden"}
+      inert={!away}
+      className="fixed right-4 bottom-4 z-40 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2.5 text-small font-medium transition hover:text-accent data-[state=hidden]:translate-y-2 data-[state=hidden]:opacity-0 motion-reduce:transition-none md:right-6 md:bottom-6"
+    >
+      <ArrowUp aria-hidden="true" className="size-4" />
+      {m.agents_toc_return()}
+    </a>
   );
 }
 
@@ -193,6 +226,15 @@ function Tools({ items }: { items: ToolLink[] }) {
   );
 }
 
+/** The step drops take the intent icons' mixes in turn, so neighbouring steps differ. */
+const stepScenes: Scene[] = [
+  "icon-agents",
+  "icon-tools",
+  "icon-play",
+  "icon-contact",
+  "icon-unity",
+];
+
 function RequestPath() {
   return (
     <figure
@@ -205,12 +247,17 @@ function RequestPath() {
           <li
             key={step.title()}
             data-reveal
+            data-step
             className="flex gap-3 rounded-lg border border-line bg-ground p-4"
           >
+            {/* The same drop as the home page's intent icons: a changing shape filled with a
+                live shader, the number crisp above it. */}
             <span
               aria-hidden="true"
-              className="grid size-7 shrink-0 place-items-center rounded-full bg-deep text-caption font-medium tabular-nums"
+              data-drop
+              className="relative isolate grid size-9 shrink-0 place-items-center overflow-hidden text-caption font-semibold tabular-nums"
             >
+              <ShaderLayer scene={stepScenes[index % stepScenes.length]!} className="-z-10" />
               {index + 1}
             </span>
             <div>

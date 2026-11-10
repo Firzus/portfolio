@@ -5,8 +5,9 @@ import { gutter } from "../lib/layout";
 import { cn } from "../lib/utils";
 import { m } from "../paraglide/messages.js";
 import { localizeHref } from "../paraglide/runtime.js";
+import { ShaderLayer, useHover } from "./motion/shaders/ShaderLayer";
 import { AtelierDemo } from "./atelier-demo/AtelierDemo";
-import { ProjectCard } from "./ProjectCard";
+import { ProjectTile } from "./ProjectTile";
 import { Band } from "./ui/band";
 import { Chip } from "./ui/chip";
 import { LinkButton } from "./ui/link-button";
@@ -71,6 +72,22 @@ export function ProjectPage({ project }: { project: Project }) {
           </div>
         </div>
       </Band>
+
+      {project.demo === "atelier-inspector" && (
+        <Band aria-labelledby="demo-heading">
+          <div className="grid gap-10 lg:grid-cols-5 lg:gap-16">
+            <div className="lg:col-span-2">
+              <h2 data-reveal id="demo-heading" className={sectionHeading}>
+                {m.project_atelier_demo_heading()}
+              </h2>
+              <p className="mt-5 max-w-md text-body text-muted">{m.project_atelier_demo_intro()}</p>
+            </div>
+            <div className="min-w-0 lg:col-span-3">
+              <AtelierDemo />
+            </div>
+          </div>
+        </Band>
+      )}
 
       {pictures.length > 0 && (
         <Band aria-labelledby="pictures-heading">
@@ -152,11 +169,11 @@ export function ProjectPage({ project }: { project: Project }) {
         <h2 data-reveal id="others-heading" className={sectionHeading}>
           {m.project_others_heading()}
         </h2>
-        <ul className="mt-12 grid overflow-hidden rounded-xl border border-line md:grid-cols-2">
+        <ul className="mt-10 grid overflow-hidden rounded-xl border border-line md:grid-cols-2">
           {projects
             .filter((other) => other.slug !== project.slug)
             .map((other) => (
-              <ProjectCard
+              <ProjectTile
                 key={other.slug}
                 project={other}
                 picture={other.pictures[0]}
@@ -171,6 +188,7 @@ export function ProjectPage({ project }: { project: Project }) {
 
 function ProjectHero({ project, picture }: { project: Project; picture?: Picture }) {
   const [primary] = project.links;
+  const stage = useHover();
   return (
     <section className="grid border-b border-line lg:grid-cols-5">
       <div className={cn(gutter, "flex flex-col justify-center py-14 md:py-20 lg:col-span-3")}>
@@ -203,8 +221,20 @@ function ProjectHero({ project, picture }: { project: Project; picture?: Picture
         </dl>
       </div>
       {project.demo === "atelier-inspector" && (
-        <div className="border-line bg-deep p-4 max-lg:border-t md:p-8 lg:col-span-2 lg:border-l">
-          <AtelierDemo />
+        // Atelier is presented with its own brand: its logo on its signature gradient, live.
+        <div
+          {...stage.bind}
+          data-atelier-stage
+          className="relative isolate grid min-h-80 place-items-center overflow-hidden border-line p-10 max-lg:border-t lg:col-span-2 lg:border-l"
+        >
+          <ShaderLayer scene="atelier" hover={stage.hover} className="-z-10" />
+          <img
+            src="/images/projects/atelier/brand/atelier-lockup-vertical.svg"
+            alt=""
+            width={100}
+            height={148}
+            className="w-32 md:w-40"
+          />
         </div>
       )}
       {picture && (

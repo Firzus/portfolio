@@ -26,9 +26,12 @@ export interface RunningServer {
 /** Starts the built Node server on a free local port and waits until it answers. */
 export async function startServer(): Promise<RunningServer> {
   const port = await freePort();
-  // NITRO_* variables (port, host, TLS, socket) would override where the server listens.
+  // NITRO_* variables (port, host, TLS, socket) would override where the server listens, and a
+  // GITHUB_TOKEN would replace the saved GitHub calendar the tests compare against.
   const env = Object.fromEntries(
-    Object.entries(process.env).filter(([name]) => !name.startsWith("NITRO_")),
+    Object.entries(process.env).filter(
+      ([name]) => !name.startsWith("NITRO_") && name !== "GITHUB_TOKEN",
+    ),
   );
   const child: ChildProcess = spawn(process.execPath, [entry], {
     env: { ...env, NODE_ENV: "production", PORT: String(port), HOST: "127.0.0.1" },

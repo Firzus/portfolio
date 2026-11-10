@@ -21,3 +21,16 @@ export function localizedPages(pathname: string): LocalizedPage[] {
 export function defaultPage(pages: LocalizedPage[]): LocalizedPage | undefined {
   return pages.find((page) => page.locale === baseLocale);
 }
+
+/** Whether a link leaves the portfolio for another site (an e-mail link opens the mail app). */
+export function isExternal(href: string | undefined): boolean {
+  return !!href && /^https?:\/\//.test(href) && new URL(href).origin !== siteOrigin;
+}
+
+/**
+ * The attributes of a link to another site: it opens in a new tab, and that tab gets no handle on
+ * this page.
+ */
+export function externalLinkProps(href: string | undefined) {
+  return isExternal(href) ? { target: "_blank", rel: "noopener noreferrer" } : {};
+}

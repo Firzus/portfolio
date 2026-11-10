@@ -41,8 +41,8 @@ export interface Project {
   year: string;
   kind: () => string;
   summary: () => string;
-  /** The fact shown on the project's card. */
-  fact: () => string;
+  /** The tags shown on the project's card. */
+  tags: (() => string)[];
   /** The first picture stands for the project. */
   pictures: Picture[];
   /** The project's own site, when it has one. */
@@ -90,7 +90,7 @@ export const projects: Project[] = [
     year: "2026",
     kind: m.project_lysandra_kind,
     summary: m.project_lysandra_summary,
-    fact: m.project_lysandra_fact,
+    tags: [m.project_tag_video_game, () => "Action RPG", m.project_tag_demo],
     pictures: [
       picture("lysandra-1", m.project_lysandra_picture_1),
       picture("lysandra-2", m.project_lysandra_picture_2),
@@ -129,7 +129,7 @@ export const projects: Project[] = [
     year: "2025",
     kind: m.project_huzounet_kind,
     summary: m.project_huzounet_summary,
-    fact: m.project_huzounet_fact,
+    tags: [m.project_tag_fansite, () => "Dofus", m.project_tag_web],
     pictures: [
       media("huzounet", "home", m.project_huzounet_picture_home),
       media("huzounet", "equipments", m.project_huzounet_picture_equipments),
@@ -166,7 +166,7 @@ export const projects: Project[] = [
     year: "2026",
     kind: m.project_atelier_kind,
     summary: m.project_atelier_summary,
-    fact: () => "Unity 6, URP",
+    tags: [m.project_tag_open_source, () => "Unity", m.project_tag_framework],
     pictures: [
       {
         ...media("atelier", "behaviour", m.project_atelier_picture_behaviour),

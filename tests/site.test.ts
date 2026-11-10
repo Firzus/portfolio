@@ -1,3 +1,4 @@
+import { nameMark } from "../src/components/motion/lettering";
 import { parse, type HTMLElement } from "node-html-parser";
 import { afterAll, beforeAll, describe, expect, test } from "vite-plus/test";
 import { startServer, type RunningServer } from "./server";
@@ -40,7 +41,10 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
 
   test("shows the localized interface texts", async () => {
     const html = await page(path);
-    expect(html.querySelector("header nav")?.getAttribute("aria-label")).toBe(texts.switcherLabel);
+    const switcher = html
+      .querySelectorAll("header nav")
+      .find((nav) => nav.querySelector("[data-language-switch]"));
+    expect(switcher?.getAttribute("aria-label")).toBe(texts.switcherLabel);
     expect(html.querySelectorAll("[data-contact]").map((link) => link.text.trim())).toContain(
       texts.email,
     );
@@ -95,6 +99,16 @@ describe.each(pages)("$path rendered by the server", ({ path, lang, texts, switc
     const home = html.querySelector("header [data-home]");
     expect(home?.text).toContain("Lilian PRIEU");
     expect(home?.getAttribute("href")).toBe(path);
+  });
+
+  test("writes the name in the loading screen's hand lettering, without a monogram", async () => {
+    const html = await page(path);
+    const home = html.querySelector("header [data-home]");
+    const mark = home?.querySelector("svg[data-slot=name-mark]");
+    expect(mark?.getAttribute("aria-hidden")).toBe("true");
+    expect(mark?.querySelector("path")?.getAttribute("d")).toBe(nameMark.d);
+    expect(home?.querySelector(".sr-only")?.text).toBe("Lilian PRIEU");
+    expect(home?.text).not.toContain("LP");
   });
 
   test("keeps the header at the top of the screen, and anchors clear of it", async () => {
@@ -166,6 +180,8 @@ const homes = [
     projectPath: "/projets/",
     pathsHeading: "Par où commencer ?",
     provisional: "provisoire",
+    jobTitle: "Ingénieur logiciel",
+    lead: "De l'idée au logiciel en ligne, je m'occupe de tout le chemin, du code à la mise en production.",
     lysandraAlt: "Illustration provisoire",
     huzounetAlt: "La liste des équipements de huzounet.fr",
     atelierAlt: "Le sélecteur d'instructions d'Atelier",
@@ -175,6 +191,8 @@ const homes = [
     projectPath: "/en/projects/",
     pathsHeading: "Where to start?",
     provisional: "provisional",
+    jobTitle: "Software Engineer",
+    lead: "From idea to live software, I take care of the whole way, from code to production.",
     lysandraAlt: "Provisional illustration",
     huzounetAlt: "The huzounet.fr equipment list",
     atelierAlt: "Atelier's instruction picker",
@@ -183,7 +201,17 @@ const homes = [
 
 describe.each(homes)(
   "$path, the home page",
-  ({ path, projectPath, pathsHeading, provisional, lysandraAlt, huzounetAlt, atelierAlt }) => {
+  ({
+    path,
+    projectPath,
+    pathsHeading,
+    provisional,
+    jobTitle,
+    lead,
+    lysandraAlt,
+    huzounetAlt,
+    atelierAlt,
+  }) => {
     test("opens on the job title, with the name read only by screen readers", async () => {
       const html = await page(path);
       const headings = html.querySelectorAll("h1");
@@ -192,7 +220,7 @@ describe.each(homes)(
       expect(heading?.querySelector(".sr-only")?.text).toContain("Lilian PRIEU");
       expect(heading?.text).toContain("Lilian PRIEU");
       heading?.querySelector(".sr-only")?.remove();
-      expect(heading?.text.trim()).toBe("Software Engineer");
+      expect(heading?.text.trim()).toBe(jobTitle);
     });
 
     test("shows one card per project, linking to its page in the current language", async () => {
@@ -275,10 +303,19 @@ describe.each(homes)(
       const marks = html.querySelectorAll("main [data-slot='provisional-mark']");
       expect(marks.length).toBeGreaterThan(0);
       expect(marks.map((mark) => mark.text.trim())).toEqual(marks.map(() => provisional));
-      const lead = html.querySelector("main h1 ~ p");
-      expect(lead?.querySelector("[data-slot='provisional-mark']")).not.toBeNull();
-      // Read aloud or copied, the mark must not run into the sentence it follows.
-      expect(lead?.text).toMatch(new RegExp(`\\S\\s+${provisional}$`));
+    });
+
+    test("opens on the tagline Lilian chose, confirmed and so not marked provisional", async () => {
+      const html = await page(path);
+      const shown = html.querySelector("main h1 ~ p");
+      expect(shown?.text.trim()).toBe(lead);
+      expect(shown?.querySelector("[data-slot='provisional-mark']")).toBeNull();
+    });
+
+    test("invites the reader to get in touch in the first person, as the tagline speaks", async () => {
+      const html = await page(path);
+      const contact = html.querySelector("main a[href^='mailto:']");
+      expect(contact?.text.trim()).toBe(path === "/" ? "Me contacter" : "Contact me");
     });
 
     test("uses no hash link standing for a missing page", async () => {
@@ -288,3 +325,67 @@ describe.each(homes)(
     });
   },
 );
+
+describe("the project cards' tags", () => {
+  test.each([
+    [
+      "/",
+      [
+        ["Jeu vidéo", "Action RPG", "Démo"],
+        ["Fansite", "Dofus", "Web"],
+        ["Open source", "Unity", "Framework"],
+      ],
+    ],
+    [
+      "/en/",
+      [
+        ["Video game", "Action RPG", "Demo"],
+        ["Fan site", "Dofus", "Web"],
+        ["Open source", "Unity", "Framework"],
+      ],
+    ],
+  ])("on %s", async (path, expected) => {
+    const cards = (await page(path)).querySelectorAll("#projects [data-project-card]");
+    expect(
+      cards.map((card) => card.querySelectorAll("[data-slot=chip]").map((c) => c.text.trim())),
+    ).toEqual(expected);
+  });
+});
+
+const everyKindOfPage = [
+  "/",
+  "/en/",
+  "/projets/lysandra",
+  "/projets/huzounet",
+  "/en/projects/atelier",
+  "/agents",
+  "/en/agents",
+].map((path) => ({ path }));
+
+describe.each(everyKindOfPage)("links to other sites on $path", ({ path }) => {
+  test("open in a new tab, without giving it this page, and say so", async () => {
+    const html = await page(path);
+    const external = html
+      .querySelectorAll("body a[href^='http']")
+      .filter((a) => !a.getAttribute("href")!.startsWith(site));
+    expect(external.length).toBeGreaterThan(0);
+    for (const a of external) {
+      expect(a.getAttribute("target"), a.getAttribute("href")).toBe("_blank");
+      expect(a.getAttribute("rel")?.split(" ")).toEqual(expect.arrayContaining(["noopener"]));
+      expect(a.querySelector("[data-slot=new-tab-note]")?.text.trim()).toBe(
+        path.startsWith("/en/") ? "(opens in a new tab)" : "(s'ouvre dans un nouvel onglet)",
+      );
+    }
+  });
+
+  test("leave links within the site and e-mail links in place", async () => {
+    const html = await page(path);
+    const local = html
+      .querySelectorAll("body a[href]")
+      .filter(
+        (a) =>
+          !/^https?:/.test(a.getAttribute("href")!) || a.getAttribute("href")!.startsWith(site),
+      );
+    for (const a of local) expect(a.getAttribute("target"), a.getAttribute("href")).toBeUndefined();
+  });
+});

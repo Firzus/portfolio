@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AgentsIaRouteImport } from './routes/agents-ia'
+import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as ProjetsSlugRouteImport } from './routes/projets/$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +18,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AgentsIaRoute = AgentsIaRouteImport.update({
-  id: '/agents-ia',
-  path: '/agents-ia',
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjetsSlugRoute = ProjetsSlugRouteImport.update({
@@ -31,31 +31,31 @@ const ProjetsSlugRoute = ProjetsSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/agents-ia': typeof AgentsIaRoute
+  '/agents': typeof AgentsRoute
   '/projets/$slug': typeof ProjetsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/agents-ia': typeof AgentsIaRoute
+  '/agents': typeof AgentsRoute
   '/projets/$slug': typeof ProjetsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/agents-ia': typeof AgentsIaRoute
+  '/agents': typeof AgentsRoute
   '/projets/$slug': typeof ProjetsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agents-ia' | '/projets/$slug'
+  fullPaths: '/' | '/agents' | '/projets/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agents-ia' | '/projets/$slug'
-  id: '__root__' | '/' | '/agents-ia' | '/projets/$slug'
+  to: '/' | '/agents' | '/projets/$slug'
+  id: '__root__' | '/' | '/agents' | '/projets/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AgentsIaRoute: typeof AgentsIaRoute
+  AgentsRoute: typeof AgentsRoute
   ProjetsSlugRoute: typeof ProjetsSlugRoute
 }
 
@@ -68,11 +68,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/agents-ia': {
-      id: '/agents-ia'
-      path: '/agents-ia'
-      fullPath: '/agents-ia'
-      preLoaderRoute: typeof AgentsIaRouteImport
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projets/$slug': {
@@ -87,7 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AgentsIaRoute: AgentsIaRoute,
+  AgentsRoute: AgentsRoute,
   ProjetsSlugRoute: ProjetsSlugRoute,
 }
 export const routeTree = rootRouteImport

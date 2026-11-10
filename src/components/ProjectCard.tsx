@@ -32,9 +32,9 @@ export function ProjectCard({ project, picture, className, ...props }: ProjectCa
       <h3 className="mt-2 font-display text-title font-heading">{project.name}</h3>
       <p className="-mt-2 text-body text-muted">{project.summary()}</p>
       <ul className="flex flex-wrap gap-1.5 pb-2">
-        {[project.kind(), project.year, project.fact()].map((fact) => (
-          <li key={fact}>
-            <Chip>{fact}</Chip>
+        {project.tags.map((tag) => (
+          <li key={tag()}>
+            <Chip>{tag()}</Chip>
           </li>
         ))}
       </ul>

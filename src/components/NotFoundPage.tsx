@@ -1,18 +1,23 @@
-import { Link } from "@tanstack/react-router";
-import { gutter } from "../lib/layout";
-import { cn } from "../lib/utils";
 import { m } from "../paraglide/messages.js";
-import { textLinkVariants } from "./ui/text-link";
+import { localizeHref } from "../paraglide/runtime.js";
+import { ErrorScreen } from "./ErrorScreen";
+import { LinkButton } from "./ui/link-button";
 
 export function NotFoundPage() {
   return (
-    <main className={cn(gutter, "flex flex-col gap-6 py-24")}>
-      <h1 className="font-display text-head font-heading">{m.not_found_title()}</h1>
-      <p>
-        <Link to="/" viewTransition className={textLinkVariants({ variant: "accent" })}>
-          {m.not_found_home()}
-        </Link>
-      </p>
-    </main>
+    <ErrorScreen
+      kind="not-found"
+      code="404"
+      title={m.not_found_title()}
+      text={m.not_found_text()}
+      actions={
+        <>
+          <LinkButton href={localizeHref("/")}>{m.not_found_home()}</LinkButton>
+          <LinkButton href={`${localizeHref("/")}#projects`} variant="outline">
+            {m.home_hero_projects_cta()}
+          </LinkButton>
+        </>
+      }
+    />
   );
 }
