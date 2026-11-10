@@ -499,6 +499,69 @@ html {
 }
 
 /*
+ * With scripts, the carousel hides its scrollbar: the slides left showing at the sides and its
+ * controls already say that it scrolls. Without scripts the controls are gone, so the scrollbar
+ * stays for the mouse.
+ */
+html.js [data-slot="carousel-viewport"] {
+  scrollbar-width: none;
+}
+/* For Safari before 18.2, which ignores scrollbar-width; remove once it is no longer supported. */
+html.js [data-slot="carousel-viewport"]::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+ * Each slide follows its own way across the carousel: it enters as a drop of ink, small and
+ * dim, settles into a frame while it holds the middle, and melts back as it leaves, its picture
+ * drifting slower than its frame. Driven by the scroll position alone, so it needs no script;
+ * a browser without scroll-driven animations shows plain frames.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* The picture follows its slide's timeline by name: the slide clips its overflow, which
+       makes it the picture's nearest scroller, and that one never scrolls. */
+    [data-slot="carousel-slide"] {
+      view-timeline: --carousel-slide inline;
+      animation: carousel-settle linear both;
+      animation-timeline: --carousel-slide;
+    }
+    [data-slot="carousel-slide"] img {
+      animation: carousel-drift linear both;
+      animation-timeline: --carousel-slide;
+    }
+  }
+}
+@keyframes carousel-settle {
+  0% {
+    scale: 0.8;
+    opacity: 0.45;
+    border-radius: 46% 54% 58% 42% / 44% 46% 54% 56%;
+  }
+  38%,
+  62% {
+    scale: 1;
+    opacity: 1;
+    border-radius: var(--radius-lg);
+  }
+  100% {
+    scale: 0.8;
+    opacity: 0.45;
+    border-radius: 58% 42% 44% 56% / 52% 60% 40% 48%;
+  }
+}
+@keyframes carousel-drift {
+  from {
+    scale: 1.16;
+    translate: -7% 0;
+  }
+  to {
+    scale: 1.16;
+    translate: 7% 0;
+  }
+}
+
+/*
  * The footer's liquid shows only as a glow rising from the bottom right, so the links above stay
  * on a calm ground; the name melts into it, fading out toward its foot.
  */

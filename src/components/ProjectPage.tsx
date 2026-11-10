@@ -9,9 +9,15 @@ import { ShaderLayer, useHover } from "./motion/shaders/ShaderLayer";
 import { AtelierDemo } from "./atelier-demo/AtelierDemo";
 import { ProjectTile } from "./ProjectTile";
 import { Band } from "./ui/band";
+import {
+  Carousel,
+  CarouselControl,
+  CarouselCount,
+  CarouselSlide,
+  CarouselViewport,
+} from "./ui/carousel";
 import { Chip } from "./ui/chip";
 import { LinkButton } from "./ui/link-button";
-import { ProvisionalMark } from "./ui/provisional-mark";
 import { RowLink } from "./ui/row-link";
 import { Stat } from "./ui/stat";
 import { Thumbnail } from "./ui/thumbnail";
@@ -23,12 +29,13 @@ export function ProjectPage({ project }: { project: Project }) {
   const shown = project.demo
     ? project.pictures.filter((picture) => !picture.reproducedByDemo)
     : project.pictures;
-  // With a demo, the demo stands at the top and every remaining picture goes to the gallery.
+  // A demo or a poster stands at the top; every remaining picture then goes to the gallery.
+  const staged = Boolean(project.demo || project.poster);
   const [lead, ...rest] = shown;
-  const pictures = project.demo ? shown : rest;
+  const pictures = staged ? shown : rest;
   return (
     <main>
-      <ProjectHero project={project} picture={project.demo ? undefined : lead} />
+      <ProjectHero project={project} picture={staged ? undefined : lead} />
 
       <Band aria-labelledby="context-heading">
         <div className="grid gap-8 lg:grid-cols-5 lg:gap-16">
@@ -89,7 +96,54 @@ export function ProjectPage({ project }: { project: Project }) {
         </Band>
       )}
 
-      {pictures.length > 0 && (
+      {pictures.length > 0 && project.gallery === "carousel" && (
+        <Band className="px-0 md:px-0 lg:px-0">
+          <Carousel
+            count={pictures.length}
+            aria-labelledby="pictures-heading"
+            aria-roledescription={m.carousel_role()}
+          >
+            <div className={cn(gutter, "flex flex-wrap items-end justify-between gap-x-6 gap-y-4")}>
+              <h2 data-reveal id="pictures-heading" className={sectionHeading}>
+                {m.project_pictures_heading()}
+              </h2>
+              <div className="flex items-center gap-2.5">
+                <CarouselCount className="mr-2.5" />
+                <CarouselControl direction="previous" aria-label={m.carousel_previous()}>
+                  <ArrowLeft aria-hidden="true" className="size-4" />
+                </CarouselControl>
+                <CarouselControl direction="next" aria-label={m.carousel_next()}>
+                  <ArrowRight aria-hidden="true" className="size-4" />
+                </CarouselControl>
+              </div>
+            </div>
+            <CarouselViewport data-reveal className="mt-10">
+              {pictures.map((picture, index) => (
+                <CarouselSlide
+                  key={picture.src}
+                  index={index}
+                  aria-roledescription={m.carousel_slide_role()}
+                  aria-label={m.carousel_position({
+                    position: index + 1,
+                    count: pictures.length,
+                  })}
+                >
+                  <img
+                    src={picture.src}
+                    alt={picture.alt()}
+                    width={picture.width}
+                    height={picture.height}
+                    loading="lazy"
+                    className="aspect-video w-full object-cover"
+                  />
+                </CarouselSlide>
+              ))}
+            </CarouselViewport>
+          </Carousel>
+        </Band>
+      )}
+
+      {pictures.length > 0 && project.gallery !== "carousel" && (
         <Band aria-labelledby="pictures-heading">
           <h2 data-reveal id="pictures-heading" className={sectionHeading}>
             {m.project_pictures_heading()}
@@ -237,6 +291,21 @@ function ProjectHero({ project, picture }: { project: Project; picture?: Picture
           />
         </div>
       )}
+      {project.poster && (
+        <div
+          data-project-stage
+          className="relative overflow-hidden border-line max-lg:aspect-square max-lg:border-t lg:col-span-2 lg:min-h-96 lg:border-l"
+        >
+          <img
+            src={project.poster.src}
+            alt={project.poster.alt()}
+            width={project.poster.width}
+            height={project.poster.height}
+            fetchPriority="high"
+            className="absolute inset-0 size-full object-cover"
+          />
+        </div>
+      )}
       {picture && (
         <div className="flex items-center border-line bg-deep p-6 max-lg:border-t md:px-8 md:py-12 lg:col-span-2 lg:border-l lg:px-11">
           <ProjectFigure picture={picture} eager className="w-full" />
@@ -266,11 +335,6 @@ function ProjectFigure({ picture, eager = false, className }: ProjectFigureProps
         // The hero picture receives the clicked project picture in the page transition.
         data-transition-hero={eager || undefined}
       />
-      {picture.provisional && (
-        <figcaption className="mt-2">
-          <ProvisionalMark className="ml-0" />
-        </figcaption>
-      )}
     </figure>
   );
 }

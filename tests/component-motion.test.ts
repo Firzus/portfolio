@@ -188,6 +188,14 @@ describe("the stylesheet", () => {
     );
   });
 
+  test("keeps the carousel's scrollbar when scripts cannot offer its controls", async () => {
+    const css = await stylesheet();
+    expect(css).toMatch(
+      /html\.js \[data-slot=["']?carousel-viewport["']?\]\s*\{\s*scrollbar-width:\s*none/,
+    );
+    expect(css).not.toMatch(/(^|[},])\s*\[data-slot=["']?carousel-viewport["']?\]\s*\{/);
+  });
+
   test("lets the current menu link carry the pill's fill without scripts", async () => {
     const css = await stylesheet();
     expect(css).toMatch(
