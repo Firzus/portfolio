@@ -1,23 +1,37 @@
 import { parse } from "node-html-parser";
 import { afterAll, beforeAll, describe, expect, test } from "vite-plus/test";
-import { parseContributions } from "../scripts/github-activity";
+import {
+  createRefreshingCache,
+  fetchContributions,
+  readCalendar,
+} from "../src/lib/github-activity";
 import activity from "../src/content/github-activity.json";
 import { startServer, type RunningServer } from "./server";
 
-describe("reading GitHub's public contributions page", () => {
-  const html = `
-    <h2 id="js-contribution-activity-description" class="f4">
-      5,273  contributions
-      in the last year
-    </h2>
-    <table><tbody>
-      <tr><td data-date="2025-11-10" id="d1" data-level="2" class="ContributionCalendar-day"></td></tr>
-      <tr><td data-date="2025-11-09" id="d0" data-level="0" class="ContributionCalendar-day"></td></tr>
-      <tr><td data-date="2025-11-11" id="d2" data-level="4" class="ContributionCalendar-day"></td></tr>
-    </tbody></table>`;
+const calendar = {
+  data: {
+    user: {
+      contributionsCollection: {
+        contributionCalendar: {
+          totalContributions: 5273,
+          weeks: [
+            {
+              contributionDays: [
+                { date: "2025-11-10", contributionLevel: "SECOND_QUARTILE" },
+                { date: "2025-11-09", contributionLevel: "NONE" },
+              ],
+            },
+            { contributionDays: [{ date: "2025-11-11", contributionLevel: "FOURTH_QUARTILE" }] },
+          ],
+        },
+      },
+    },
+  },
+};
 
+describe("reading GitHub's contribution calendar", () => {
   test("takes the yearly total and every day's level, in date order", () => {
-    expect(parseContributions(html)).toEqual({
+    expect(readCalendar(calendar)).toEqual({
       total: 5273,
       days: [
         { date: "2025-11-09", level: 0 },
@@ -27,8 +41,93 @@ describe("reading GitHub's public contributions page", () => {
     });
   });
 
-  test("refuses a page it cannot read rather than saving an empty year", () => {
-    expect(() => parseContributions("<html></html>")).toThrow();
+  test("refuses an answer without a calendar rather than showing an empty year", () => {
+    expect(() => readCalendar({ errors: [{ message: "Bad credentials" }] })).toThrow(
+      /Bad credentials/,
+    );
+    expect(() => readCalendar({ data: { user: null } })).toThrow();
+  });
+
+  test("asks GitHub's GraphQL API for the user's calendar, with the token", async () => {
+    const calls: { url: string; init: RequestInit }[] = [];
+    const fake = async (url: string, init: RequestInit) => {
+      calls.push({ url, init });
+      return Response.json(calendar);
+    };
+    const result = await fetchContributions({ user: "Firzus", token: "t0ken", fetch: fake });
+    expect(result.total).toBe(5273);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.url).toBe("https://api.github.com/graphql");
+    expect(new Headers(calls[0]?.init.headers).get("authorization")).toBe("Bearer t0ken");
+    expect(JSON.parse(calls[0]?.init.body as string).variables).toEqual({ login: "Firzus" });
+  });
+
+  test("reports a refused request with GitHub's status", async () => {
+    const fake = async () => new Response("", { status: 401 });
+    await expect(fetchContributions({ user: "Firzus", token: "x", fetch: fake })).rejects.toThrow(
+      /401/,
+    );
+  });
+});
+
+describe("the weekly copy of the calendar kept by the server", () => {
+  const week = 7 * 24 * 3600 * 1000;
+  const hour = 3600 * 1000;
+
+  function setup(load: () => Promise<string>) {
+    let time = 0;
+    let loads = 0;
+    const cache = createRefreshingCache({
+      initial: "saved",
+      maxAge: week,
+      retryAfter: hour,
+      now: () => time,
+      load: () => {
+        loads++;
+        return load();
+      },
+    });
+    return {
+      cache,
+      advance: (ms: number) => (time += ms),
+      loads: () => loads,
+    };
+  }
+
+  test("answers at once with what it has, and refreshes it in the background", async () => {
+    const { cache, loads } = setup(async () => "fresh");
+    expect(cache.get()).toBe("saved");
+    expect(cache.get()).toBe("saved");
+    expect(loads()).toBe(1);
+    await cache.settled();
+    expect(cache.get()).toBe("fresh");
+  });
+
+  test("asks GitHub again only once the copy is a week old", async () => {
+    const { cache, advance, loads } = setup(async () => "fresh");
+    cache.get();
+    await cache.settled();
+    advance(week - 1);
+    cache.get();
+    expect(loads()).toBe(1);
+    advance(2);
+    cache.get();
+    expect(loads()).toBe(2);
+  });
+
+  test("keeps the last copy when GitHub fails, and tries again an hour later", async () => {
+    const { cache, advance, loads } = setup(async () => {
+      throw new Error("down");
+    });
+    cache.get();
+    await cache.settled();
+    expect(cache.get()).toBe("saved");
+    advance(hour - 1);
+    cache.get();
+    expect(loads()).toBe(1);
+    advance(2);
+    cache.get();
+    expect(loads()).toBe(2);
   });
 });
 

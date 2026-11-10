@@ -42,3 +42,5 @@ docker run --rm -p 127.0.0.1:3000:3000 portfolio
 ```
 
 The build fails when a translation is missing or empty. The image declares a health check on `/`.
+
+Set `GITHUB_TOKEN` on the running server (a GitHub token with no permission is enough) to keep the home page's GitHub calendar current: the server asks GitHub's API for it at most once a week. Without the token, or while GitHub cannot be reached, the page shows the copy saved in `src/content/github-activity.json`, which `GITHUB_TOKEN=<token> node scripts/github-activity.ts` refreshes.

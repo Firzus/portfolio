@@ -1,6 +1,7 @@
+import { getRouteApi } from "@tanstack/react-router";
 import { ArrowUpRight, Github } from "iconoir-react";
 import { contact } from "../../content/contact";
-import activity from "../../content/github-activity.json";
+import type { GithubActivityData } from "../../lib/github-activity-fn";
 import { cn } from "../../lib/utils";
 import { m } from "../../paraglide/messages.js";
 import { getLocale } from "../../paraglide/runtime.js";
@@ -9,7 +10,7 @@ import { TextLink } from "../ui/text-link";
 const phoneWeeks = 26;
 
 /** Columns of seven days, Sunday first as on GitHub, with the empty days before the first one. */
-function weeks() {
+function weeks(activity: GithubActivityData) {
   const first = new Date(`${activity.days[0]?.date}T00:00:00Z`);
   const padded = [...Array<undefined>(first.getUTCDay()).fill(undefined), ...activity.days];
   const columns: (typeof padded)[] = [];
@@ -35,14 +36,17 @@ function monthStarts(columns: ReturnType<typeof weeks>, locale: string) {
   });
 }
 
+const home = getRouteApi("/");
+
 /**
- * Lilian's public GitHub year, from the copy saved by scripts/github-activity.ts: the calendar of
- * contributions, coloured like GitHub's but in the site's palette, and the yearly total. The
- * calendar is decoration for the total, so assistive technology reads the total only.
+ * Lilian's public GitHub year, loaded by the home route (see lib/github-activity-fn.ts): the
+ * calendar of contributions, coloured like GitHub's but in the site's palette, and the yearly
+ * total. The calendar is decoration for the total, so assistive technology reads the total only.
  */
 export function GithubActivity() {
+  const activity = home.useLoaderData();
   const locale = getLocale();
-  const columns = weeks();
+  const columns = weeks(activity);
   const months = monthStarts(columns, locale);
   // A phone shows the last half-year only: the whole year would shrink each day to a few pixels.
   const phoneHidden = (x: number) => x < columns.length - phoneWeeks && "max-sm:hidden";

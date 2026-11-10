@@ -11,6 +11,8 @@
     "allowJs": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
+    // Lets scripts run by Node import the site's TypeScript modules with their extension.
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "strict": true,
     "noUnusedLocals": true,
