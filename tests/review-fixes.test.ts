@@ -53,8 +53,8 @@ describe("the AI agents note", () => {
   afterAll(() => server?.stop());
 
   test.each([
-    ["/agents-ia", "Retour au sommaire"],
-    ["/en/ai-agents", "Back to contents"],
+    ["/agents", "Retour au sommaire"],
+    ["/en/agents", "Back to contents"],
   ])("on %s keeps a way back to its contents while reading", async (path, label) => {
     const html = parse(await (await fetch(new URL(path, server.origin))).text());
     const back = html.querySelector("[data-toc-return]");
@@ -94,12 +94,12 @@ describe("the site's voice", () => {
     "/projets/lysandra",
     "/projets/huzounet",
     "/projets/atelier",
-    "/agents-ia",
+    "/agents",
     "/en/",
     "/en/projects/lysandra",
     "/en/projects/huzounet",
     "/en/projects/atelier",
-    "/en/ai-agents",
+    "/en/agents",
   ])("on %s speaks in the first person, never of Lilian as someone else", async (path) => {
     const html = parse(await (await fetch(new URL(path, server.origin))).text());
     // The full name stays where it names the site's author, as in the home page's heading.
@@ -114,7 +114,7 @@ describe("the name of the agents section", () => {
   });
   afterAll(() => server?.stop());
 
-  test.each(["/", "/agents-ia", "/en/", "/en/ai-agents"])(
+  test.each(["/", "/agents", "/en/", "/en/agents"])(
     "on %s is just « Agents », with no « IA » or « AI »",
     async (path) => {
       const html = parse(await (await fetch(new URL(path, server.origin))).text());

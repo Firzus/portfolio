@@ -99,7 +99,7 @@ function intents(): Intent[] {
           key: "agents-note",
           type: m.row_type_note(),
           label: m.intent_agents_row(),
-          href: localizeHref("/agents-ia"),
+          href: localizeHref("/agents"),
         },
       ],
     },

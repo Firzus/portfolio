@@ -7,7 +7,7 @@ export type NavItem = "home" | "projects" | "agents";
 export function currentNavItem(pathname: string): NavItem | undefined {
   if (pathname === "/") return "home";
   if (pathname.startsWith("/projets/")) return "projects";
-  if (pathname === "/agents-ia") return "agents";
+  if (pathname === "/agents") return "agents";
   return undefined;
 }
 
@@ -22,6 +22,6 @@ export function navLinks(): NavLink[] {
   return [
     { item: "home", label: m.nav_home(), href: localizeHref("/") },
     { item: "projects", label: m.nav_projects(), href: `${localizeHref("/")}#projects` },
-    { item: "agents", label: m.nav_agents(), href: localizeHref("/agents-ia") },
+    { item: "agents", label: m.nav_agents(), href: localizeHref("/agents") },
   ];
 }

@@ -358,8 +358,8 @@ const everyKindOfPage = [
   "/projets/lysandra",
   "/projets/huzounet",
   "/en/projects/atelier",
-  "/agents-ia",
-  "/en/ai-agents",
+  "/agents",
+  "/en/agents",
 ].map((path) => ({ path }));
 
 describe.each(everyKindOfPage)("links to other sites on $path", ({ path }) => {

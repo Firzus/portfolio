@@ -33,10 +33,10 @@ async function stylesheet(): Promise<string> {
 const navigation = [
   { path: "/", label: "Navigation principale", current: "Accueil" },
   { path: "/projets/lysandra", label: "Navigation principale", current: "Projets" },
-  { path: "/agents-ia", label: "Navigation principale", current: "Agents" },
+  { path: "/agents", label: "Navigation principale", current: "Agents" },
   { path: "/en/", label: "Main navigation", current: "Home" },
   { path: "/en/projects/atelier", label: "Main navigation", current: "Projects" },
-  { path: "/en/ai-agents", label: "Main navigation", current: "Agents" },
+  { path: "/en/agents", label: "Main navigation", current: "Agents" },
 ];
 
 describe.each(navigation)("the header menu on $path", ({ path, label, current }) => {
@@ -57,8 +57,8 @@ describe.each(navigation)("the header menu on $path", ({ path, label, current })
     const hrefs = nav?.querySelectorAll("[data-slot=nav-link]").map((l) => l.getAttribute("href"));
     expect(hrefs).toEqual(
       path.startsWith("/en/")
-        ? ["/en/", "/en/#projects", "/en/ai-agents"]
-        : ["/", "/#projects", "/agents-ia"],
+        ? ["/en/", "/en/#projects", "/en/agents"]
+        : ["/", "/#projects", "/agents"],
     );
   });
 });
@@ -67,7 +67,7 @@ describe("the current section of a path", () => {
   test.each([
     ["/", "home"],
     ["/projets/huzounet", "projects"],
-    ["/agents-ia", "agents"],
+    ["/agents", "agents"],
     ["/introuvable", undefined],
   ])("%s is %s", (pathname, item) => {
     expect(currentNavItem(pathname)).toBe(item);
@@ -198,7 +198,7 @@ describe("the stylesheet", () => {
 
 describe("the request path steps on the AI agents page", () => {
   test("number each step in a shader drop, like the intent icons", async () => {
-    const steps = (await page("/agents-ia")).querySelectorAll("[data-step]");
+    const steps = (await page("/agents")).querySelectorAll("[data-step]");
     expect(steps.length).toBeGreaterThan(0);
     steps.forEach((step, index) => {
       const drop = step.querySelector("[data-drop]");

@@ -16,7 +16,7 @@ const footer = async (path: string) => {
 
 describe.each([
   { path: "/", label: "Plan du site", links: ["Accueil", "Projets", "Agents"] },
-  { path: "/en/ai-agents", label: "Site map", links: ["Home", "Projects", "Agents"] },
+  { path: "/en/agents", label: "Site map", links: ["Home", "Projects", "Agents"] },
 ])("the footer on $path", ({ path, label, links }) => {
   test("ends the page on Lilian's name, large, in the loading screen's hand lettering", async () => {
     const mark = (await footer(path))?.querySelector("[data-footer-name] svg[data-slot=name-mark]");
