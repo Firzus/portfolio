@@ -11,8 +11,6 @@ export interface Picture {
    * function, so the text follows the locale of the page being rendered.
    */
   alt: () => string;
-  /** A stand-in until Lilian provides the real picture; the page marks it as provisional. */
-  provisional?: boolean;
   /** Shown on the home page only: on the project page, the project's demo reproduces it. */
   reproducedByDemo?: boolean;
 }
@@ -45,6 +43,13 @@ export interface Project {
   tags: (() => string)[];
   /** The first picture stands for the project. */
   pictures: Picture[];
+  /**
+   * An artwork with its own background, filling the side of the project's name at the top of its
+   * page instead of the framed first picture.
+   */
+  poster?: Picture;
+  /** How the project's page lays out its pictures; a grid unless stated. */
+  gallery?: "carousel";
   /** The project's own site, when it has one. */
   site?: string;
   /** Studio or frame of the project and its dates, shown under the name on its page. */
@@ -63,13 +68,12 @@ export interface Project {
   demo?: "atelier-inspector";
 }
 
-// Provisional pictures, reprinted as violet duotones, until Lilian provides the real ones.
-const picture = (name: string, alt: () => string): Picture => ({
-  src: `/images/placeholders/${name}.webp`,
-  width: 1586,
-  height: 992,
+// An illustration of the game. Every one is exported at 2000 by 1140, the shape of the originals.
+const artwork = (slug: string, name: string, alt: () => string): Picture => ({
+  src: `/images/projects/${slug}/${name}.avif`,
+  width: 2000,
+  height: 1140,
   alt,
-  provisional: true,
 });
 
 const literal = (text: string) => () => text;
@@ -92,9 +96,17 @@ export const projects: Project[] = [
     summary: m.project_lysandra_summary,
     tags: [m.project_tag_video_game, () => "Action RPG", m.project_tag_demo],
     pictures: [
-      picture("lysandra-1", m.project_lysandra_picture_1),
-      picture("lysandra-2", m.project_lysandra_picture_2),
+      artwork("lysandra", "cover", m.project_lysandra_picture_cover),
+      artwork("lysandra", "lyra-slime", m.project_lysandra_picture_slime),
+      artwork("lysandra", "lyra-boss", m.project_lysandra_picture_boss),
     ],
+    gallery: "carousel",
+    poster: {
+      src: "/images/projects/lysandra/lyra.avif",
+      width: 1400,
+      height: 1400,
+      alt: m.project_lysandra_picture_lyra,
+    },
     site: "https://lysandra.faill.studio",
     period: m.project_lysandra_period,
     context: [m.project_lysandra_context_1, m.project_lysandra_context_2],
@@ -113,7 +125,7 @@ export const projects: Project[] = [
     stack: ["Unity 6", "URP", "Cinemachine", "Tauri 2", "Cloudflare R2"],
     stats: [
       { value: literal("7"), label: m.project_lysandra_stat_team },
-      { value: literal("16"), label: m.project_lysandra_stat_decisions },
+      { value: m.project_lysandra_stat_installs_value, label: m.project_lysandra_stat_installs },
     ],
     links: [
       {

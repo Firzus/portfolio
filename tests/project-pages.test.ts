@@ -164,10 +164,116 @@ test("gives Huzounet's build count once, as the exact figure", async () => {
   }
 });
 
-test("marks Lysandra's provisional pictures as provisional", async () => {
-  const html = await page("/projets/lysandra");
-  expect(html.querySelectorAll("main [data-slot='provisional-mark']").length).toBeGreaterThan(0);
+describe.each([
+  { path: "/projets/lysandra", alt: "Lyra", art: "Illustration de Lysandra" },
+  { path: "/en/projects/lysandra", alt: "Lyra", art: "Lysandra artwork" },
+])("$path, Lysandra's stage", ({ path, alt, art }) => {
+  test("opens on Lyra's artwork with its own background, without a shader", async () => {
+    const html = await page(path);
+    const hero = html.querySelector("main > section");
+    const stage = hero?.querySelector("[data-project-stage]");
+    const lyra = stage?.querySelector("img");
+    expect(lyra?.getAttribute("src")).toBe("/images/projects/lysandra/lyra.avif");
+    expect(lyra?.getAttribute("alt")).toContain(alt);
+    expect(stage?.querySelector("[data-scene]")).toBeNull();
+    expect(hero?.querySelectorAll("img")).toHaveLength(1);
+    expect(hero?.querySelector("[data-slot='provisional-mark']")).toBeNull();
+  });
+
+  test("keeps the game's artwork among the pictures", async () => {
+    const html = await page(path);
+    const artwork = html.querySelector(
+      "main [aria-labelledby=pictures-heading] img[src='/images/projects/lysandra/cover.avif']",
+    );
+    expect(artwork?.getAttribute("alt")).toContain(art);
+  });
 });
+
+test.each([
+  { path: "/projets/lysandra", value: "1 251", label: "installations de la démo" },
+  { path: "/en/projects/lysandra", value: "1,251", label: "demo installs" },
+])("counts the installs of Lysandra's demo on $path", async ({ path, value, label }) => {
+  const stats = (await page(path)).querySelectorAll("main > section [data-slot=stat]");
+  const found = stats.map((stat) => [
+    stat.querySelector("dd")?.text.trim(),
+    stat.querySelector("dt")?.text.trim(),
+  ]);
+  expect(found).toContainEqual([value, label]);
+});
+
+test("shows no provisional picture on the Lysandra pages", async () => {
+  for (const path of ["/projets/lysandra", "/en/projects/lysandra"]) {
+    const html = await page(path);
+    expect(html.querySelectorAll("main [data-slot='provisional-mark']")).toHaveLength(0);
+    const sources = html.querySelectorAll("main img").map((img) => img.getAttribute("src"));
+    expect(sources.filter((src) => src?.includes("placeholders"))).toEqual([]);
+  }
+});
+
+describe.each([
+  {
+    path: "/projets/lysandra",
+    roles: { carousel: "carrousel", slide: "diapositive" },
+    slides: ["1 sur 3", "2 sur 3", "3 sur 3"],
+    controls: ["Image précédente", "Image suivante"],
+  },
+  {
+    path: "/en/projects/lysandra",
+    roles: { carousel: "carousel", slide: "slide" },
+    slides: ["1 of 3", "2 of 3", "3 of 3"],
+    controls: ["Previous picture", "Next picture"],
+  },
+])("$path, Lysandra's picture carousel", ({ path, roles, slides, controls }) => {
+  test("is a labelled carousel of the game's three illustrations", async () => {
+    const html = await page(path);
+    const carousel = html.querySelector("main [data-slot=carousel]");
+    expect(carousel?.getAttribute("role")).toBe("region");
+    expect(carousel?.getAttribute("aria-roledescription")).toBe(roles.carousel);
+    const heading = html.getElementById(carousel?.getAttribute("aria-labelledby") ?? "");
+    expect(heading?.tagName).toBe("H2");
+    const found = carousel?.querySelectorAll("[data-slot=carousel-slide]") ?? [];
+    expect(found.map((slide) => slide.getAttribute("aria-label"))).toEqual(slides);
+    expect(found.map((slide) => slide.querySelector("img")?.getAttribute("src"))).toEqual([
+      "/images/projects/lysandra/cover.avif",
+      "/images/projects/lysandra/lyra-slime.avif",
+      "/images/projects/lysandra/lyra-boss.avif",
+    ]);
+    for (const slide of found) {
+      expect(slide.getAttribute("role")).toBe("group");
+      expect(slide.getAttribute("aria-roledescription")).toBe(roles.slide);
+      // A list item cannot also be a group: the slides are plain blocks.
+      expect(slide.tagName).toBe("DIV");
+      expect(slide.querySelector("img")?.getAttribute("alt")).toMatch(/\S/);
+    }
+  });
+
+  test("scrolls with the keyboard and offers named controls", async () => {
+    const html = await page(path);
+    const carousel = html.querySelector("main [data-slot=carousel]");
+    expect(carousel?.querySelector("[data-slot=carousel-viewport]")?.getAttribute("tabindex")).toBe(
+      "0",
+    );
+    const buttons = carousel?.querySelectorAll("button") ?? [];
+    expect(buttons.map((button) => button.getAttribute("aria-label"))).toEqual(controls);
+    // The end of the row is announced without disabling the button, which would drop its focus.
+    expect(buttons.map((button) => button.getAttribute("aria-disabled"))).toEqual([
+      "true",
+      "false",
+    ]);
+    expect(buttons.some((button) => button.hasAttribute("disabled"))).toBe(false);
+  });
+});
+
+test.each(["/projets/huzounet", "/projets/atelier"])(
+  "keeps the picture grid on %s, without a carousel",
+  async (path) => {
+    const html = await page(path);
+    expect(html.querySelector("main [data-slot=carousel]")).toBeNull();
+    expect(
+      html.querySelectorAll("main [aria-labelledby=pictures-heading] li img").length,
+    ).toBeGreaterThan(0);
+  },
+);
 
 test("redirects the French segment under /en/ to the English address", async () => {
   const response = await get("/en/projets/atelier");

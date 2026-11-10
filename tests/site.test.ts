@@ -182,7 +182,7 @@ const homes = [
     provisional: "provisoire",
     jobTitle: "Ingénieur logiciel",
     lead: "De l'idée au logiciel en ligne, je m'occupe de tout le chemin, du code à la mise en production.",
-    lysandraAlt: "Illustration provisoire",
+    lysandraAlt: "Lyra, assise sur un slime",
     huzounetAlt: "La liste des équipements de huzounet.fr",
     atelierAlt: "Le sélecteur d'instructions d'Atelier",
   },
@@ -193,7 +193,7 @@ const homes = [
     provisional: "provisional",
     jobTitle: "Software Engineer",
     lead: "From idea to live software, I take care of the whole way, from code to production.",
-    lysandraAlt: "Provisional illustration",
+    lysandraAlt: "Lyra, sitting on a slime",
     huzounetAlt: "The huzounet.fr equipment list",
     atelierAlt: "Atelier's instruction picker",
   },
@@ -238,13 +238,13 @@ describe.each(homes)(
       ]);
     });
 
-    test("shows the real media of Huzounet and Atelier, described in the current language", async () => {
+    test("shows the real media of the projects, described in the current language", async () => {
       const html = await page(path);
       const pictures = html.querySelectorAll("main img");
       expect(pictures.length).toBeGreaterThanOrEqual(6);
       for (const picture of pictures) {
         expect(picture.getAttribute("src")).toMatch(
-          /^\/images\/(placeholders|projects\/(huzounet|atelier))\/[\w-]+\.(webp|avif)$/,
+          /^\/images\/projects\/(lysandra|huzounet|atelier)\/[\w-]+\.(webp|avif)$/,
         );
         expect(picture.getAttribute("alt")).toBeDefined();
         expect(picture.getAttribute("width")).toBeTruthy();
