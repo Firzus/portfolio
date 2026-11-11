@@ -35,7 +35,7 @@
     "nitro": "3.0.261103-rc",
     "node-html-parser": "^9.0.6",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vite-plus": "catalog:"
   },
   "engines": {
